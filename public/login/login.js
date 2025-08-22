@@ -2,9 +2,9 @@ document.getElementById("loginForm")
     .addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const username = document.getElementById("username")
+        const userName = document.getElementById("username")
             .value;
-        const password = document.getElementById("password")
+        const passWord = document.getElementById("password")
             .value;
 
         try {
@@ -14,8 +14,8 @@ document.getElementById("loginForm")
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    username,
-                    password,
+                    userName,
+                    passWord,
                 }),
             });
 
