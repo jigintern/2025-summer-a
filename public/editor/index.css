@@ -1,8 +1,15 @@
+html, body {
+    height: 100%; /* ページ全体の高さを画面いっぱいに */
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 body {
     background-color: #3a6ea5;
     font-family: "MS UI Gothic", sans-serif;
     font-size: 11px;
-    padding: 20px;
 }
 
 .title-bar {
@@ -81,11 +88,11 @@ body {
     font-family: Webdings;
 }
 
-.toolbar input[type="radio"] {
+.toolbar input[type="radio"], .char-bar input[type="radio"] {
     display: none;
 }
 
-.tool-button {
+.tool-button, .char-button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -99,11 +106,12 @@ body {
     transition: all 0.1s;
 }
 
-.tool-button:hover {
+.tool-button:hover, .char-button:hover {
     border-color: #c0c0c0;
 }
 
-input[type="radio"]:checked + .tool-button {
+input[type="radio"]:checked + .tool-button,
+input[type="radio"]:checked + .char-button {
     background-color: #e5e4df;
     border-style: inset;
     border-color: #c0c0c0;
@@ -122,13 +130,26 @@ input[type="radio"]:checked + .tool-button {
 
 .main-content {
     display: flex;
-    flex-grow: 1; /* 利用可能な高さをすべて埋める */
+    flex-grow: 1;
 }
 
-.bottom-toolbar {
+.char-bar {
     display: flex;
-    padding-top: 5px; /* 上の要素との間に余白 */
-    gap: 2px; /* ボタン間の余白 */
-    border-top: 1px solid #b5b5b5; /* 区切り線 */
+    padding-top: 5px;
+    gap: 2px;
+    border-top: 1px solid #b5b5b5;
     margin-top: 5px;
+}
+
+.window {
+    width: 80vw;
+    height: 80vh;
+
+    max-width: 1200px;
+    min-width: 400px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid gray;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
 }
