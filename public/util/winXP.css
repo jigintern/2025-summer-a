@@ -1,5 +1,5 @@
 :root {
-  --window-bg-color: rgb(255, 242, 192);
+  --window-bg-color: #ece9d8;
   --window-fr-color: #0057e8;
   --window-fr-grad: linear-gradient(
     to bottom,
@@ -25,12 +25,13 @@
   font-family: var(--main-tx-font);
   color: var(--window-tx-color);
   text-align: center;
+  user-select:none;
 }
 
 .window {
   background-color: var(--window-bg-color);
   border: 2px solid;
-  border-top: 1px solid;
+  border-top: 3px solid;
   border-color: var(--window-fr-color);
   font-family: "MS UI Gothic", sans-serif;
   font-size: 11px;
@@ -122,10 +123,47 @@ h1 {
   color: var(--window-tx-color);
   font-family: "Webdings", sans-serif;
   width: 10px;
+  user-select: none;
 }
 
 .window_fr_icon {
   margin: 1px;
   padding: 0;
   width: 20px;
+  user-select: none;
+}
+
+#control_panel{
+  border-bottom:1px solid;
+  border-color: rgb(255, 255, 255);
+  box-shadow:0 0 2px 0 black;
+}
+
+.control_panel_bt{
+  background:transparent;
+  border:none;
+  user-select: none;
+  font-family:var(--main-tx-font);
+  margin:0px;
+
+}
+
+.control_panel_bt:hover{
+  background-color: #b2cdfd;
+  border:none;
+  user-select: none;
+  font-family:var(--main-tx-font);
+  margin:0px;
+  color:white;
+
+}
+
+.control_panel_bt:active{
+  background-color: var(--window-fr-color);
+  border:none;
+  user-select: none;
+  font-family:var(--main-tx-font);
+  margin:0px;
+  color:white;
+
 }
