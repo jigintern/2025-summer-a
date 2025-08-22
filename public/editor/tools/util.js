@@ -59,4 +59,15 @@ export class CharPlace {
             }
         }
     }
+
+    /**
+     * @param {number} line
+     * @param {number} offset
+     * @param {string} char
+     */
+    addChar(line, offset, char) {
+        if (char in charwidth) {
+            this.#chars[line].push({ offset, char });
+        }
+    }
 }
