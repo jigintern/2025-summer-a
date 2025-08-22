@@ -8,6 +8,17 @@ Deno.serve(async (req) => {
     return new Response("ホーム画面です");
   }
 
+  if (req.method === "POST" && pathname === "/login") {
+    const { username, password } = await req.json();
+    console.log("ログイン試行:", { username, password });
+
+    if (username === "test" && password === "password") {
+      return new Response("ログイン成功", { status: 200 });
+    } else {
+      return new Response("ログイン失敗", { status: 401 });
+    }
+  }
+
   return serveDir(req, {
     fsRoot: "public",
     urlRoot: "",
