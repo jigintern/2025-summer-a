@@ -28,4 +28,31 @@ export class CharPlace {
             this.#chars.push(lineChars);
         }
     }
+
+    /**
+     * 重なった文字を消す. 後から追加された文字を優先で残す.
+     */
+    removeOverlap() {
+        for (const line of this.#chars) {
+            /** @type {(number | null)[]} */
+            // 流さthis.#widthのfalseで埋められた配列を作成
+            const flg = Array.from({ length: this.#width }, () => false);
+            // 文字を後ろ(後から追加された方)から順に見ていく
+            for (let i = line.length - 1; i >= 0; --i) {
+                const { offset, char } = line[i];
+                /** @type {number} このループで処理する文字の幅 */
+                const charw = charwidth[char];
+                // もし既に見た要素を重複していたら, 削除する
+                // このとき, 変数iにちょっと気を付けつつ, 今回は何もしなくていい
+                if (flg.slice(offset, offset + charw).some((f) => f)) {
+                    line.splice(i, 1);
+                }
+                // 既に文字がある, というフラグを立てる
+                for (let i = offset; i < offset + charw; ++i) {
+                    line[i] = true;
+                }
+                ++i;
+            }
+        }
+    }
 }
