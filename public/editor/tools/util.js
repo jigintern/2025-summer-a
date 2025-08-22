@@ -50,12 +50,12 @@ export class CharPlace {
                 // このとき, 変数iにちょっと気を付けつつ, 今回は何もしなくていい
                 if (flg.slice(offset, offset + charw).some((f) => f)) {
                     line.splice(i, 1);
+                    continue;
                 }
                 // 既に文字がある, というフラグを立てる
-                for (let i = offset; i < offset + charw; ++i) {
-                    line[i] = true;
+                for (let j = offset; j < offset + charw; ++j) {
+                    flg[j] = true;
                 }
-                ++i;
             }
         }
     }
