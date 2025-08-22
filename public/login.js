@@ -19,17 +19,11 @@ document.getElementById("loginForm")
                 }),
             });
 
+            const responseText = await response.text(); // JSONではなくテキストとして読み込み
+
             if (response.ok) {
-                const data = await response.json();
-                if (data.success) {
-                    alert("ログイン成功！");
-                    window.location.href = "/";
-                } else {
-                    alert(
-                        data.message ||
-                            "ログインに失敗しました。",
-                    );
-                }
+                alert("ログイン成功！");
+                window.location.href = "/"; // ログイン成功時のリダイレクト
             } else {
                 alert(
                     "ログインに失敗しました。ユーザー名とパスワードを確認してください。",
