@@ -4,3 +4,102 @@ body {
     font-size: 11px;
     padding: 20px;
 }
+
+.title-bar {
+    background: linear-gradient(to right, #0055e3, #3a89ff);
+    padding: 3px 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    height: 18px;
+}
+
+.title-bar-controls button {
+    width: 16px;
+    height: 14px;
+    margin-left: 2px;
+    border: 1px solid #00309c;
+    background-color: #3780ff;
+    font-family: "Webdings"; /* 特殊文字でボタンアイコンを表現 */
+    font-size: 10px;
+    color: white;
+    line-height: 14px;
+    padding: 0;
+}
+
+.title-bar-controls button:active {
+    filter: brightness(0.8);
+}
+
+.title-bar-controls button[aria-label="Minimize"]::before {
+    content: "0";
+}
+.title-bar-controls button[aria-label="Maximize"]::before {
+    content: "1";
+}
+.title-bar-controls button[aria-label="Close"]::before {
+    content: "r";
+}
+
+.menu-bar {
+    background-color: #ece9d8;
+    padding: 3px 4px;
+    display: flex;
+}
+
+.menu-bar span {
+    padding: 2px 5px;
+    margin-right: 2px;
+}
+
+.menu-bar span:hover {
+    background-color: #316ac5;
+    color: white;
+}
+
+.window-body {
+    flex-grow: 1;
+    display: flex;
+    padding: 5px;
+    position: relative;
+    background-color: #b5b5b5;
+}
+
+.toolbar {
+    width: 50px;
+    border: 1px solid #b5b5b5;
+    border-right: 1px solid #f3f3f3;
+    border-bottom: 1px solid #f3f3f3;
+    padding: 3px;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+
+.toolbar-controls button {
+    width: 16px;
+    height: 14px;
+    margin-left: 2px;
+    border: 1px solid #00309c;
+    background-color: #3780ff;
+    font-family: "Webdings"; /* 特殊文字でボタンアイコンを表現 */
+    font-size: 10px;
+    color: white;
+    line-height: 14px;
+    padding: 0;
+}
+
+.toolbar-controls button[aria-label="Line"]::before {
+    content: "0";
+}
+.toolbar-controls button[aria-label="Curve"]::before {
+    content: "1";
+}
+.toolbar-controls button[aria-label="Erase"]::before {
+    content: "r";
+}
+.toolbar-controls button[aria-label="Fill"]::before {
+    content: "r";
+}
