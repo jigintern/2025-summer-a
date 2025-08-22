@@ -14,8 +14,9 @@ export class CharPlace {
     /**
      * @param {string} aa アスキーアートの文字列データ
      * @param {number} width アスキーアートの最大幅
+     * @param {number} height アスキーアートの最大行数
      */
-    constructor(aa, width) {
+    constructor(aa, width, height) {
         this.#chars = [];
         this.#width = width;
         for (const line of aa.split("\n")) {
@@ -31,6 +32,7 @@ export class CharPlace {
             }
             this.#chars.push(lineChars);
         }
+        while (this.#chars.length < height) this.#chars.push([]);
     }
 
     /**
