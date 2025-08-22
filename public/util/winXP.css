@@ -25,7 +25,7 @@
   font-family: var(--main-tx-font);
   color: var(--window-tx-color);
   text-align: center;
-  user-select:none;
+  user-select: none;
 }
 
 .window {
@@ -131,39 +131,46 @@ h1 {
   padding: 0;
   width: 20px;
   user-select: none;
+  background-image: var(--main-bg-icon);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
-#control_panel{
-  border-bottom:1px solid;
+#control_panel {
+  border-bottom: 1px solid;
   border-color: rgb(255, 255, 255);
-  box-shadow:0 0 2px 0 black;
+  box-shadow: 0 0 2px 0 black;
 }
 
-.control_panel_bt{
-  background:transparent;
-  border:none;
+.control_panel_bt {
+  background: transparent;
+  border: none;
   user-select: none;
-  font-family:var(--main-tx-font);
-  margin:0px;
-
+  font-family: var(--main-tx-font);
+  margin: 0px;
 }
 
-.control_panel_bt:hover{
+.control_panel_bt:hover {
   background-color: #b2cdfd;
-  border:none;
+  border: none;
   user-select: none;
-  font-family:var(--main-tx-font);
-  margin:0px;
-  color:white;
-
+  font-family: var(--main-tx-font);
+  margin: 0px;
+  color: white;
 }
 
-.control_panel_bt:active{
+.control_panel_bt:active {
   background-color: var(--window-fr-color);
-  border:none;
+  border: none;
   user-select: none;
-  font-family:var(--main-tx-font);
-  margin:0px;
-  color:white;
+  font-family: var(--main-tx-font);
+  margin: 0px;
+  color: white;
+}
 
+body {
+  background-image: var(--main-bg-image);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
