@@ -21,7 +21,7 @@ document.getElementById("loginForm")
 
             if (response.ok) {
                 alert("新規作成成功！");
-                window.location.href = "/login.html";
+                window.location.href = "./login.html";
             } else {
                 alert(result || "新規作成に失敗しました。");
             }
