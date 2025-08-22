@@ -10,61 +10,52 @@
         <link rel="stylesheet" href="index.css">
     </head>
     <body>
-        <!-- <div class="title-bar">
-            無題 - エディタ
-            <div class="title-bar-controls">
-                <button aria-label="Minimize"></button>
-                <button aria-label="Maximize"></button>
-                <button aria-label="Close"></button>
-            </div>
-        </div>
-        <div class="menu-bar">
-            <span>ファイル(F)</span>
-            <span>編集(E)</span>
-            <span>表示(V)</span>
-            <span>変形(I)</span>
-            <span>色(C)</span>
-            <span>ヘルプ(H)</span>
-        </div> -->
-        <div class="window-body">
-            <div class="main-content">
-                <div class="toolbar">
-                    <input type="radio" id="btn-pen" name="tool-button" checked>
-                    <label class="tool-button" for="btn-pen">
-                        &#x34;
-                    </label>
+        <div class="window">
+            <div class="window-body">
+                <div class="main-content">
+                    <div class="toolbar">
+                        <input
+                            type="radio"
+                            id="btn-pen"
+                            name="tool-button"
+                            checked
+                        >
+                        <label class="tool-button" for="btn-pen">
+                            &#x34;
+                        </label>
 
-                    <input type="radio" name="tool-button" id="btn-line">
-                    <label class="tool-button" for="btn-line">
-                        &#x36;
-                    </label>
+                        <input type="radio" name="tool-button" id="btn-line">
+                        <label class="tool-button" for="btn-line">
+                            &#x36;
+                        </label>
 
-                    <input type="radio" name="tool-button" id="btn-erase">
-                    <label class="tool-button" for="btn-erase">
-                        &#x38;
-                    </label>
+                        <input type="radio" name="tool-button" id="btn-erase">
+                        <label class="tool-button" for="btn-erase">
+                            &#x38;
+                        </label>
 
-                    <input type="radio" name="tool-button" id="btn-fill">
-                    <label class="tool-button" for="btn-fill">
-                        s
+                        <input type="radio" name="tool-button" id="btn-fill">
+                        <label class="tool-button" for="btn-fill">
+                            s
+                        </label>
+                    </div>
+                    <textarea class="editor-area"></textarea>
+                </div>
+
+                <div class="char-bar">
+                    <input type="radio" id="btn-opt1" name="char-bar" checked>
+                    <label class="char-button" for="btn-opt1">
+                        A
+                    </label>
+                    <input type="radio" id="btn-opt2" name="char-bar">
+                    <label class="char-button" for="btn-opt2">
+                        B
+                    </label>
+                    <input type="radio" id="btn-opt3" name="char-bar">
+                    <label class="char-button" for="btn-opt3">
+                        C
                     </label>
                 </div>
-                <textarea class="editor-area"></textarea>
-            </div>
-
-            <div class="char-bar">
-                <input type="radio" id="btn-opt1" name="char-bar" checked>
-                <label class="char-button" for="btn-opt1">
-                    A
-                </label>
-                <input type="radio" id="btn-opt2" name="char-bar">
-                <label class="char-button" for="btn-opt2">
-                    B
-                </label>
-                <input type="radio" id="btn-opt3" name="char-bar">
-                <label class="char-button" for="btn-opt3">
-                    C
-                </label>
             </div>
         </div>
     </body>
