@@ -22,7 +22,7 @@ body {
     margin-left: 2px;
     border: 1px solid #00309c;
     background-color: #3780ff;
-    font-family: "Webdings"; /* 特殊文字でボタンアイコンを表現 */
+    font-family: "Webdings";
     font-size: 10px;
     color: white;
     line-height: 14px;
@@ -61,45 +61,74 @@ body {
 
 .window-body {
     flex-grow: 1;
+    flex-direction: column;
     display: flex;
     padding: 5px;
     position: relative;
-    background-color: #b5b5b5;
+    background-color: #ece9d8;
 }
 
 .toolbar {
-    width: 50px;
+    width: 70px;
     border: 1px solid #b5b5b5;
     border-right: 1px solid #f3f3f3;
     border-bottom: 1px solid #f3f3f3;
     padding: 3px;
     display: flex;
     flex-wrap: wrap;
+    gap: 2px;
     align-content: flex-start;
+    font-family: Webdings;
 }
 
-.toolbar-controls button {
-    width: 16px;
-    height: 14px;
-    margin-left: 2px;
-    border: 1px solid #00309c;
-    background-color: #3780ff;
-    font-family: "Webdings"; /* 特殊文字でボタンアイコンを表現 */
-    font-size: 10px;
-    color: white;
-    line-height: 14px;
-    padding: 0;
+.toolbar input[type="radio"] {
+    display: none;
 }
 
-.toolbar-controls button[aria-label="Line"]::before {
-    content: "0";
+.tool-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    background-color: #ece9d8;
+    border: 2px solid #f0f0f0;
+    border-style: outset;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.1s;
 }
-.toolbar-controls button[aria-label="Curve"]::before {
-    content: "1";
+
+.tool-button:hover {
+    border-color: #c0c0c0;
 }
-.toolbar-controls button[aria-label="Erase"]::before {
-    content: "r";
+
+input[type="radio"]:checked + .tool-button {
+    background-color: #e5e4df;
+    border-style: inset;
+    border-color: #c0c0c0;
 }
-.toolbar-controls button[aria-label="Fill"]::before {
-    content: "r";
+
+.editor-area {
+    flex-grow: 1;
+    margin-left: 5px;
+    border: 1px solid #7f9db9;
+    resize: none;
+    outline: none;
+    padding: 5px;
+    font-family: "MS P Gothic", sans-serif;
+    font-size: 12px;
+}
+
+.main-content {
+    display: flex;
+    flex-grow: 1; /* 利用可能な高さをすべて埋める */
+}
+
+.bottom-toolbar {
+    display: flex;
+    padding-top: 5px; /* 上の要素との間に余白 */
+    gap: 2px; /* ボタン間の余白 */
+    border-top: 1px solid #b5b5b5; /* 区切り線 */
+    margin-top: 5px;
 }
