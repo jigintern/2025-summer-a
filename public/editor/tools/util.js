@@ -1,5 +1,7 @@
 import charwidth from "../../util/charwidth.json" with { type: "json" };
 
+const whiteSpace = "\u0020\u200a";
+
 /**
  * 「文字の種類と2次元上の位置」でAAを表したもの
  */
@@ -22,7 +24,9 @@ export class CharPlace {
             let offset = 0;
             for (const char of line) {
                 if (!(char in charwidth)) continue;
-                lineChars.push({ offset, char });
+                if (!whiteSpace.includes(char)) {
+                    lineChars.push({ offset, char });
+                }
                 offset += charwidth[char];
             }
             this.#chars.push(lineChars);
