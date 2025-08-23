@@ -1,0 +1,39 @@
+import { CharPlace } from "./util.js";
+
+/**
+ * AAに直線を引く
+ * @param {string} aa AAの文字列データ
+ * @param {number} width AAの最大幅(px)
+ * @param {number} height AAの最大行数
+ * @param {[number, number]} start 直線の開始地点の`[行, 左端からの位置(px)]`
+ * @param {[number, number]} stop 直線の終了地点の`[行, 左端からの位置(px)]`
+ */
+export const line = (aa, width, height, start, stop) => {
+    const cp = new CharPlace(aa, width, height);
+    if (stop[0] < start[0]) [start, stop] = [stop, start];
+    const dy = stop[0] - start[0];
+    const dx = stop[1] - start[1];
+    if (dy === 0) {
+        // 横線
+    } else {
+        for (let i = start[0]; i < stop[0]; ++i) {
+            const x1 = Math.round(((i - start[0]) / dy) * dx + start[1]);
+            const x2 = Math.round(((i + 1 - start[0]) / dy) * dx + start[1]);
+            const lwidth = x2 - x1;
+            if (-3 <= lwidth && lwidth <= 3) {
+                // ほぼまっすぐなのでパイプ
+                cp.addChar(i, Math.round((x1 + x2) / 2 - 2), "|");
+            } else if (-10 <= lwidth && lwidth <= -4) {
+                // スラッシュ
+                cp.addChar(i, Math.round((x1 + x2) / 2 - 4), "/");
+            }
+        }
+    }
+    return cp.toAA();
+};
+
+let a = "";
+a = line(a, 100, 10, [0, 50], [10, 40]);
+a = line(a, 100, 10, [0, 30], [10, 60]);
+a = line(a, 100, 10, [0, 100], [10, 0]);
+console.log(a);
