@@ -1,0 +1,7 @@
+{
+  "fmt": {
+    "exclude": [
+      "public/util/mspgothic_supported.json"
+    ]
+  }
+}
