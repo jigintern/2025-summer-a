@@ -1,3 +1,4 @@
+//ログインフォームの送信イベントをキャッチ
 document.getElementById("loginForm")
     .addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -8,6 +9,7 @@ document.getElementById("loginForm")
             .value;
 
         try {
+            // ログイン処理
             const response = await fetch("/login", {
                 method: "POST",
                 headers: {
@@ -18,8 +20,6 @@ document.getElementById("loginForm")
                     passWord,
                 }),
             });
-
-            const responseText = await response.text(); // JSONではなくテキストとして読み込み
 
             if (response.ok) {
                 alert("ログイン成功！");
