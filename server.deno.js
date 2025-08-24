@@ -1,5 +1,15 @@
 import { serveDir } from "jsr:@std/http/file-server";
 
+// パスワードハッシュ化の関数
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hash = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
 Deno.serve(async (req) => {
   const kv = await Deno.openKv();
   const pathname = new URL(req.url).pathname;
@@ -27,8 +37,11 @@ Deno.serve(async (req) => {
         return new Response("ユーザー名が既に存在します", { status: 400 });
       }
 
+      // パスワードをハッシュ化
+      const hashedPassword = await hashPassword(passWord);
+
       const key = ["user", userName]; // キーをユーザー名にする
-      const value = { name: userName, pass: passWord };
+      const value = { name: userName, pass: hashedPassword };
       await kv.set(key, value);
 
       return new Response("新規作成成功", { status: 200 });
@@ -41,12 +54,22 @@ Deno.serve(async (req) => {
   //ログイン処理
   if (req.method === "POST" && pathname === "/login") {
     try {
+      const userIterator = kv.list({
+        prefix: ["user"],
+      });
+      // ループしながらDeno KVに問い合わせるので、forループにawaitを付ける
+      for await (const userItem of userIterator) {
+        console.log("user_data: ", userItem);
+      }
+
       const { userName, passWord } = await req.json();
 
       const user = await kv.get(["user", userName]);
-      if (user.value.name === userName && user.value.pass === passWord) {
+      // パスワードをハッシュ化して比較
+      const hashedPassword = await hashPassword(passWord);
+
+      if (user.value.name === userName && user.value.pass === hashedPassword) {
         loginPlayerName = userName;
-        console.log("loginPlayerName:", loginPlayerName);
         return new Response("ログイン成功", { status: 200 });
       }
       return new Response("ログイン失敗", { status: 401 });
