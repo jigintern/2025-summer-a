@@ -39,9 +39,28 @@ export const line = (aa, width, height, start, stop) => {
       } else if (-13 <= lwidth && lwidth <= -10) {
         // 罫線 (幅11)
         cp.addChar(i, Math.round((x1 + x2) / 2 - 5.5), "╱");
-      } else if (lwidth <= -14) {
+      } else if (-24 <= lwidth && lwidth <= -14) {
         // 全角スラッシュ (幅16)
         cp.addChar(i, Math.round((x1 + x2) / 2 - 8), "／");
+      } else if (lwidth <= -25) {
+        // その行の文字数
+        const count = Math.round(0 - lwidth / 16);
+        // "＿"の個数
+        const low = Math.ceil(count / 4);
+        // "￣"の個数
+        const high = Math.floor(count / 4);
+        // "─"の個数
+        const mid = count - low - high;
+        const left = Math.round((x1 + x2) / 2 - count * 8);
+        for (let j = 0; j < low; ++j) {
+          cp.addChar(i, left + j * 16, "＿");
+        }
+        for (let j = low; j < low + mid; ++j) {
+          cp.addChar(i, left + j * 16, "─");
+        }
+        for (let j = low + mid; j < low + mid + high; ++j) {
+          cp.addChar(i, left + j * 16, "￣");
+        }
       }
     }
   }
