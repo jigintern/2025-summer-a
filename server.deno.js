@@ -67,13 +67,45 @@ Deno.serve(async (req) => {
       const hashedPassword = await hashPassword(passWord);
 
       if (user.value.name === userName && user.value.pass === hashedPassword) {
-        return new Response("ログイン成功", { status: 200 });
+        // ユーザー情報を含むレスポンスを返す
+        return new Response(
+          JSON.stringify({
+            status: "success",
+            message: "ログイン成功",
+            user: {
+              userName: user.value.name,
+              loginTime: new Date().toISOString(),
+            },
+          }),
+          {
+            status: 200,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
       }
       return new Response("ログイン失敗", { status: 401 });
     } catch (error) {
       console.error("ログインエラー:", error);
       return new Response("サーバーエラー", { status: 500 });
     }
+  }
+
+  // ログアウトエンドポイントを追加
+  if (req.method === "POST" && pathname === "/logout") {
+    return new Response(
+      JSON.stringify({
+        status: "success",
+        message: "ログアウト成功",
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
   }
 
   return serveDir(req, {
