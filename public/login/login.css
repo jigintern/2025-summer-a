@@ -1,58 +1,60 @@
-body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    background-color: #f5f5f5;
-}
+/* login.css (ボタンのスタイルを修正) */
+
 .login-container {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
+  padding: 2rem 4rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 .form-group {
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 label {
-    display: block;
-    margin-bottom: 0.5rem;
+  display: block;
+  margin-bottom: 0.5rem;
 }
 input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-    margin-bottom: 1rem;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #7f9db9;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
 }
+
+/* === ▼ ここから下を修正・追加 === */
+
 .btn {
-    width: 100%;
-    padding: 0.75rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
+  min-width: 120px;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  margin: 0 0.5rem; /* ボタン間の余白を左右に均等に */
+
+  /* エディタのボタン風スタイル */
+  font-family: "MS UI Gothic", sans-serif;
+  background-color: #ece9d8; /* ウィンドウと同じ背景色 */
+  color: black; /* 文字色を黒に */
+  border: 2px outset #c0c0c0; /* 立体的に見せる枠線 */
+  border-radius: 0; /* 角丸をなくす */
 }
-.btn-primary {
-    background-color: #007bff;
-    color: white;
+
+/* マウスホバー時のスタイル */
+.btn:hover {
+  border-color: #a0a0a0;
 }
-.btn-primary:hover {
-    background-color: #0056b3;
+
+/* クリック時（押されている間）のスタイル */
+.btn:active {
+  border-style: inset; /* へこんで見える枠線 */
 }
+
+/* .btn-primary と .btn-secondary は背景色指定をなくすため、空にするか削除します */
+.btn-primary,
 .btn-secondary {
-    background-color: #6c757d;
-    color: white;
+  /* 個別のスタイルは不要 */
 }
-.btn-secondary:hover {
-    background-color: #545b62;
-}
+
 .button-group {
-    margin-top: 1rem;
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center; /* ボタンを中央揃えに */
 }
