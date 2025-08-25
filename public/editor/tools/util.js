@@ -71,8 +71,8 @@ export class CharPlace {
     if (char in charwidth) {
       if (
         Number.isInteger(line) && Number.isInteger(offset) &&
-        line > 0 && offset > 0 &&
-        line < this.#chars.length && offset + charwidth[char] <= this.#width
+        0 <= line && line < this.#chars.length &&
+        0 <= offset && offset + charwidth[char] <= this.#width
       ) {
         this.#chars[line].push({ offset, char });
       }
