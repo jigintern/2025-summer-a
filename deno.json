@@ -5,6 +5,9 @@
       "public/util/charwidth.json"
     ]
   },
+  "tasks": {
+    "start": "deno run --watch --unstable-kv --allow-net --allow-read=public server.deno.js"
+  },
   "compilerOptions": {
     "lib": ["deno.window", "dom"]
   }
