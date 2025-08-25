@@ -126,22 +126,6 @@ Deno.serve(async (req) => {
     }
   }
 
-  // ログアウトエンドポイントを追加
-  if (req.method === "POST" && pathname === "/logout") {
-    return new Response(
-      JSON.stringify({
-        status: "success",
-        message: "ログアウト成功",
-      }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-  }
-
   if (req.method === "POST" && pathname === "/AALibrary") {
     try {
       const { title, AA } = await req.json();
