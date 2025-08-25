@@ -1,4 +1,5 @@
 import { serveDir } from "jsr:@std/http/file-server";
+import { getCookies } from "jsr:@std/http/cookie";
 
 // パスワードハッシュ化の関数
 async function hashPassword(password) {
@@ -10,10 +11,24 @@ async function hashPassword(password) {
     .join("");
 }
 
+// ログインが必要なページ一覧
+const needLogin = ["/", "/index.html"];
+
 Deno.serve(async (req) => {
   const kv = await Deno.openKv();
   const pathname = new URL(req.url).pathname;
   console.log(pathname);
+
+  if (needLogin.includes(pathname)) {
+    const cookie = getCookies(req.headers);
+    if ((await kv.get(["session", cookie["sessionid"] ?? ""])).value == null) {
+      const url = new URL(req.url);
+      url.pathname = "/login/login.html";
+      url.search = "";
+      url.hash = "";
+      return Response.redirect(url.href, 303);
+    }
+  }
 
   /*const keys = kv.list({ prefix: [] });
   for await (const entry of keys) {
