@@ -1,0 +1,8 @@
+{
+  "fmt": {
+    "exclude": [
+      "public/util/mspgothic_supported.json",
+      "public/util/charwidth.json"
+    ]
+  }
+}
