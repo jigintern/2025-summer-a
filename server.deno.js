@@ -92,7 +92,12 @@ Deno.serve(async (req) => {
       if (user.value.name === userName && user.value.pass === hashedPassword) {
         const sessionid = makeSessionid();
         const headers = new Headers();
-        setCookie(headers, { name: "sessionid", value: sessionid });
+        setCookie(headers, {
+          name: "sessionid",
+          value: sessionid,
+          httpOnly: true,
+          maxAge: 86400 * 14, // 2週間
+        });
         kv.set(["session", sessionid], { user: userName });
         return new Response("ログイン成功", { status: 200, headers });
       }
