@@ -86,9 +86,7 @@ Deno.serve(async (req) => {
         console.log("user_data: ", userItem);
       }*/
 
-      const form = await req.formData();
-      const username = form.get("username");
-      const password = form.get("password");
+      const { username, password } = await req.json();
 
       const user = await kv.get(["user", username]);
       // パスワードをハッシュ化して比較
@@ -99,9 +97,7 @@ Deno.serve(async (req) => {
         user.value?.pass === hashedPassword
       ) {
         const sessionid = makeSessionid();
-        const headers = new Headers({
-          Location: new URL(req.url).origin + "/",
-        });
+        const headers = new Headers();
         setCookie(headers, {
           name: "sessionid",
           value: sessionid,
@@ -109,7 +105,7 @@ Deno.serve(async (req) => {
           maxAge: 86400 * 14, // 2週間
         });
         sessions.set(sessionid, username);
-        return new Response(null, { status: 303, headers });
+        return new Response(null, { headers });
       }
       return new Response("ログイン失敗", { status: 401 });
     } catch (error) {
