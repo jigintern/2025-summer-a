@@ -9,6 +9,6 @@
     "start": "deno run --watch --unstable-kv --allow-net --allow-read=public server.deno.js"
   },
   "compilerOptions": {
-    "lib": ["deno.window", "dom"]
+    "lib": ["deno.window", "dom", "dom.iterable"]
   }
 }
