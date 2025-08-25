@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>衝突テスト</title>
+  </head>
+  <body>
+    <script type="module">
+      import { AAObj, BattleStatus } from "./physics.js";
+      const canvas = document.createElement("canvas");
+      canvas.width = 480;
+      canvas.height = 360;
+      const ctx = canvas.getContext("2d");
+      document.body.append(canvas);
+      const bs = new BattleStatus(
+        new AAObj(50, [80, 180], [2, 0.4]),
+        new AAObj(60, [400, 180], [0, 0]),
+      );
+      setInterval(() => {
+        bs.nextTick();
+        bs.draw(ctx);
+      }, 20);
+    </script>
+  </body>
+</html>
