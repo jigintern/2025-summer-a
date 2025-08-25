@@ -1,1 +1,152 @@
+html {
+  height: 100%;
+}
 
+body {
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  background-position: top;
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+#window_mask {
+  background-image: url("util/background.png");
+  background-position: top;
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: -7px;
+  left: -7px;
+  right: 0;
+  bottom: 0;
+  width: 101%;
+  height: 101%;
+  margin: 0;
+  animation: mask_hidden 0.35s steps(5, end) 0.52s 1 both;
+}
+
+.window_frame {
+  animation: instantiate 0s steps(1, end) 0.5s 1 backwards;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+}
+
+.window {
+  position: relative;
+}
+
+.window_main {
+  position: absolute;
+  top: 4%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 96%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scrollbar-color: #b6fcfe #ffffff;
+  scrollbar-width: 50px;
+}
+
+.window_title {
+  margin-left: 5px;
+  position: fixed;
+  user-select: none;
+}
+
+button {
+  font-family: var(--main-tx-font);
+}
+
+#opuses {
+  display: flex;
+  padding: 10px;
+  align-items: flex-start;
+  flex-flow: row wrap;
+  justify-content: left;
+}
+
+.opus {
+  margin: 25px;
+  margin-bottom: 50px;
+  width: 160px;
+  height: 160px;
+}
+
+.opus_image {
+  width: 100%;
+  height: 100%;
+}
+
+.opus_title {
+  user-select: none;
+}
+
+@keyframes instantiate {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes mask_hidden {
+  0% {
+    clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0);
+  }
+  100% {
+    clip-path: polygon(0 100%, 0 100%, 100% 100%, 100% 100%);
+  }
+}
+
+#opus_is_none {
+  user-select: none;
+  display: none;
+  margin-top: 50px;
+  text-align: center;
+}
+
+#access_to_any {
+  display: flex;
+  justify-content: space-around;
+}
+
+.access_to_any {
+  margin-top: 20px;
+
+  width: 30%;
+  height: 50px;
+}
+
+.access_bt {
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  margin: 0 0.5rem;
+
+  font-family: "MS UI Gothic", sans-serif;
+  background-color: #ece9d8;
+  color: black;
+  border: 2px outset #c0c0c0;
+  border-radius: 0;
+
+  user-select: none;
+}
+
+.access_bt:hover {
+  border-color: #a0a0a0;
+}
+
+.access_bt:active {
+  border-style: inset;
+}
