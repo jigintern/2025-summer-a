@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (
       globalThis.confirm("編集中の内容は失われます。タイトルに戻りますか？")
     ) {
-      globalThis.location.href = "/public/index.html";
+      globalThis.location.href = "/";
     }
   };
 
