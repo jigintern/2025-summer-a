@@ -42,7 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (response.ok) {
         // 成功時の処理
-        globalThis.location.href = "/";
       } else {
         alert(
           "保存に失敗しました",
