@@ -9,8 +9,10 @@ document.querySelector("#signupForm").addEventListener("submit", async (e) => {
     });
     if (response.ok) {
       location.href = "/";
-    } else {
+    } else if (response.status === 400) {
       alert("既にアカウントが存在しています.");
+    } else {
+      alert("何らかのエラーが発生しました.");
     }
   } catch (err) {
     console.error(err);

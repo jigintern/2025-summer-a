@@ -9,8 +9,10 @@ document.querySelector("#loginForm").addEventListener("submit", async (e) => {
     });
     if (response.ok) {
       location.href = "/";
-    } else {
+    } else if (response.status === 401) {
       alert("ログインに失敗しました");
+    } else {
+      alert("何らかのエラーが発生しました.");
     }
   } catch (err) {
     console.error(err);
