@@ -24,7 +24,26 @@ export const line = (aa, width, height, start, stop) => {
       const x1 = Math.round(((i - start[0]) / dy) * dx + start[1]);
       const x2 = Math.round(((i + 1 - start[0]) / dy) * dx + start[1]);
       const lwidth = x2 - x1;
-      if (14 <= lwidth) {
+      if (25 <= lwidth) {
+        // その行の文字数
+        const count = Math.round(lwidth / 16);
+        // "＿"の個数
+        const low = Math.ceil(count / 4);
+        // "￣"の個数
+        const high = Math.floor(count / 4);
+        // "─"の個数
+        const mid = count - low - high;
+        const left = Math.round((x1 + x2) / 2 - count * 8);
+        for (let j = 0; j < high; ++j) {
+          cp.addChar(i, left + j * 16, "￣");
+        }
+        for (let j = high; j < high + mid; ++j) {
+          cp.addChar(i, left + j * 16, "─");
+        }
+        for (let j = high + mid; j < high + mid + low; ++j) {
+          cp.addChar(i, left + j * 16, "＿");
+        }
+      } else if (14 <= lwidth && lwidth <= 24) {
         // 全角バックスラッシュ(幅16)
         cp.addChar(i, Math.round((x1 + x2) / 2 - 8), "＼");
       } else if (5 <= lwidth && lwidth <= 13) {
