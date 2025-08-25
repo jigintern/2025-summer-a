@@ -80,6 +80,23 @@ export class CharPlace {
   }
 
   /**
+   * 指定した位置を占める文字を削除する
+   * @param {number} line
+   * @param {number} offset
+   */
+  removeChar(line, offset) {
+    if (Number.isInteger(line) && 0 <= line && line < this.#chars.length) {
+      const chars = this.#chars[line];
+      for (let i = 0; i < chars.length; ++i) {
+        const { char, offset: ofs } = chars[i];
+        if (ofs <= offset && offset <= ofs + charwidth[char]) {
+          chars.splice(i, 1);
+        }
+      }
+    }
+  }
+
+  /**
    * 文字列に変換する
    * @returns {string}
    */
