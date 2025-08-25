@@ -1,4 +1,5 @@
 import { CharPlace } from "./util.js";
+import charwidth from "../../util/charwidth.json" with { type: "json" };
 
 /**
  * AAに直線を引く
@@ -23,10 +24,14 @@ export const line = (aa, width, height, start, stop) => {
       if (-3 <= lwidth && lwidth <= 3) {
         // ほぼまっすぐなのでパイプ
         cp.addChar(i, Math.round((x1 + x2) / 2 - 2), "|");
-      } else if (-10 <= lwidth && lwidth <= -4) {
-        // スラッシュ
+      } else if (-9 <= lwidth && lwidth <= -4) {
+        // スラッシュ (幅8)
         cp.addChar(i, Math.round((x1 + x2) / 2 - 4), "/");
-      } else if (lwidth <= -11) {
+      } else if (-13 <= lwidth && lwidth <= -10) {
+        // 罫線 (幅11)
+        cp.addChar(i, Math.round((x1 + x2) / 2 - 5), "╱");
+      } else if (lwidth <= -14) {
+        // 全角スラッシュ (幅16)
         cp.addChar(i, Math.round((x1 + x2) / 2 - 8), "／");
       }
     }
