@@ -77,16 +77,19 @@ Deno.serve(async (req) => {
       const { username, password } = await req.json();
 
       // ユーザー名の重複チェック
-      const userIterator = await kv.get(["user", username]);
-      if (userIterator.value) {
+      const userEntry = await kv.get(["users", username]);
+      if (userEntry.value) {
         return new Response("ユーザー名が既に存在します", { status: 400 });
       }
 
       // パスワードをハッシュ化
       const hashedPassword = await hashPassword(password);
 
-      const key = ["user", username]; // キーをユーザー名にする
-      const value = { name: username, pass: hashedPassword };
+      const key = ["users", username];
+      const value = {
+        password_hash: hashedPassword,
+        rating: 1500, // 初期レート
+      };
       await kv.set(key, value);
 
       return new Response(null, { headers: makeSession(username) });
