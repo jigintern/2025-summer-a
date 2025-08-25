@@ -1,3 +1,5 @@
+window.devicePixelRatio = 2;
+
 let opuses_length = 0;
 
 (async () => {
@@ -65,7 +67,11 @@ for (let i = 0; i < libraries.length; i++) {
   for (let j = 0; j < aryRow.length; j++) {
     aryStr = aryRow[j].split("");
     for (let k = 0; k < aryStr.length; k++) {
-      ctx.fillText(aryStr[k], k * font_size / 4, (j * font_size) / 4 + 10);
+      ctx.fillText(
+        aryStr[k],
+        k * font_size / 4 + 0.5,
+        (j * font_size) / 4 + 10 + 0.5,
+      );
     }
   }
 
