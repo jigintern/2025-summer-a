@@ -93,6 +93,7 @@ Deno.serve(async (req) => {
         const sessionid = makeSessionid();
         const headers = new Headers();
         setCookie(headers, { name: "sessionid", value: sessionid });
+        kv.set(["session", sessionid], { user: userName });
         return new Response("ログイン成功", { status: 200, headers });
       }
       return new Response("ログイン失敗", { status: 401 });
