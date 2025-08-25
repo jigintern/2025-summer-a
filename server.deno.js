@@ -11,19 +11,29 @@ async function hashPassword(password) {
     .join("");
 }
 
-/**
- * sessionidを生成する
- * @returns {string}
- */
-const makeSessionid = () => {
-  return crypto.randomUUID();
-};
-
 // ログインが必要なページ一覧
 const needLogin = ["/", "/index.html"];
 
 /** @type {Map<string, string>} sessionid -> username のMap */
 const sessions = new Map();
+
+/**
+ * セッションを新たに作成する
+ * @param {string} username ログインしたユーザー名
+ * @returns {Headers}
+ */
+const makeSession = (username) => {
+  const sessionid = crypto.randomUUID();
+  const headers = new Headers();
+  setCookie(headers, {
+    name: "sessionid",
+    value: sessionid,
+    httpOnly: true,
+    maxAge: 86400 * 14, // 2週間
+  });
+  sessions.set(sessionid, username);
+  return headers;
+};
 
 Deno.serve(async (req) => {
   const kv = await Deno.openKv();
@@ -53,22 +63,22 @@ Deno.serve(async (req) => {
   //サインアップ処理（新規作成）
   if (req.method === "POST" && pathname === "/signup") {
     try {
-      const { userName, passWord } = await req.json();
+      const { username, password } = await req.json();
 
       // ユーザー名の重複チェック
-      const userIterator = await kv.get(["user", userName]);
+      const userIterator = await kv.get(["user", username]);
       if (userIterator.value) {
         return new Response("ユーザー名が既に存在します", { status: 400 });
       }
 
       // パスワードをハッシュ化
-      const hashedPassword = await hashPassword(passWord);
+      const hashedPassword = await hashPassword(password);
 
-      const key = ["user", userName]; // キーをユーザー名にする
-      const value = { name: userName, pass: hashedPassword };
+      const key = ["user", username]; // キーをユーザー名にする
+      const value = { name: username, pass: hashedPassword };
       await kv.set(key, value);
 
-      return new Response("新規作成成功", { status: 200 });
+      return new Response(null, { headers: makeSession(username) });
     } catch (error) {
       console.error("登録エラー:", error);
       return new Response("サーバーエラー", { status: 500 });
@@ -96,16 +106,7 @@ Deno.serve(async (req) => {
         user.value?.name === username &&
         user.value?.pass === hashedPassword
       ) {
-        const sessionid = makeSessionid();
-        const headers = new Headers();
-        setCookie(headers, {
-          name: "sessionid",
-          value: sessionid,
-          httpOnly: true,
-          maxAge: 86400 * 14, // 2週間
-        });
-        sessions.set(sessionid, username);
-        return new Response(null, { headers });
+        return new Response(null, { headers: makeSession(username) });
       }
       return new Response("ログイン失敗", { status: 401 });
     } catch (error) {

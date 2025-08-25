@@ -1,33 +1,19 @@
-//サインアップフォームの送信イベントをキャッチ
-document.getElementById("signupForm")
-  .addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const userName = document.getElementById("username").value;
-    const passWord = document.getElementById("password").value;
-
-    try {
-      const response = await fetch("/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userName,
-          passWord,
-        }),
-      });
-
-      const result = await response.text();
-
-      if (response.ok) {
-        alert("新規作成成功！");
-        location.href = "./login.html";
-      } else {
-        alert(result || "新規作成に失敗しました。");
-      }
-    } catch (error) {
-      console.error("エラー:", error);
-      alert("アカウント作成中にエラーが発生しました。");
+document.querySelector("#signupForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    const username = document.querySelector("#username").value;
+    const password = document.querySelector("#password").value;
+    const response = await fetch("/signup", {
+      method: "POST",
+      body: JSON.stringify({ username, password }),
+    });
+    if (response.ok) {
+      location.href = "/";
+    } else {
+      alert("既にアカウントが存在しています.");
     }
-  });
+  } catch (err) {
+    console.error(err);
+    alert("何らかのエラーが発生しました.");
+  }
+});
