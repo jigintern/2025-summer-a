@@ -15,8 +15,6 @@ Deno.serve(async (req) => {
   const pathname = new URL(req.url).pathname;
   console.log(pathname);
 
-  let loginPlayerName = "";
-
   /*const keys = kv.list({ prefix: [] });
   for await (const entry of keys) {
     await kv.delete(entry.key);
@@ -54,13 +52,13 @@ Deno.serve(async (req) => {
   //ログイン処理
   if (req.method === "POST" && pathname === "/login") {
     try {
-      const userIterator = kv.list({
+      /*const userIterator = kv.list({
         prefix: ["user"],
       });
       // ループしながらDeno KVに問い合わせるので、forループにawaitを付ける
       for await (const userItem of userIterator) {
         console.log("user_data: ", userItem);
-      }
+      }*/
 
       const { userName, passWord } = await req.json();
 
@@ -69,7 +67,6 @@ Deno.serve(async (req) => {
       const hashedPassword = await hashPassword(passWord);
 
       if (user.value.name === userName && user.value.pass === hashedPassword) {
-        loginPlayerName = userName;
         return new Response("ログイン成功", { status: 200 });
       }
       return new Response("ログイン失敗", { status: 401 });
