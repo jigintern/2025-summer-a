@@ -21,9 +21,39 @@ document.addEventListener("DOMContentLoaded", () => {
     // ここにファイルを開く処理を書いていく
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     console.log("「保存」ボタンが押されました。");
     // ここに保存処理を書いていく
+    const titleName = document.getElementById("editor-area").value;
+    const AA = document.getElementById("editor-area").value;
+    console.log(AA, titleName);
+
+    try {
+      const response = await fetch("/AALibrary", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          "title": titleName,
+          "AA": AA,
+        }),
+      });
+
+      if (response.ok) {
+        // 成功時の処理
+        globalThis.location.href = "/";
+      } else {
+        alert(
+          "保存に失敗しました",
+        );
+      }
+    } catch (error) {
+      console.error("エラー:", error);
+      alert(
+        "エラーで保存に失敗しました",
+      );
+    }
   };
 
   const handleBack = () => {
