@@ -60,6 +60,17 @@ Deno.serve(async (req) => {
     return new Response("ホーム画面です");
   }
 
+  if (pathname === "/logout") {
+    const cookie = getCookies(req.headers);
+    sessions.delete(cookie["sessionid"] ?? "");
+
+    const headers = new Headers({
+      Location: new URL(req.url).origin + "/login/",
+    });
+    setCookie(headers, { name: "sessionid", value: "", maxAge: 0 });
+    return new Response(null, { status: 303, headers });
+  }
+
   //サインアップ処理（新規作成）
   if (req.method === "POST" && pathname === "/signup") {
     try {
