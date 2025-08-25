@@ -1,5 +1,4 @@
 import { CharPlace } from "./util.js";
-import charwidth from "../../util/charwidth.json" with { type: "json" };
 
 /**
  * AAに直線を引く
@@ -15,7 +14,11 @@ export const line = (aa, width, height, start, stop) => {
   const dy = stop[0] - start[0];
   const dx = stop[1] - start[1];
   if (dy === 0) {
-    // 横線
+    const count = Math.round(Math.abs(dx) / 16);
+    const left = (start[1] + stop[1]) / 2 - count * 8;
+    for (let i = 0; i < count; ++i) {
+      cp.addChar(stop[0], left + i * 16, "￣");
+    }
   } else {
     for (let i = start[0]; i < stop[0]; ++i) {
       const x1 = Math.round(((i - start[0]) / dy) * dx + start[1]);
