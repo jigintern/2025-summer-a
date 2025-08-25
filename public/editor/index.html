@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>エディタ</title>
+    <link rel="icon" href="data:image/x-icon;,">
+    <link rel="stylesheet" href="../util/winXP.css">
+    <link rel="stylesheet" href="./index.css">
+    <script src="./index.js"></script>
+  </head>
+  <body>
+    <div class="window_frame">
+      <div class="window_header">
+        <div class="window_header_left">
+          <div class="window_fr_icon"></div>
+          <span id="window_header_title">エディタ</span>
+        </div>
+        <div class="window_header_right">
+          <button class="window_fr_bt">
+            <span class="window_fr_bt_img">0</span>
+          </button>
+          <button class="window_fr_bt">
+            <span class="window_fr_bt_img">1</span>
+          </button>
+          <button id="window_fr_bt_red" class="window_fr_bt">
+            <span class="window_fr_bt_img">r</span>
+          </button>
+        </div>
+      </div>
+      <div class="window">
+        <header id="control_panel">
+          <button class="control_panel_bt" id="btn-new">
+            新規作成
+          </button>
+          <button class="control_panel_bt" id="btn-open">
+            開く
+          </button>
+          <button class="control_panel_bt" id="btn-save">
+            保存
+          </button>
+          <button class="control_panel_bt" id="btn-back">
+            タイトルに戻る
+          </button>
+        </header>
+        <div class="window-body">
+          <div
+            id="debug-info"
+            style="padding: 10px; background: #fff; border: 1px solid #7f9db9; margin-top: 5px"
+          >
+          </div><br>
+          <div class="main-content">
+            <div class="toolbar">
+              <input
+                type="radio"
+                id="btn-pen"
+                name="tool-button"
+                checked
+              >
+              <label class="tool-button" for="btn-pen">
+                &#x34;
+              </label>
+
+              <input
+                type="radio"
+                name="tool-button"
+                id="btn-line"
+              >
+              <label class="tool-button" for="btn-line">
+                &#x36;
+              </label>
+
+              <input
+                type="radio"
+                name="tool-button"
+                id="btn-erase"
+              >
+              <label class="tool-button" for="btn-erase">
+                &#x38;
+              </label>
+
+              <input
+                type="radio"
+                name="tool-button"
+                id="btn-fill"
+              >
+              <label class="tool-button" for="btn-fill">
+                s
+              </label>
+            </div>
+            <textarea class="editor-area"></textarea>
+          </div>
+
+          <div class="char-bar">
+            <input
+              type="radio"
+              id="btn-opt1"
+              name="char-bar"
+              checked
+            >
+            <label class="char-button" for="btn-opt1">
+              A
+            </label>
+            <input type="radio" id="btn-opt2" name="char-bar">
+            <label class="char-button" for="btn-opt2">
+              B
+            </label>
+            <input type="radio" id="btn-opt3" name="char-bar">
+            <label class="char-button" for="btn-opt3">
+              C
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

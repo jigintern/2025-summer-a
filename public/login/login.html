@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン</title>
+    <link rel="stylesheet" href="../util/winXP.css">
+    <link rel="stylesheet" href="login.css">
+  </head>
+  <body>
+    <div class="window_frame">
+      <div class="window_header">
+        <div class="window_header_left">
+          <div class="window_fr_icon"></div>
+          <span id="window_header_title">ログイン</span>
+        </div>
+        <div class="window_header_right">
+          <button class="window_fr_bt">
+            <span class="window_fr_bt_img">0</span>
+          </button>
+          <button class="window_fr_bt">
+            <span class="window_fr_bt_img">1</span>
+          </button>
+          <button id="window_fr_bt_red" class="window_fr_bt">
+            <span class="window_fr_bt_img">r</span>
+          </button>
+        </div>
+      </div>
+      <div class="window">
+        <div class="login-container">
+          <h2 style="text-align: center; margin-bottom: 2rem">ログイン</h2>
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="username">ユーザー名:</label>
+              <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+              <label for="password">パスワード:</label>
+              <input type="password" id="password" name="password" required>
+            </div>
+            <div class="button-group">
+              <button type="submit" class="btn btn-primary">ログイン</button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="location.href='./signup.html'"
+              >
+                アカウント作成
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script src="login.js"></script>
+  </body>
+</html>
