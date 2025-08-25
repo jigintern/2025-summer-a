@@ -22,7 +22,7 @@ export const line = (aa, width, height, start, stop) => {
       const x2 = Math.round(((i + 1 - start[0]) / dy) * dx + start[1]);
       const lwidth = x2 - x1;
       if (14 <= lwidth) {
-        // 罫線 (幅11)
+        // 全角バックスラッシュ(幅16)
         cp.addChar(i, Math.round((x1 + x2) / 2 - 8), "＼");
       } else if (5 <= lwidth && lwidth <= 13) {
         // 罫線 (幅11)
