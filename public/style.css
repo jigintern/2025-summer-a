@@ -1,19 +1,89 @@
-#window_mask {
-  background-image: url("util/background.png");
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+html {
   height: 100%;
-  margin: 0;
 }
 
-.window {
-  animation: instantiate 2s steps(5, end) 0.5s 1 backwards;
+body {
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  background-position: top;
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+#window_mask {
+  background-image: url("util/background.png");
+  background-position: top;
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: -7px;
+  left: -7px;
+  right: 0;
+  bottom: 0;
+  width: 102%;
+  height: 102%;
+  margin: 0;
+  animation: mask_hidden 0.35s steps(5, end) 0.52s 1 both;
 }
 
 .window_frame {
   animation: instantiate 0s steps(1, end) 0.5s 1 backwards;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+}
+
+.window {
+  position: relative;
+}
+
+.window_main {
+  position: absolute;
+  top: 4%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 96%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scrollbar-color: red orange;
+  scrollbar-width: thin;
+}
+
+.window_title {
+  position: fixed;
+  user-select: none;
+}
+
+.opuses {
+  display: flex;
+  padding: 10px;
+  align-items: flex-start;
+  flex-flow: row wrap;
+  justify-content: left;
+}
+
+.opus {
+  margin: 25px;
+  margin-bottom: 50px;
+  width: 160px;
+  height: 160px;
+}
+
+.opus_image {
+  width: 100%;
+  height: 100%;
+}
+
+.opus_title {
+  user-select: none;
 }
 
 @keyframes instantiate {
@@ -22,5 +92,14 @@
   }
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes mask_hidden {
+  0% {
+    clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0);
+  }
+  100% {
+    clip-path: polygon(0 100%, 0 100%, 100% 100%, 100% 100%);
   }
 }
