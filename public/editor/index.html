@@ -6,7 +6,8 @@
     <title>エディタ</title>
     <link rel="icon" href="data:image/x-icon;,">
     <link rel="stylesheet" href="../util/winXP.css">
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="./index.css">
+    <script src="./index.js"></script>
   </head>
   <body>
     <div class="window_frame">
@@ -27,17 +28,28 @@
           </button>
         </div>
       </div>
-
       <div class="window">
         <header id="control_panel">
-          <button class="control_panel_bt">
-            ファイル(F)
+          <button class="control_panel_bt" id="btn-new">
+            新規作成
           </button>
-          <button class="control_panel_bt">
-            編集(F)
+          <button class="control_panel_bt" id="btn-open">
+            開く
+          </button>
+          <button class="control_panel_bt" id="btn-save">
+            保存
+          </button>
+          <button class="control_panel_bt" id="btn-back">
+            タイトルに戻る
           </button>
         </header>
         <div class="window-body">
+          <div
+            id="debug-info"
+            style="padding: 10px; background: #fff; border: 1px solid #7f9db9; margin-top: 5px"
+          >
+          </div>
+          <br>
           <div class="main-content">
             <div class="toolbar">
               <input
