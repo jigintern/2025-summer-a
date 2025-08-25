@@ -70,7 +70,7 @@ export class CharPlace {
   addChar(line, offset, char) {
     if (char in charwidth) {
       if (
-        Number.isInteget(line) && Number.isInteger(offset) &&
+        Number.isInteger(line) && Number.isInteger(offset) &&
         line > 0 && offset > 0 &&
         line < this.#chars.length && offset + charwidth[char] <= this.#width
       ) {
