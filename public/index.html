@@ -29,40 +29,47 @@
       </div>
       <div class="window">
         <header id="control_panel">
-          <button class="control_panel_bt">
+          <button class="control_panel_bt" id="to_battle_bt">
             対戦(B)
           </button>
-          <button class="control_panel_bt">
+          <button class="control_panel_bt" id="to_edit_bt">
             編集(E)
           </button>
         </header>
         <div class="window_main">
-          <h1 class="window_title">作品</h1>
+          <div class="window_title">
+            <h1>作品</h1>
+            <span id="opus_num">0個</span>
+          </div>
+          <div id="opus_is_none">
+            <h1>作品がありません</h1>
+            <button id="to_create_bt">作成</button>
+          </div>
           <div class="scroll">
-            <div class="opuses">
-              <button class="opus">
-                <canvas class="opus_image"></canvas>
-                <p class="opus_title">name1</p>
+            <div id="opuses">
+              <button class="opus" id="opus_name1">
+                <canvas class="opus_image" id="opus_image_name1"></canvas>
+                <p class="opus_title" id="opus_tt_name1">name1</p>
               </button>
-              <button class="opus">
-                <canvas class="opus_image"></canvas>
-                <p class="opus_title">name2</p>
+              <button class="opus" id="opus_name2">
+                <canvas class="opus_image" id="opus_image_name2"></canvas>
+                <p class="opus_title" id="opus_tt_name2">name2</p>
               </button>
-              <button class="opus">
-                <canvas class="opus_image"></canvas>
-                <p class="opus_title">name3</p>
+              <button class="opus" id="opus_name3">
+                <canvas class="opus_image" id="opus_image_name3"></canvas>
+                <p class="opus_title" id="opus_tt_name3">name3</p>
               </button>
-              <button class="opus">
-                <canvas class="opus_image"></canvas>
-                <p class="opus_title">name4</p>
+              <button class="opus" id="opus_name4">
+                <canvas class="opus_image" id="opus_image_name4"></canvas>
+                <p class="opus_title" id="opus_tt_name4">name4</p>
               </button>
-              <button class="opus">
-                <canvas class="opus_image"></canvas>
-                <p class="opus_title">name5</p>
+              <button class="opus" id="opus_name5">
+                <canvas class="opus_image" id="opus_image_name5"></canvas>
+                <p class="opus_title" id="opus_tt_name5">name5</p>
               </button>
-              <button class="opus">
-                <canvas class="opus_image"></canvas>
-                <p class="opus_title">name6</p>
+              <button class="opus" id="opus_name6">
+                <canvas class="opus_image" id="opus_image_name6"></canvas>
+                <p class="opus_title" id="opus_tt_name6">name6</p>
               </button>
             </div>
           </div>
@@ -70,5 +77,7 @@
       </div>
     </div>
     <div id="window_mask"></div>
+    <script type="text/javascript" src="index.js">
+    </script>
   </body>
 </html>

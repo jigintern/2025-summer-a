@@ -25,8 +25,8 @@ body {
   left: -7px;
   right: 0;
   bottom: 0;
-  width: 102%;
-  height: 102%;
+  width: 101%;
+  height: 101%;
   margin: 0;
   animation: mask_hidden 0.35s steps(5, end) 0.52s 1 both;
 }
@@ -58,11 +58,16 @@ body {
 }
 
 .window_title {
+  margin-left: 5px;
   position: fixed;
   user-select: none;
 }
 
-.opuses {
+button {
+  font-family: var(--main-tx-font);
+}
+
+#opuses {
   display: flex;
   padding: 10px;
   align-items: flex-start;
@@ -102,4 +107,11 @@ body {
   100% {
     clip-path: polygon(0 100%, 0 100%, 100% 100%, 100% 100%);
   }
+}
+
+#opus_is_none {
+  user-select: none;
+  display: none;
+  margin-top: 50px;
+  text-align: center;
 }
