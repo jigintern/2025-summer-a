@@ -1,5 +1,5 @@
 import { serveDir } from "jsr:@std/http/file-server";
-import { getCookies } from "jsr:@std/http/cookie";
+import { getCookies, setCookie } from "jsr:@std/http/cookie";
 
 // パスワードハッシュ化の関数
 async function hashPassword(password) {
@@ -10,6 +10,14 @@ async function hashPassword(password) {
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 }
+
+/**
+ * sessionidを生成する
+ * @returns {string}
+ */
+const makeSessionid = () => {
+  return crypto.randomUUID();
+};
 
 // ログインが必要なページ一覧
 const needLogin = ["/", "/index.html"];
@@ -82,7 +90,10 @@ Deno.serve(async (req) => {
       const hashedPassword = await hashPassword(passWord);
 
       if (user.value.name === userName && user.value.pass === hashedPassword) {
-        return new Response("ログイン成功", { status: 200 });
+        const sessionid = makeSessionid();
+        const headers = new Headers();
+        setCookie(headers, { name: "sessionid", value: sessionid });
+        return new Response("ログイン成功", { status: 200, headers });
       }
       return new Response("ログイン失敗", { status: 401 });
     } catch (error) {
