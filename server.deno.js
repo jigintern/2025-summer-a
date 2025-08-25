@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
     const cookie = getCookies(req.headers);
     if (!sessions.has(cookie["sessionid"] ?? "")) {
       const url = new URL(req.url);
-      url.pathname = "/login/login.html";
+      url.pathname = "/login";
       url.search = "";
       url.hash = "";
       return Response.redirect(url.href, 303);
@@ -99,7 +99,9 @@ Deno.serve(async (req) => {
         user.value?.pass === hashedPassword
       ) {
         const sessionid = makeSessionid();
-        const headers = new Headers();
+        const headers = new Headers({
+          Location: new URL(req.url).origin + "/",
+        });
         setCookie(headers, {
           name: "sessionid",
           value: sessionid,
@@ -107,7 +109,7 @@ Deno.serve(async (req) => {
           maxAge: 86400 * 14, // 2週間
         });
         sessions.set(sessionid, username);
-        return Response.redirect(new URL(req.url).origin + "/");
+        return new Response(null, { status: 303, headers });
       }
       return new Response("ログイン失敗", { status: 401 });
     } catch (error) {
