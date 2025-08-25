@@ -22,6 +22,9 @@ const makeSessionid = () => {
 // ログインが必要なページ一覧
 const needLogin = ["/", "/index.html"];
 
+/** @type {Map<string, string>} sessionid -> username のMap */
+const sessions = new Map();
+
 Deno.serve(async (req) => {
   const kv = await Deno.openKv();
   const pathname = new URL(req.url).pathname;
@@ -29,7 +32,7 @@ Deno.serve(async (req) => {
 
   if (needLogin.includes(pathname)) {
     const cookie = getCookies(req.headers);
-    if ((await kv.get(["session", cookie["sessionid"] ?? ""])).value == null) {
+    if (!sessions.has(cookie["sessionid"] ?? "")) {
       const url = new URL(req.url);
       url.pathname = "/login/login.html";
       url.search = "";
@@ -98,7 +101,7 @@ Deno.serve(async (req) => {
           httpOnly: true,
           maxAge: 86400 * 14, // 2週間
         });
-        kv.set(["session", sessionid], { user: userName });
+        sessions.set(sessionid, userName);
         return new Response("ログイン成功", { status: 200, headers });
       }
       return new Response("ログイン失敗", { status: 401 });
