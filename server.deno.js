@@ -108,6 +108,30 @@ Deno.serve(async (req) => {
     );
   }
 
+  if (req.method === "POST" && pathname === "/AALibrary") {
+    try {
+      const { title, AA } = await req.json();
+      const userName = "a";
+
+      console.log(title, AA);
+
+      const key = ["user", userName]; // キーをユーザー名にする
+      const value = { AALibrary: [{ title: title, AA: AA }] };
+
+      await kv.set(key, value);
+      console.log(await kv.get(key));
+
+      console.log("AALibraryに追加:", { title, AA });
+      return new Response("追加した", { status: 200 });
+    } catch (error) {
+      console.error("エラー:", error);
+      return new Response("サーバーエラー", { status: 500 });
+    }
+  }
+
+  if (req.method === "GET" && pathname === "/AALibraryList") {
+  }
+
   return serveDir(req, {
     fsRoot: "public",
     urlRoot: "",

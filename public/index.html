@@ -39,8 +39,35 @@
         <h1>hello</h1>
       </div>
     </div>
-    <div id="userInfo"></div>
-    <div id="protectedContent"></div>
+
+    <div class="window">
+      <div class="login-container">
+        <h2 style="text-align: center; margin-bottom: 2rem">ログイン</h2>
+        <form id="AAseve">
+          <div class="form-group">
+            <label for="title">タイトル:</label>
+            <input type="text" id="title" name="title" required>
+          </div>
+          <div class="form-group">
+            <label for="AA">パスワード:</label>
+            <input type="text" id="AA" name="AA" required>
+          </div>
+          <div class="button-group">
+            <button type="submit" class="btn btn-primary">ログイン</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="location.href='./signup.html'"
+            >
+              アカウント作成
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script src="userCheck.js"></script>
+    <script src="test.js"></script>
+    <a href="./login/login.html"> ログアウト</a>
   </body>
 </html>
