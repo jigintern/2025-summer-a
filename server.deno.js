@@ -102,24 +102,15 @@ Deno.serve(async (req) => {
   //ログイン処理
   if (req.method === "POST" && pathname === "/login") {
     try {
-      /*const userIterator = kv.list({
-        prefix: ["user"],
-      });
-      // ループしながらDeno KVに問い合わせるので、forループにawaitを付ける
-      for await (const userItem of userIterator) {
-        console.log("user_data: ", userItem);
-      }*/
-
       const { username, password } = await req.json();
 
-      const user = await kv.get(["user", username]);
+      const userEntry = await kv.get(["users", username]);
+      const user = userEntry.value;
+
       // パスワードをハッシュ化して比較
       const hashedPassword = await hashPassword(password);
 
-      if (
-        user.value?.name === username &&
-        user.value?.pass === hashedPassword
-      ) {
+      if (user && user.password_hash === hashedPassword) {
         return new Response(null, { headers: makeSession(username) });
       }
       return new Response("ログイン失敗", { status: 401 });
@@ -131,21 +122,38 @@ Deno.serve(async (req) => {
 
   if (req.method === "POST" && pathname === "/AALibrary") {
     try {
+      // セッションからユーザー名を取得
+      const cookie = getCookies(req.headers);
+      const sessionid = cookie["sessionid"] ?? "";
+      const username = sessions.get(sessionid);
+
+      if (!username) {
+        return new Response("認証されていません", { status: 401 });
+      }
+
       const { title, AA } = await req.json();
+      const aa_id = crypto.randomUUID();
+      const now = new Date();
 
-      //ユーザー名は仮でaにしておく。cookieなどから取得するようにする
-      const userName = "a";
+      const res = await kv.atomic()
+        // 1. アスキーアート本体を保存
+        .set(["aas", aa_id], {
+          author: username,
+          title: title,
+          content: AA,
+          created_at: now,
+          updated_at: now,
+        })
+        // 2. ユーザーとAAの関連（インデックス）を保存
+        .set(["aas_by_user", username, aa_id], true)
+        .commit();
 
-      console.log(title, AA);
-
-      const key = ["user", userName]; // キーをユーザー名にする
-      const value = { AALibrary: [{ title: title, AA: AA }] };
-
-      await kv.set(key, value);
-      console.log(await kv.get(key));
+      if (!res.ok) {
+        throw new Error("Failed to save AA with atomic operation.");
+      }
 
       console.log("AALibraryに追加:", { title, AA });
-      return new Response("追加した", { status: 200 });
+      return new Response("追加しました", { status: 200 });
     } catch (error) {
       console.error("エラー:", error);
       return new Response("サーバーエラー", { status: 500 });
@@ -154,13 +162,31 @@ Deno.serve(async (req) => {
 
   if (req.method === "GET" && pathname === "/AALibraryList") {
     try {
-      //ユーザー名は仮でaにしておく。cookieなどから取得するようにする
-      const userName = "a";
+      // セッションからユーザー名を取得
+      const cookie = getCookies(req.headers);
+      const sessionid = cookie["sessionid"] ?? "";
+      const username = sessions.get(sessionid);
 
-      const key = ["user", userName];
-      const res = await kv.get(key);
+      if (!username) {
+        return new Response("認証されていません", { status: 401 });
+      }
 
-      return new Response(JSON.stringify(res.value), {
+      const aa_ids = [];
+      const entries = kv.list({ prefix: ["aas_by_user", username] });
+
+      for await (const entry of entries) {
+        // entry.key は ["aas_by_user", <username>, <aa_id>] という形式
+        const aa_id = entry.key[2];
+        aa_ids.push(aa_id);
+      }
+
+      // 取得したIDのリストを使って、AA本体のデータをまとめて取得
+      const aaKeys = aa_ids.map((id) => ["aas", id]);
+      const aaEntries = await kv.getMany(aaKeys);
+
+      const AALibrary = aaEntries.map((entry) => entry.value);
+
+      return new Response(JSON.stringify({ AA: AALibrary }), {
         status: 200,
         headers: { "Content-Type": "application/json" },
       });
