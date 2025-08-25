@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+  <body>
+    <script type="module">
+      import { line } from "./line.js";
+      const ta = document.createElement("textarea");
+      Object.assign(ta.style, {
+        font: "12pt 'MS PGothic'",
+        lineHeight: "18px",
+        width: "800px",
+        height: "800px",
+      });
+      let t = -0.2;
+      setInterval(() => {
+        const g = Math.round(Math.sin(t) * 20);
+        ta.value = line("", 800, 40, [20, 400], [
+          g + 20,
+          (g === 0
+            ? Math.sign(Math.cos(t)) * 360
+            : g / Math.tan(t) * 18) + 400,
+        ]);
+        t += 0.03;
+      }, 50);
+      document.body.append(ta);
+    </script>
+  </body>
+</html>

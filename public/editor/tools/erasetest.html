@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+  <body>
+    <script type="module">
+      import { erase } from "./erase.js";
+      const ta = document.createElement("textarea");
+      ta.value = ("●".repeat(50) + "\n").repeat(40);
+      Object.assign(ta.style, {
+        font: "12pt 'MS PGothic'",
+        lineHeight: "18px",
+        width: "800px",
+        height: "800px",
+      });
+      let t = -0.2;
+      setInterval(() => {
+        const g = Math.round(Math.sin(t) * 20);
+        ta.value = erase(ta.value, 700, 40, [
+          Math.round(Math.sin(t) * t + 20),
+          Math.cos(t) * t * 18 + 400,
+        ]);
+        t += 0.02;
+      }, 50);
+      document.body.append(ta);
+    </script>
+  </body>
+</html>
