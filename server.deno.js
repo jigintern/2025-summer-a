@@ -1,4 +1,5 @@
 import { serveDir } from "jsr:@std/http/file-server";
+import { getCookies, setCookie } from "jsr:@std/http/cookie";
 
 // パスワードハッシュ化の関数
 async function hashPassword(password) {
@@ -10,10 +11,45 @@ async function hashPassword(password) {
     .join("");
 }
 
+// ログインが必要なページ一覧
+const needLogin = ["/", "/index.html"];
+
+/** @type {Map<string, string>} sessionid -> username のMap */
+const sessions = new Map();
+
+/**
+ * セッションを新たに作成する
+ * @param {string} username ログインしたユーザー名
+ * @returns {Headers}
+ */
+const makeSession = (username) => {
+  const sessionid = crypto.randomUUID();
+  const headers = new Headers();
+  setCookie(headers, {
+    name: "sessionid",
+    value: sessionid,
+    httpOnly: true,
+    maxAge: 86400 * 14, // 2週間
+  });
+  sessions.set(sessionid, username);
+  return headers;
+};
+
 Deno.serve(async (req) => {
   const kv = await Deno.openKv();
   const pathname = new URL(req.url).pathname;
   console.log(pathname);
+
+  if (needLogin.includes(pathname)) {
+    const cookie = getCookies(req.headers);
+    if (!sessions.has(cookie["sessionid"] ?? "")) {
+      const url = new URL(req.url);
+      url.pathname = "/login";
+      url.search = "";
+      url.hash = "";
+      return Response.redirect(url.href, 303);
+    }
+  }
 
   /*const keys = kv.list({ prefix: [] });
   for await (const entry of keys) {
@@ -24,25 +60,36 @@ Deno.serve(async (req) => {
     return new Response("ホーム画面です");
   }
 
+  if (pathname === "/logout") {
+    const cookie = getCookies(req.headers);
+    sessions.delete(cookie["sessionid"] ?? "");
+
+    const headers = new Headers({
+      Location: new URL(req.url).origin + "/login/",
+    });
+    setCookie(headers, { name: "sessionid", value: "", maxAge: 0 });
+    return new Response(null, { status: 303, headers });
+  }
+
   //サインアップ処理（新規作成）
   if (req.method === "POST" && pathname === "/signup") {
     try {
-      const { userName, passWord } = await req.json();
+      const { username, password } = await req.json();
 
       // ユーザー名の重複チェック
-      const userIterator = await kv.get(["user", userName]);
+      const userIterator = await kv.get(["user", username]);
       if (userIterator.value) {
         return new Response("ユーザー名が既に存在します", { status: 400 });
       }
 
       // パスワードをハッシュ化
-      const hashedPassword = await hashPassword(passWord);
+      const hashedPassword = await hashPassword(password);
 
-      const key = ["user", userName]; // キーをユーザー名にする
-      const value = { name: userName, pass: hashedPassword };
+      const key = ["user", username]; // キーをユーザー名にする
+      const value = { name: username, pass: hashedPassword };
       await kv.set(key, value);
 
-      return new Response("新規作成成功", { status: 200 });
+      return new Response(null, { headers: makeSession(username) });
     } catch (error) {
       console.error("登録エラー:", error);
       return new Response("サーバーエラー", { status: 500 });
@@ -60,14 +107,17 @@ Deno.serve(async (req) => {
         console.log("user_data: ", userItem);
       }*/
 
-      const { userName, passWord } = await req.json();
+      const { username, password } = await req.json();
 
-      const user = await kv.get(["user", userName]);
+      const user = await kv.get(["user", username]);
       // パスワードをハッシュ化して比較
-      const hashedPassword = await hashPassword(passWord);
+      const hashedPassword = await hashPassword(password);
 
-      if (user.value.name === userName && user.value.pass === hashedPassword) {
-        return new Response("ログイン成功", { status: 200 });
+      if (
+        user.value?.name === username &&
+        user.value?.pass === hashedPassword
+      ) {
+        return new Response(null, { headers: makeSession(username) });
       }
       return new Response("ログイン失敗", { status: 401 });
     } catch (error) {
