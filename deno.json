@@ -4,5 +4,8 @@
       "public/util/mspgothic_supported.json",
       "public/util/charwidth.json"
     ]
+  },
+  "compilerOptions": {
+    "lib": ["deno.window", "dom"]
   }
 }
