@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
       `選択中のツール: ${selectedToolId} | 選択中のオプション: ${selectedCharId}`;
   };
 
+  // 各ボタンにイベントリスナーを設定する
   toolButtons.forEach((button) => {
     button.addEventListener("change", updateDebugInfo);
   });
