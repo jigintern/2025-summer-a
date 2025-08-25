@@ -111,6 +111,8 @@ Deno.serve(async (req) => {
   if (req.method === "POST" && pathname === "/AALibrary") {
     try {
       const { title, AA } = await req.json();
+
+      //ユーザー名は仮でaにしておく。cookieなどから取得するようにする
       const userName = "a";
 
       console.log(title, AA);
@@ -130,6 +132,21 @@ Deno.serve(async (req) => {
   }
 
   if (req.method === "GET" && pathname === "/AALibraryList") {
+    try {
+      //ユーザー名は仮でaにしておく。cookieなどから取得するようにする
+      const userName = "a";
+
+      const key = ["user", userName];
+      const res = await kv.get(key);
+
+      return new Response(JSON.stringify(res.value), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("エラー:", error);
+      return new Response("サーバーエラー", { status: 500 });
+    }
   }
 
   return serveDir(req, {
