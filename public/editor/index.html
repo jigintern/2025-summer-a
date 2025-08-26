@@ -7,7 +7,7 @@
     <link rel="icon" href="data:image/x-icon;,">
     <link rel="stylesheet" href="../util/winXP.css">
     <link rel="stylesheet" href="./index.css">
-    <script src="./index.js"></script>
+    <script type="module" src="./index.js"></script>
   </head>
   <body>
     <div class="window_frame">
@@ -54,12 +54,12 @@
             <div class="toolbar">
               <input
                 type="radio"
-                id="btn-pen"
+                id="btn-text"
                 name="tool-button"
                 checked
               >
-              <label class="tool-button" for="btn-pen">
-                &#x34;
+              <label class="tool-button" for="btn-text">
+                &gt; <!-- "Aa"みたいなアイコン -->
               </label>
 
               <input
@@ -89,7 +89,10 @@
                 s
               </label>
             </div>
-            <textarea class="editor-area" id="editor-area"></textarea>
+            <div class="textarea-wrapper">
+              <textarea class="editor-area" id="editor-area"></textarea>
+              <div id="editor-overwrap"></div>
+            </div>
           </div>
 
           <div class="char-bar">
