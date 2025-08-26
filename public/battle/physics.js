@@ -125,6 +125,15 @@ export class BattleStatus {
   }
 
   /**
+   * 全てのオブジェクトが止まっているか判定
+   * @returns {boolean}
+   */
+  isStopping() {
+    return this.a.dx.every((v) => v === 0) && this.b.dx.every((v) => v === 0) &&
+      this.a.dtt === 0 && this.b.dtt === 0;
+  }
+
+  /**
    * @param {CanvasRenderingContext2D} ctx
    */
   draw(ctx) {
