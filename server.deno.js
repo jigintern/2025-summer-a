@@ -167,8 +167,9 @@ Deno.serve(async (req) => {
   // 部屋入室
   if (pathname === "/join-room" && req.method === "POST") {
     return req.formData().then((formData) => {
+      const cookie = getCookies(req.headers);
+      const userName = sessions.get(cookie["sessionid"] ?? "");
       const roomName = formData.get("roomName");
-      const userName = formData.get("userName");
       console.log("join-roomリクエスト:", roomName, userName);
       console.log("現在の部屋一覧:", [...rooms.keys()]);
 
