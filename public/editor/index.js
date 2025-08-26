@@ -1,3 +1,5 @@
+import { line } from "./tools/line.js";
+
 document.addEventListener("DOMContentLoaded", () => {
   const newButton = document.getElementById("btn-new");
   const openButton = document.getElementById("btn-open");
@@ -61,6 +63,53 @@ document.addEventListener("DOMContentLoaded", () => {
   openButton.addEventListener("click", handleOpen);
   saveButton.addEventListener("click", handleSave);
   backButton.addEventListener("click", handleBack);
+
+  /** @type {HTMLDivElement} */
+  const overwrap = document.querySelector("#editor-overwrap");
+  /** @type {HTMLTextAreaElement} */
+  const textarea = document.querySelector("#editor-area");
+  /** @type {HTMLInputElement} */
+  const textModeButton = document.querySelector("#btn-text");
+  /** @type {HTMLInputElement} */
+  const lineModeButton = document.querySelector("#btn-line");
+  /** @type {() => unknown} */
+  let finishmode = () => {};
+  textModeButton.addEventListener("change", () => {
+    finishmode();
+    overwrap.style.display = "none";
+  });
+  lineModeButton.addEventListener("change", () => {
+    finishmode();
+    overwrap.style.display = "block";
+    /** @type {[number, number,string] | null} */
+    let status = null;
+    /** @param {MouseEvent} e */
+    const onMousedown = (e) => {
+      status = [Math.round(e.offsetY / 18), e.offsetX, textarea.value];
+    };
+    /** @param {MouseEvent} e */
+    const onMousemove = (e) => {
+      if (status === null) return;
+      textarea.value = line(
+        status[2],
+        1000,
+        40,
+        [status[0], status[1]],
+        [Math.round(e.offsetY / 18), e.offsetX],
+      );
+    };
+    const onMouseup = () => {
+      status = null;
+    };
+    overwrap.addEventListener("mousedown", onMousedown);
+    overwrap.addEventListener("mousemove", onMousemove);
+    overwrap.addEventListener("mouseup", onMouseup);
+    finishmode = () => {
+      overwrap.removeEventListener("mousedown", onMousedown);
+      overwrap.removeEventListener("mousemove", onMousemove);
+      overwrap.removeEventListener("mouseup", onMouseup);
+    };
+  });
 
   // デバッグ用処理
   {

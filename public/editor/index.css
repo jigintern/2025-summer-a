@@ -136,6 +136,8 @@ input[type="radio"]:checked + .char-button {
 }
 
 #editor-overwrap {
+  display: none;
+  user-select: none;
   position: absolute;
   top: 6px; /* textareaのborder1px, padding6pxの和 */
   left: 6px;
