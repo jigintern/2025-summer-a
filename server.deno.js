@@ -51,10 +51,6 @@ Deno.serve(async (req) => {
     }
   }
 
-  if (req.method === "GET" && pathname === "/welcome-message") {
-    return new Response("ホーム画面です");
-  }
-
   if (pathname === "/logout") {
     const cookie = getCookies(req.headers);
     sessions.delete(cookie["sessionid"] ?? "");
