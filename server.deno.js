@@ -149,6 +149,7 @@ Deno.serve(async (req) => {
     }
   }
 
+  // 上書き保存（共通の処理が多いけど一旦保留）
   if (req.method === "PUT" && pathname.startsWith("/AALibrary/")) {
     try {
       const cookie = getCookies(req.headers);
@@ -200,6 +201,7 @@ Deno.serve(async (req) => {
     }
   }
 
+  // アスキーアートのリストを取得する（最初の50個）
   if (req.method === "GET" && pathname === "/AALibraryList") {
     try {
       // セッションからユーザー名を取得
