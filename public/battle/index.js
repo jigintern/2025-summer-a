@@ -2,6 +2,7 @@ const canvas = document.getElementById("battle_canvas");
 
 const ctx = canvas.getContext("2d");
 
+//ウィンドウサイズが変わった時の処理
 function setDispSize() {
   const area = document.getElementById("window_main");
   console.log(area.clientWidth);
@@ -24,6 +25,7 @@ let isMouseOverBt = false;
 let isButtonEnable = true;
 let isMetarEnable = true;
 
+//ボタンの描画関数
 function drawButton() {
   ctx.beginPath();
   let x = canvas.width / 2 - 40;
@@ -43,6 +45,8 @@ function drawButton() {
   }
   ctx.fill();
   ctx.fillStyle = "#000000";
+  ctx.rect(x, y, 80, 50);
+  ctx.stroke();
   x = canvas.width / 2;
   y = canvas.height - 75;
   ctx.textAlign = "center";
@@ -53,10 +57,12 @@ function drawButton() {
 
 let isMouseDown = false;
 
+//マウスのクリック検知関数
 function onMouseDown() {
   isMouseDown = true;
 }
 
+//マウスのクリック検知関数
 function onMouseUp() {
   isMouseDown = false;
   if (isMouseOverBt) buttonPush();
@@ -71,6 +77,7 @@ canvas.addEventListener("mousemove", function (evt) {
   mouseY = mousePos[1];
 }, false);
 
+//マウスの座標をとる関数
 function getMousePosition(canvas, evt) {
   const rect = canvas.getBoundingClientRect();
   return [evt.clientX - rect.left, evt.clientY - rect.top];
@@ -81,10 +88,13 @@ const metarMaxNum = 10;
 const velcVar = 12.5;
 let metarVelc = velcVar;
 
+//AAを打ち出す関数
 function AAShoot() {
-  ///////////////////////////////////////
+  vx_m = metarNum * 20 * Math.cos(angle - Math.PI / 2);
+  vy_m = metarNum * 20 * Math.sin(angle - Math.PI / 2);
 }
 
+//ボタンの処理
 function buttonPush() {
   if (isMetarEnable) {
     isMetarEnable = false;
@@ -102,8 +112,11 @@ powerImg.src = "power.png";
 
 let x_m = 200;
 let y_m = 200;
+let vx_m = 0;
+let vy_m = 0;
 let size_m = 75;
 
+//メーター描画用関数
 function drawMeter() {
   const x = x_m + canvas.width / 5;
   const y = canvas.height - 150;
@@ -188,6 +201,7 @@ let sizeAngle = 0;
 let sizex = 1;
 let sizey = 1;
 
+//やじるし描画用関数
 function drawArrow() {
   ctx.beginPath();
   ctx.save();
@@ -204,6 +218,7 @@ function drawArrow() {
   if (sizeAngle < 0) sizeAngle += Math.PI * 2;
 }
 
+//AA描画用関数(今は円だけ)
 function drawMyAA() {
   ctx.beginPath();
   ctx.arc(x_m, y_m, size_m, 0, 2 * Math.PI);
@@ -220,12 +235,18 @@ function testDraw() {
   ctx.fillText("firstTime:" + firstTimestamp, 100, 140);
 }
 
+function AAMove() {
+  x_m += vx_m * deltaTime;
+  y_m += vy_m * deltaTime;
+}
+
 let deltaTime = 0;
 
 let lastTimestamp = null;
 
 let firstTimestamp;
 
+//FPS管理
 function fpsUpdate(timestamp) {
   deltaTime = 0; // 前回フレーム時間からの経過時間(単位:秒)
   if (lastTimestamp != null) {
@@ -236,9 +257,10 @@ function fpsUpdate(timestamp) {
   lastTimestamp = timestamp;
 }
 
+//メインの描画関数
 function draw(timestamp) {
   fpsUpdate(timestamp);
-
+  AAMove();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawMyAA();
   if (isButtonEnable) drawButton();
