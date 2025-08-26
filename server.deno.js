@@ -153,6 +153,57 @@ Deno.serve(async (req) => {
     }
   }
 
+  if (req.method === "PUT" && pathname.startsWith("/AALibrary/")) {
+    try {
+      const cookie = getCookies(req.headers);
+      const sessionid = cookie["sessionid"] ?? "";
+      const username = sessions.get(sessionid);
+      if (!username) {
+        return new Response("認証されていません", { status: 401 });
+      }
+
+      const aa_id = pathname.split("/")[2];
+      const { title, AA } = await req.json();
+
+      if (!aa_id) {
+        return new Response("IDが指定されていません", { status: 400 });
+      }
+
+      const originalKey = ["aa", aa_id];
+      const originalEntry = await kv.get(originalKey);
+
+      if (!originalEntry.value) {
+        return new Response("更新対象のAAが見つかりません", { status: 404 });
+      }
+      if (originalEntry.value.author !== username) {
+        return new Response("編集権限がありません", { status: 403 });
+      }
+
+      const originalTimestamp = originalEntry.value.created_at;
+      const newTimestamp = new Date();
+
+      const res = await kv.atomic()
+        .set(originalKey, {
+          ...originalEntry.value,
+          title: title,
+          content: AA,
+          updated_at: newTimestamp,
+        })
+        .delete(["aa_by_user", username, originalTimestamp])
+        .set(["aa_by_user", username, newTimestamp], { aa_id: aa_id })
+        .commit();
+
+      if (!res.ok) {
+        throw new Error("Failed to update AA with atomic operation.");
+      }
+
+      return new Response("更新しました", { status: 200 });
+    } catch (error) {
+      console.error("更新エラー:", error);
+      return new Response("サーバーエラー", { status: 500 });
+    }
+  }
+
   if (req.method === "GET" && pathname === "/AALibraryList") {
     try {
       // セッションからユーザー名を取得
