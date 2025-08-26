@@ -21,10 +21,13 @@ let mouseY = 0;
 
 let isMouseOverBt = false;
 
+let isButtonEnable = true;
+let isMetarEnable = true;
+
 function drawButton() {
   ctx.beginPath();
-  const x = canvas.width / 2 - 40;
-  const y = canvas.height - 100;
+  let x = canvas.width / 2 - 40;
+  let y = canvas.height - 100;
   ctx.rect(x, y, 80, 50);
   ctx.fillStyle = "#ff0000ff";
   isMouseOverBt = false;
@@ -39,6 +42,12 @@ function drawButton() {
     }
   }
   ctx.fill();
+  ctx.fillStyle = "#000000";
+  x = canvas.width / 2;
+  y = canvas.height - 75;
+  ctx.textAlign = "center";
+  ctx.font = "20px 'MS P Gothic'";
+  ctx.fillText("Push!!", x, y);
   ctx.closePath();
 }
 
@@ -60,10 +69,6 @@ canvas.addEventListener("mousemove", function (evt) {
   const mousePos = getMousePosition(canvas, evt);
   mouseX = mousePos[0];
   mouseY = mousePos[1];
-  console.log("maxX:" + canvas.width);
-  console.log("maxY:" + canvas.height);
-  console.log("x:" + mousePos[0]);
-  console.log("y" + mousePos[1]);
 }, false);
 
 function getMousePosition(canvas, evt) {
@@ -80,14 +85,27 @@ function buttonPush() {
   if (metarVelc === velcVar) metarVelc = 0;
   else metarVelc = velcVar;
 }
+const powerImg = new Image();
+powerImg.addEventListener("load", () => {
+});
+powerImg.src = "power.png";
+
+let x_m = 200;
+let y_m = 200;
+let size_m = 20;
 
 function drawMeter() {
+  const x = x_m + canvas.width / 5;
+  const y = canvas.height - 150;
+  const w = canvas.width / 10;
+  const h = metarMaxNum * 15;
+
   ctx.beginPath();
   const gradient = ctx.createLinearGradient(
-    canvas.width / 5,
-    canvas.height - 20,
-    canvas.width / 5,
-    canvas.height - 20 - metarMaxNum * 15,
+    x,
+    y,
+    x,
+    y - h,
   );
 
   gradient.addColorStop(0, "#000000");
@@ -95,28 +113,23 @@ function drawMeter() {
   ctx.fillStyle = gradient;
 
   //ctx.fillStyle = "#898989ff";
-  ctx.moveTo(canvas.width / 5, canvas.height - 20);
+  ctx.moveTo(x, y);
   ctx.lineTo(
-    canvas.width / 5 - canvas.width / 20,
-    canvas.height - 20 - metarMaxNum * 15,
+    x - w / 2,
+    y - h,
   );
   ctx.lineTo(
-    canvas.width / 5 + canvas.width / 20,
-    canvas.height - 20 - metarMaxNum * 15,
+    x + w / 2,
+    y - h,
   );
   ctx.fill();
   ctx.closePath();
 
-  let num;
-
-  if (metarNum < metarMaxNum / 5) num = metarNum;
-  else num = metarMaxNum / 5;
-
   gradient2 = ctx.createLinearGradient(
-    canvas.width / 5,
-    canvas.height - 20,
-    canvas.width / 5,
-    canvas.height - 20 - metarMaxNum * 15,
+    x,
+    y,
+    x,
+    x - h,
   );
 
   gradient2.addColorStop(0, "#acad3fff");
@@ -124,29 +137,81 @@ function drawMeter() {
   gradient2.addColorStop(0.8, "#fc260eff");
   gradient2.addColorStop(1, "#fc590eff");
 
-  num = metarNum;
+  const num = metarNum;
 
   ctx.beginPath();
   ctx.fillStyle = gradient2;
-  ctx.moveTo(canvas.width / 5, canvas.height - 20);
+  ctx.moveTo(x, y);
   ctx.lineTo(
-    canvas.width / 5 - canvas.width * num / metarMaxNum / 20,
-    canvas.height - 20 - num * 15,
+    x - w / 2 * num / metarMaxNum,
+    y - h * num / metarMaxNum,
   );
   ctx.lineTo(
-    canvas.width / 5 + canvas.width * num / metarMaxNum / 20,
-    canvas.height - 20 - num * 15,
+    x + w / 2 * num / metarMaxNum,
+    y - h * num / metarMaxNum,
   );
   ctx.fill();
+  const scale = 1.25;
+  ctx.drawImage(
+    powerImg,
+    x - w / scale,
+    y - w / 1,
+    w * 2 / scale,
+    w * 2 / scale,
+  );
   ctx.closePath();
 
   metarNum += metarVelc;
   metarNum %= metarMaxNum;
 }
 
+let isArrow = true;
+
+const arrowImg = new Image();
+arrowImg.addEventListener("load", () => {
+});
+arrowImg.src = "arrow.png";
+
+let angle = 0;
+const angleVelc = Math.PI * 2 / 150;
+let sizeAngle = 0;
+let sizex = 1;
+let sizey = 1;
+
+function drawArrow() {
+  ctx.beginPath();
+  ctx.save();
+  ctx.translate(x_m, y_m);
+  ctx.rotate(angle);
+  sizey = 100 + 15 * Math.sin(sizeAngle);
+  sizex = 100;
+  ctx.drawImage(arrowImg, -sizex / 2, -sizey - 25, sizex, sizey);
+  ctx.restore();
+  ctx.closePath();
+  sizeAngle -= angleVelc * 3.25;
+  angle -= angleVelc;
+  if (angle < 0) angle += Math.PI * 2;
+  if (sizeAngle < 0) sizeAngle += Math.PI * 2;
+}
+
+function drawMyAA() {
+  ctx.beginPath();
+  ctx.arc(x_m, y_m, size_m, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.closePath();
+}
+
+function testDraw() {
+  ctx.fillStyle = "#000000";
+  ctx.fillText(Math.floor(metarNum * 10) / 10, 100, 100);
+}
+
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawButton();
-  drawMeter();
+  drawMyAA();
+  if (isButtonEnable) drawButton();
+  if (isMetarEnable) drawMeter();
+  if (isArrow) drawArrow();
+  testDraw();
 }
 setInterval(draw, 10);
