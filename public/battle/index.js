@@ -14,6 +14,8 @@ function setDispSize() {
 
 setDispSize();
 
+window.addEventListener("resize", setDispSize);
+
 let mouseX = 0;
 let mouseY = 0;
 
@@ -29,12 +31,30 @@ function drawButton() {
   if (mouseX < canvas.width / 2 + 40 && mouseX > canvas.width / 2 - 40) {
     if (mouseY < canvas.height - 50 && mouseY > canvas.height - 100) {
       isMouseOverBt = true;
-      ctx.fillStyle = "#0095DD";
+      if (isMouseDown) {
+        ctx.fillStyle = "#77a3b8ff";
+      } else {
+        ctx.fillStyle = "#0095DD";
+      }
     }
   }
   ctx.fill();
   ctx.closePath();
 }
+
+let isMouseDown = false;
+
+function onMouseDown() {
+  isMouseDown = true;
+}
+
+function onMouseUp() {
+  isMouseDown = false;
+  if (isMouseOverBt) buttonPush();
+}
+
+canvas.addEventListener("mousedown", onMouseDown, false);
+canvas.addEventListener("mouseup", onMouseUp, false);
 
 canvas.addEventListener("mousemove", function (evt) {
   const mousePos = getMousePosition(canvas, evt);
@@ -53,11 +73,28 @@ function getMousePosition(canvas, evt) {
 
 let metarNum = 0;
 const metarMaxNum = 10;
-const metarVelc = 0.05;
+const velcVar = 0.1;
+let metarVelc = velcVar;
+
+function buttonPush() {
+  if (metarVelc === velcVar) metarVelc = 0;
+  else metarVelc = velcVar;
+}
 
 function drawMeter() {
   ctx.beginPath();
-  ctx.fillStyle = "#898989ff";
+  const gradient = ctx.createLinearGradient(
+    canvas.width / 5,
+    canvas.height - 20,
+    canvas.width / 5,
+    canvas.height - 20 - metarMaxNum * 15,
+  );
+
+  gradient.addColorStop(0, "#000000");
+  gradient.addColorStop(1, "#bbbbbb");
+  ctx.fillStyle = gradient;
+
+  //ctx.fillStyle = "#898989ff";
   ctx.moveTo(canvas.width / 5, canvas.height - 20);
   ctx.lineTo(
     canvas.width / 5 - canvas.width / 20,
@@ -75,8 +112,22 @@ function drawMeter() {
   if (metarNum < metarMaxNum / 5) num = metarNum;
   else num = metarMaxNum / 5;
 
+  gradient2 = ctx.createLinearGradient(
+    canvas.width / 5,
+    canvas.height - 20,
+    canvas.width / 5,
+    canvas.height - 20 - metarMaxNum * 15,
+  );
+
+  gradient2.addColorStop(0, "#acad3fff");
+  gradient2.addColorStop(0.4, "#ffd556ff");
+  gradient2.addColorStop(0.8, "#fc260eff");
+  gradient2.addColorStop(1, "#fc590eff");
+
+  num = metarNum;
+
   ctx.beginPath();
-  ctx.fillStyle = "#bbff00ff";
+  ctx.fillStyle = gradient2;
   ctx.moveTo(canvas.width / 5, canvas.height - 20);
   ctx.lineTo(
     canvas.width / 5 - canvas.width * num / metarMaxNum / 20,
@@ -88,41 +139,6 @@ function drawMeter() {
   );
   ctx.fill();
   ctx.closePath();
-
-  const colors = [
-    "#bbff00ff",
-    "#00a6ffff",
-    "#002fffff",
-    "#e600ffff",
-    "#ff002bff",
-  ];
-
-  for (let i = 1; i < 5; i++) {
-    if (metarNum < metarMaxNum / 5 * i) break;
-    if (metarNum > metarMaxNum / 5 * (i + 1)) {
-      num = metarMaxNum / 5 * (i + 1);
-    } else num = metarNum;
-    ctx.beginPath();
-    ctx.fillStyle = colors[i];
-    ctx.moveTo(
-      canvas.width / 5 - canvas.width / 5 * i / 20,
-      canvas.height - 20 - metarMaxNum / 5 * i * 15,
-    );
-    ctx.lineTo(
-      canvas.width / 5 - canvas.width * num / metarMaxNum / 20,
-      canvas.height - 20 - num * 15,
-    );
-    ctx.lineTo(
-      canvas.width / 5 + canvas.width * num / metarMaxNum / 20,
-      canvas.height - 20 - num * 15,
-    );
-    ctx.lineTo(
-      canvas.width / 5 + canvas.width / 5 * i / 20,
-      canvas.height - 20 - metarMaxNum / 5 * i * 15,
-    );
-    ctx.fill();
-    ctx.closePath();
-  }
 
   metarNum += metarVelc;
   metarNum %= metarMaxNum;
