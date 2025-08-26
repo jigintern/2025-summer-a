@@ -118,20 +118,34 @@ input[type="radio"]:checked + .char-button {
   border-color: #c0c0c0;
 }
 
+.textarea-wrapper {
+  overflow: auto;
+  position: relative;
+}
+
 .editor-area {
-  flex-grow: 1;
-  margin-left: 5px;
   border: 1px solid #7f9db9;
+  width: 1000px;
+  height: calc(40 * 18px);
   resize: none;
   outline: none;
   padding: 5px;
   font-family: "MS PGothic";
   font-size: 12pt;
+  line-height: 18px;
+}
+
+#editor-overwrap {
+  position: absolute;
+  top: 6px; /* textareaのborder1px, padding6pxの和 */
+  left: 6px;
+  width: 1000px;
+  height: calc(40 * 18px);
 }
 
 .main-content {
-  display: flex;
-  flex-grow: 1;
+  display: grid;
+  grid-template-columns: auto 1fr;
 }
 
 .char-bar {
