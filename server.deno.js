@@ -11,6 +11,15 @@ async function hashPassword(password) {
     .join("");
 }
 
+/**
+ * @typedef {Object} Room
+ * @property {string[]} users
+ * @property {WebSocket[]} sockets
+ */
+
+/** @type {Map<string, Room>} */
+const rooms = new Map();
+
 // ログインが必要なページ一覧
 const needLogin = ["/", "/index.html"];
 
@@ -124,6 +133,78 @@ Deno.serve(async (req) => {
       console.error("ログインエラー:", error);
       return new Response("サーバーエラー", { status: 500 });
     }
+  }
+
+  // 部屋作成 これ以下追加分
+  if (req.method === "POST" && pathname === "/create-room") {
+    return req.formData().then((formData) => {
+      const roomName = formData.get("roomName");
+      if (rooms.has(roomName)) {
+        // 既に同じ名前の部屋が存在する場合は作れない
+        return new Response(`同じ名前の部屋が既に存在します`, {
+          status: 400,
+        });
+      }
+      rooms.set(roomName, { users: [], sockets: [] });
+      return new Response(`部屋作成${roomName}`);
+    });
+  }
+
+  // 部屋情報の初期化
+  /*room.users = [];
+  room.sockets = [];*/
+
+  // 部屋入室
+  if (pathname === "/join-room" && req.method === "POST") {
+    return req.formData().then((formData) => {
+      const roomName = formData.get("roomName");
+      const userName = formData.get("userName");
+
+      const room = rooms.get(roomName);
+      if (!room) {
+        return new Response(`Room ${roomName} does not exist.`, {
+          status: 404,
+        });
+      }
+      if (!room.users.includes(userName)) {
+        room.users.push(userName);
+      }
+      return new Response(`入室`);
+    });
+  }
+  if (req.method === "GET" && pathname === "/room-users") {
+    const params = new URL(req.url).searchParams; // ← ここで定義
+    const roomName = params.get("room");
+    const room = rooms.get(roomName);
+    if (!room) {
+      return new Response(JSON.stringify([]), { status: 404 });
+    }
+    return new Response(JSON.stringify(room.users), {
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // WebSocket 接続
+  if (pathname.startsWith("/ws")) {
+    const { socket, response } = Deno.upgradeWebSocket(req);
+    const params = new URL(req.url).searchParams; // ← ここで定義
+    const roomName = params.get("room");
+    const userName = params.get("user");
+    const room = rooms.get(roomName);
+
+    if (!room) {
+      socket.close(1000, "Room does not exist");
+      return response;
+    }
+
+    room.sockets.push(socket);
+
+    socket.onclose = () => {
+      room.sockets = room.sockets.filter((s) => s !== socket);
+      room.users = room.users.filter((u) => u !== userName);
+    };
+
+    return response;
   }
 
   return serveDir(req, {
