@@ -5,23 +5,22 @@
     <title>WebSocket 部屋作成・参加デモ</title>
   </head>
   <body>
-    <h2>部屋作成</h2>
-    <form id="createRoomForm">
-      <input type="text" name="roomName" placeholder="部屋名" required>
-      <button type="submit">作成</button>
-    </form>
-
-    <h2>部屋入室</h2>
-    <form id="joinRoomForm">
-      <input type="text" name="roomName" placeholder="部屋名" required>
-      <!-- ここは、Cookieでユーザー名を取得したいよ -->
-      <input type="text" name="userName" placeholder="ユーザー名" required>
-      <button type="submit">入室</button>
-    </form>
-
     <div id="formsArea">
-      <!-- ここにフォームが入る -->
+      <h2>部屋作成</h2>
+      <form id="createRoomForm">
+        <input type="text" name="roomName" placeholder="部屋名" required>
+        <button type="submit">作成</button>
+      </form>
+
+      <h2>部屋入室</h2>
+      <form id="joinRoomForm">
+        <input type="text" name="roomName" placeholder="部屋名" required>
+        <!-- ここは、Cookieでユーザー名を取得したいよ -->
+        <input type="text" name="userName" placeholder="ユーザー名" required>
+        <button type="submit">入室</button>
+      </form>
     </div>
+
     <div id="roomArea" style="display: none"></div>
     <pre id="chatPre"></pre>
 

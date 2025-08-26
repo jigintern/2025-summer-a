@@ -1,6 +1,17 @@
 const createForm = document.getElementById("createRoomForm");
 const joinForm = document.getElementById("joinRoomForm");
 
+// ユーザー一覧を更新する関数
+function updateUsersArea(users) {
+  let usersArea = document.getElementById("usersArea");
+  if (!usersArea) {
+    usersArea = document.createElement("div");
+    usersArea.id = "usersArea";
+    document.getElementById("roomArea").after(usersArea);
+  }
+  usersArea.textContent = "参加者: " + users.join(", ");
+}
+
 //ルーム作成
 createForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -22,6 +33,7 @@ joinForm.addEventListener("submit", async (e) => {
   const formData = new FormData(joinForm);
   const roomName = formData.get("roomName");
   const userName = formData.get("userName");
+  console.log("join-roomへ送信するroomName:", roomName);
   const res = await fetch("/join-room", { method: "POST", body: formData });
 
   if (res.ok) {
@@ -43,18 +55,23 @@ joinForm.addEventListener("submit", async (e) => {
       const usersRes = await fetch(`/room-users?room=${roomName}`);
       if (usersRes.ok) {
         const users = await usersRes.json();
-        let usersArea = document.getElementById("usersArea");
-        if (!usersArea) {
-          usersArea = document.createElement("div");
-          usersArea.id = "usersArea";
-          roomArea.after(usersArea);
-        }
-        usersArea.textContent = "参加者: " + users.join(", ");
+        updateUsersArea(users);
       }
     };
 
     ws.onmessage = (e) => {
-      chatPre.textContent += e.data + "\n";
+      try {
+        const data = JSON.parse(e.data);
+        if (data.type === "users") {
+          updateUsersArea(data.users);
+        } else {
+          // 他のtypeの場合（例: チャット）
+          chatPre.textContent += e.data + "\n";
+        }
+      } catch {
+        // JSONでない場合（従来のチャット等）
+        chatPre.textContent += e.data + "\n";
+      }
     };
   } else {
     // 部屋作成失敗

@@ -20,6 +20,16 @@ async function hashPassword(password) {
 /** @type {Map<string, Room>} */
 const rooms = new Map();
 
+// ユーザー一覧を全員に送信する関数
+function broadcastUsers(room) {
+  const msg = JSON.stringify({ type: "users", users: room.users });
+  for (const s of room.sockets) {
+    try {
+      s.send(msg);
+    } catch {}
+  }
+}
+
 // ログインが必要なページ一覧
 const needLogin = ["/", "/index.html"];
 
@@ -159,9 +169,12 @@ Deno.serve(async (req) => {
     return req.formData().then((formData) => {
       const roomName = formData.get("roomName");
       const userName = formData.get("userName");
+      console.log("join-roomリクエスト:", roomName, userName);
+      console.log("現在の部屋一覧:", [...rooms.keys()]);
 
       const room = rooms.get(roomName);
       if (!room) {
+        console.log("部屋が存在しません:", roomName);
         return new Response(`Room ${roomName} does not exist.`, {
           status: 404,
         });
@@ -198,10 +211,14 @@ Deno.serve(async (req) => {
     }
 
     room.sockets.push(socket);
+    // 入室時にユーザー一覧を全員に送信
+    broadcastUsers(room);
 
     socket.onclose = () => {
       room.sockets = room.sockets.filter((s) => s !== socket);
       room.users = room.users.filter((u) => u !== userName);
+      // 退出時もユーザー一覧を全員に送信
+      broadcastUsers(room);
     };
 
     return response;
