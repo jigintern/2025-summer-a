@@ -134,7 +134,7 @@ Deno.serve(async (req) => {
           created_at: now,
           updated_at: now,
         })
-        .set(["aa_by_user", username, now], { aa_id: aaId })
+        .set(["aa_by_user", username, +now], { aa_id: aaId })
         .commit();
 
       if (!res.ok) {
@@ -186,8 +186,8 @@ Deno.serve(async (req) => {
           content: AA,
           updated_at: newTimestamp,
         })
-        .delete(["aa_by_user", username, originalTimestamp])
-        .set(["aa_by_user", username, newTimestamp], { aa_id: aa_id })
+        .delete(["aa_by_user", username, +originalTimestamp])
+        .set(["aa_by_user", username, +newTimestamp], { aa_id: aa_id })
         .commit();
 
       if (!res.ok) {
