@@ -78,12 +78,22 @@ function getMousePosition(canvas, evt) {
 
 let metarNum = 0;
 const metarMaxNum = 10;
-const velcVar = 0.1;
+const velcVar = 12.5;
 let metarVelc = velcVar;
 
+function AAShoot() {
+  ///////////////////////////////////////
+}
+
 function buttonPush() {
-  if (metarVelc === velcVar) metarVelc = 0;
-  else metarVelc = velcVar;
+  if (isMetarEnable) {
+    isMetarEnable = false;
+    isArrow = true;
+  } else {
+    isArrow = false;
+    isButtonEnable = false;
+    AAShoot();
+  }
 }
 const powerImg = new Image();
 powerImg.addEventListener("load", () => {
@@ -92,13 +102,13 @@ powerImg.src = "power.png";
 
 let x_m = 200;
 let y_m = 200;
-let size_m = 20;
+let size_m = 75;
 
 function drawMeter() {
   const x = x_m + canvas.width / 5;
   const y = canvas.height - 150;
-  const w = canvas.width / 10;
-  const h = metarMaxNum * 15;
+  const w = canvas.height / 5;
+  const h = canvas.height / 3;
 
   ctx.beginPath();
   const gradient = ctx.createLinearGradient(
@@ -129,12 +139,12 @@ function drawMeter() {
     x,
     y,
     x,
-    x - h,
+    y - h,
   );
 
   gradient2.addColorStop(0, "#acad3fff");
   gradient2.addColorStop(0.4, "#ffd556ff");
-  gradient2.addColorStop(0.8, "#fc260eff");
+  gradient2.addColorStop(0.7, "#fc260eff");
   gradient2.addColorStop(1, "#fc590eff");
 
   const num = metarNum;
@@ -154,18 +164,18 @@ function drawMeter() {
   const scale = 1.25;
   ctx.drawImage(
     powerImg,
-    x - w / scale,
+    x - w / scale + 10,
     y - w / 1,
     w * 2 / scale,
     w * 2 / scale,
   );
   ctx.closePath();
 
-  metarNum += metarVelc;
+  metarNum += metarVelc * deltaTime;
   metarNum %= metarMaxNum;
 }
 
-let isArrow = true;
+let isArrow = false;
 
 const arrowImg = new Image();
 arrowImg.addEventListener("load", () => {
@@ -173,7 +183,7 @@ arrowImg.addEventListener("load", () => {
 arrowImg.src = "arrow.png";
 
 let angle = 0;
-const angleVelc = Math.PI * 2 / 150;
+const angleVelc = Math.PI * 1.5;
 let sizeAngle = 0;
 let sizex = 1;
 let sizey = 1;
@@ -185,11 +195,11 @@ function drawArrow() {
   ctx.rotate(angle);
   sizey = 100 + 15 * Math.sin(sizeAngle);
   sizex = 100;
-  ctx.drawImage(arrowImg, -sizex / 2, -sizey - 25, sizex, sizey);
+  ctx.drawImage(arrowImg, -sizex / 2, -sizey - size_m, sizex, sizey);
   ctx.restore();
   ctx.closePath();
-  sizeAngle -= angleVelc * 3.25;
-  angle -= angleVelc;
+  sizeAngle -= angleVelc * 3.25 * deltaTime;
+  angle -= angleVelc * deltaTime;
   if (angle < 0) angle += Math.PI * 2;
   if (sizeAngle < 0) sizeAngle += Math.PI * 2;
 }
@@ -202,16 +212,40 @@ function drawMyAA() {
 }
 
 function testDraw() {
+  ctx.textAlign = "left";
   ctx.fillStyle = "#000000";
-  ctx.fillText(Math.floor(metarNum * 10) / 10, 100, 100);
+  ctx.fillText("power:" + (Math.floor(metarNum * 10) / 10), 100, 100);
+  ctx.fillText("angle:" + (Math.floor(angle * 10) / 10), 100, 60);
+  ctx.fillText("deltaTime:" + deltaTime, 100, 20);
+  ctx.fillText("firstTime:" + firstTimestamp, 100, 140);
 }
 
-function draw() {
+let deltaTime = 0;
+
+let lastTimestamp = null;
+
+let firstTimestamp;
+
+function fpsUpdate(timestamp) {
+  deltaTime = 0; // 前回フレーム時間からの経過時間(単位:秒)
+  if (lastTimestamp != null) {
+    deltaTime = (timestamp - lastTimestamp) / 1000; // ミリ秒を1000で割ると秒になる(1000ミリ秒÷1000は1秒)
+  } else {
+    firstTimestamp = timestamp;
+  }
+  lastTimestamp = timestamp;
+}
+
+function draw(timestamp) {
+  fpsUpdate(timestamp);
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawMyAA();
   if (isButtonEnable) drawButton();
   if (isMetarEnable) drawMeter();
   if (isArrow) drawArrow();
   testDraw();
+  window.requestAnimationFrame(draw);
 }
-setInterval(draw, 10);
+
+window.requestAnimationFrame(draw);
