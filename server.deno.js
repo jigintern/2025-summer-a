@@ -51,11 +51,6 @@ Deno.serve(async (req) => {
     }
   }
 
-  /*const keys = kv.list({ prefix: [] });
-  for await (const entry of keys) {
-    await kv.delete(entry.key);
-  }*/
-
   if (req.method === "GET" && pathname === "/welcome-message") {
     return new Response("ホーム画面です");
   }
@@ -71,7 +66,6 @@ Deno.serve(async (req) => {
     return new Response(null, { status: 303, headers });
   }
 
-  //サインアップ処理（新規作成）
   if (req.method === "POST" && pathname === "/signup") {
     try {
       const { username, password } = await req.json();
@@ -88,7 +82,7 @@ Deno.serve(async (req) => {
       const key = ["users", username];
       const value = {
         password_hash: hashedPassword,
-        rating: 1500, // 初期レート
+        rating: 0,
       };
       await kv.set(key, value);
 
@@ -120,6 +114,7 @@ Deno.serve(async (req) => {
     }
   }
 
+  // 新規保存
   if (req.method === "POST" && pathname === "/AALibrary") {
     try {
       // セッションからユーザー名を取得
@@ -136,16 +131,13 @@ Deno.serve(async (req) => {
       const now = new Date();
 
       const res = await kv.atomic()
-        // 1. アスキーアート本体を保存
-        .set(["aas", aa_id], {
-          author: username,
+        .set(["aa", aa_id], {
           title: title,
           content: AA,
           created_at: now,
           updated_at: now,
         })
-        // 2. ユーザーとAAの関連（インデックス）を保存
-        .set(["aas_by_user", username, aa_id], true)
+        .set(["aa_by_user", username, aa_id], true)
         .commit();
 
       if (!res.ok) {
@@ -172,16 +164,16 @@ Deno.serve(async (req) => {
       }
 
       const aa_ids = [];
-      const entries = kv.list({ prefix: ["aas_by_user", username] });
+      const entries = kv.list({ prefix: ["aa_by_user", username] });
 
       for await (const entry of entries) {
-        // entry.key は ["aas_by_user", <username>, <aa_id>] という形式
+        // entry.key は ["aa_by_user", <username>, <aa_id>] という形式
         const aa_id = entry.key[2];
         aa_ids.push(aa_id);
       }
 
       // 取得したIDのリストを使って、AA本体のデータをまとめて取得
-      const aaKeys = aa_ids.map((id) => ["aas", id]);
+      const aaKeys = aa_ids.map((id) => ["aa", id]);
       const aaEntries = await kv.getMany(aaKeys);
 
       const AALibrary = aaEntries.map((entry) => entry.value);
