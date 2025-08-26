@@ -32,7 +32,8 @@ joinForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const formData = new FormData(joinForm);
   const roomName = formData.get("roomName");
-
+  const userNameRes = await fetch("/cookiePlayer", { method: "GET" });
+  const userName = await userNameRes.text();
   //最大人数チェック用に残してる
   //const userName = formData.get("userName");
   console.log("join-roomへ送信するroomName:", roomName);

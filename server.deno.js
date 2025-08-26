@@ -164,6 +164,12 @@ Deno.serve(async (req) => {
   /*room.users = [];
   room.sockets = [];*/
 
+  if (pathname === "/cookiePlayer" && req.method === "GET") {
+    const cookie = getCookies(req.headers);
+    const userName = sessions.get(cookie["sessionid"] ?? "");
+    return new Response(userName);
+  }
+
   // 部屋入室
   if (pathname === "/join-room" && req.method === "POST") {
     return req.formData().then((formData) => {
