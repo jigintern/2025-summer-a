@@ -13,6 +13,8 @@ export class AAObj {
   tt;
   /** @type {number} 角速度 */
   dtt;
+  /** @type {number} 摩擦で生じる加速度 */
+  mu = 0.01;
 
   /**
    * @param {number} r
@@ -99,6 +101,26 @@ export class BattleStatus {
       this.b.dtt -= ((dcpt - dbpt) / 3 * 2) / this.b.r;
       this.a.dx = [p[0] * adap + n[0] * adan, p[1] * adap + n[1] * adan];
       this.b.dx = [p[0] * adbp + n[0] * adbn, p[1] * adbp + n[1] * adbn];
+    }
+    // 摩擦で減速させる
+    // 速度の大きさ
+    const va = Math.hypot(...this.a.dx);
+    const vb = Math.hypot(...this.b.dx);
+    if (va <= this.a.mu) {
+      this.a.dx = [0, 0];
+      this.a.dtt = 0;
+    } else {
+      this.a.dx[0] -= this.a.dx[0] / va * this.a.mu;
+      this.a.dx[1] -= this.a.dx[1] / va * this.a.mu;
+      this.a.dtt *= 1 - (this.a.mu / va);
+    }
+    if (vb <= this.b.mu) {
+      this.b.dx = [0, 0];
+      this.b.dtt = 0;
+    } else {
+      this.b.dx[0] -= this.b.dx[0] / vb * this.b.mu;
+      this.b.dx[1] -= this.b.dx[1] / vb * this.b.mu;
+      this.b.dtt *= 1 - (this.b.mu / vb);
     }
   }
 
