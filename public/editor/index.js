@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const lineModeButton = document.querySelector("#btn-line");
   /** @type {HTMLInputElement} */
   const eraseModeButton = document.querySelector("#btn-erase");
+  const textareaPadding = 6;
   /** @type {() => unknown} */
   let finishmode = () => {};
   textModeButton.addEventListener("change", () => {
@@ -88,7 +89,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let status = null;
     /** @param {MouseEvent} e */
     const onMousedown = (e) => {
-      status = [Math.round(e.offsetY / 18), e.offsetX, textarea.value];
+      status = [
+        Math.round((e.offsetY - textareaPadding) / 18),
+        Math.round(e.offsetX - textareaPadding),
+        textarea.value,
+      ];
     };
     /** @param {MouseEvent} e */
     const onMousemove = (e) => {
@@ -98,7 +103,10 @@ document.addEventListener("DOMContentLoaded", () => {
         1000,
         40,
         [status[0], status[1]],
-        [Math.round(e.offsetY / 18), e.offsetX],
+        [
+          Math.round((e.offsetY - textareaPadding) / 18),
+          Math.round(e.offsetX - textareaPadding),
+        ],
       );
     };
     const onMouseup = () => {
@@ -125,7 +133,10 @@ document.addEventListener("DOMContentLoaded", () => {
         textarea.value,
         1000,
         40,
-        [Math.floor(e.offsetY / 18), e.offsetX],
+        [
+          Math.floor((e.offsetY - textareaPadding) / 18),
+          Math.round(e.offsetX - textareaPadding),
+        ],
       );
     };
     /** @param {MouseEvent} e */
@@ -135,7 +146,10 @@ document.addEventListener("DOMContentLoaded", () => {
         textarea.value,
         1000,
         40,
-        [Math.floor(e.offsetY / 18), e.offsetX],
+        [
+          Math.floor((e.offsetY - textareaPadding) / 18),
+          Math.round(e.offsetX - textareaPadding),
+        ],
       );
     };
     const onMouseup = () => {

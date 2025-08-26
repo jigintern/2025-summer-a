@@ -139,8 +139,9 @@ input[type="radio"]:checked + .char-button {
   display: none;
   user-select: none;
   position: absolute;
-  top: 6px; /* textareaのborder1px, padding6pxの和 */
-  left: 6px;
+  top: 0;
+  left: 0;
+  padding: 6px; /* textareaのborder1px, padding6pxの和 */
   width: 1000px;
   height: calc(40 * 18px);
 }
