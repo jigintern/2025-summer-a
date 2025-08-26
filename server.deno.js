@@ -127,17 +127,18 @@ Deno.serve(async (req) => {
       }
 
       const { title, AA } = await req.json();
-      const aa_id = crypto.randomUUID();
+      const aaId = crypto.randomUUID();
       const now = new Date();
 
       const res = await kv.atomic()
-        .set(["aa", aa_id], {
+        .set(["aa", aaId], {
+          author: username,
           title: title,
           content: AA,
           created_at: now,
           updated_at: now,
         })
-        .set(["aa_by_user", username, aa_id], true)
+        .set(["aa_by_user", username, now], { aa_id: aaId })
         .commit();
 
       if (!res.ok) {
@@ -163,17 +164,17 @@ Deno.serve(async (req) => {
         return new Response("認証されていません", { status: 401 });
       }
 
-      const aa_ids = [];
+      const aaIds = [];
       const entries = kv.list({ prefix: ["aa_by_user", username] });
 
       for await (const entry of entries) {
-        // entry.key は ["aa_by_user", <username>, <aa_id>] という形式
-        const aa_id = entry.key[2];
-        aa_ids.push(aa_id);
+        // entry.key は ["aa_by_user", <username>, <aaId>] という形式
+        const aaId = entry.key[2];
+        aaIds.push(aaId);
       }
 
       // 取得したIDのリストを使って、AA本体のデータをまとめて取得
-      const aaKeys = aa_ids.map((id) => ["aa", id]);
+      const aaKeys = aaIds.map((id) => ["aa", id]);
       const aaEntries = await kv.getMany(aaKeys);
 
       const AALibrary = aaEntries.map((entry) => entry.value);
