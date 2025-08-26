@@ -19,7 +19,24 @@
       );
       setInterval(() => {
         bs.nextTick();
-        bs.draw(ctx);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        ctx.arc(bs.a.x[0], bs.a.x[1], bs.a.r, 0, 2 * Math.PI);
+        ctx.arc(bs.b.x[0], bs.b.x[1], bs.b.r, 0, 2 * Math.PI);
+        ctx.fillStyle = "#f00";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(bs.a.x[0], bs.a.x[1]);
+        ctx.lineTo(
+          bs.a.x[0] + bs.a.r * Math.cos(bs.a.tt),
+          bs.a.x[1] + bs.a.r * Math.sin(bs.a.tt),
+        );
+        ctx.moveTo(bs.b.x[0], bs.b.x[1]);
+        ctx.lineTo(
+          bs.b.x[0] + bs.b.r * Math.cos(bs.b.tt),
+          bs.b.x[1] + bs.b.r * Math.sin(bs.b.tt),
+        );
+        ctx.stroke();
       }, 20);
     </script>
   </body>

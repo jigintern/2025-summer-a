@@ -132,29 +132,4 @@ export class BattleStatus {
     return this.a.dx.every((v) => v === 0) && this.b.dx.every((v) => v === 0) &&
       this.a.dtt === 0 && this.b.dtt === 0;
   }
-
-  /**
-   * @param {CanvasRenderingContext2D} ctx
-   */
-  draw(ctx) {
-    const { width, height } = ctx.canvas;
-    ctx.clearRect(0, 0, width, height);
-    ctx.beginPath();
-    ctx.arc(this.a.x[0], this.a.x[1], this.a.r, 0, 2 * Math.PI);
-    ctx.arc(this.b.x[0], this.b.x[1], this.b.r, 0, 2 * Math.PI);
-    ctx.fillStyle = "#f00";
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(this.a.x[0], this.a.x[1]);
-    ctx.lineTo(
-      this.a.x[0] + this.a.r * Math.cos(this.a.tt),
-      this.a.x[1] + this.a.r * Math.sin(this.a.tt),
-    );
-    ctx.moveTo(this.b.x[0], this.b.x[1]);
-    ctx.lineTo(
-      this.b.x[0] + this.b.r * Math.cos(this.b.tt),
-      this.b.x[1] + this.b.r * Math.sin(this.b.tt),
-    );
-    ctx.stroke();
-  }
 }
