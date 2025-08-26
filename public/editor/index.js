@@ -106,11 +106,11 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     overwrap.addEventListener("mousedown", onMousedown);
     overwrap.addEventListener("mousemove", onMousemove);
-    overwrap.addEventListener("mouseup", onMouseup);
+    window.addEventListener("mouseup", onMouseup);
     finishmode = () => {
       overwrap.removeEventListener("mousedown", onMousedown);
       overwrap.removeEventListener("mousemove", onMousemove);
-      overwrap.removeEventListener("mouseup", onMouseup);
+      window.removeEventListener("mouseup", onMouseup);
     };
   });
   eraseModeButton.addEventListener("change", () => {
@@ -143,11 +143,11 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     overwrap.addEventListener("mousedown", onMousedown);
     overwrap.addEventListener("mousemove", onMousemove);
-    overwrap.addEventListener("mouseup", onMouseup);
+    window.addEventListener("mouseup", onMouseup);
     finishmode = () => {
       overwrap.removeEventListener("mousedown", onMousedown);
       overwrap.removeEventListener("mousemove", onMousemove);
-      overwrap.removeEventListener("mouseup", onMouseup);
+      window.removeEventListener("mouseup", onMouseup);
     };
   });
 
