@@ -138,7 +138,7 @@ Deno.serve(async (req) => {
         .commit();
 
       if (!res.ok) {
-        throw new Error("Failed to save AA with atomic operation.");
+        throw new Error("保存時のエラー");
       }
 
       console.log("AALibraryに追加:", { title, AA });
@@ -212,10 +212,13 @@ Deno.serve(async (req) => {
       }
 
       const aaIds = [];
-      const entries = kv.list({ prefix: ["aa_by_user", username] });
 
-      for await (const entry of entries) {
-        // entry.key は ["aa_by_user", <username>, <aaId>] という形式
+      for await (
+        const entry of kv.list({ prefix: ["aa_by_user", username] }, {
+          reverse: true,
+          limit: 50,
+        })
+      ) {
         const aaId = entry.key[2];
         aaIds.push(aaId);
       }
