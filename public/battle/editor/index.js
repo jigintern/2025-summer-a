@@ -41,8 +41,13 @@ joinForm.addEventListener("submit", async (e) => {
     alert("部屋入室:");
 
     // WebSocket接続
+    /*
     ws = new WebSocket(
       `ws://localhost:8000/ws?room=${roomName}&user=${userName}`,
+    );*/
+
+    ws = new WebSocket(
+      `ws://localhost:8000/ws/battle?ward=${roomName}&user=${userName}`,
     );
 
     ws.onopen = async () => {
