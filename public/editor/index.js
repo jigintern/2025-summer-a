@@ -1,4 +1,5 @@
 import { line } from "./tools/line.js";
+import { erase } from "./tools/erase.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const newButton = document.getElementById("btn-new");
@@ -72,6 +73,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const textModeButton = document.querySelector("#btn-text");
   /** @type {HTMLInputElement} */
   const lineModeButton = document.querySelector("#btn-line");
+  /** @type {HTMLInputElement} */
+  const eraseModeButton = document.querySelector("#btn-erase");
   /** @type {() => unknown} */
   let finishmode = () => {};
   textModeButton.addEventListener("change", () => {
@@ -100,6 +103,43 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     const onMouseup = () => {
       status = null;
+    };
+    overwrap.addEventListener("mousedown", onMousedown);
+    overwrap.addEventListener("mousemove", onMousemove);
+    overwrap.addEventListener("mouseup", onMouseup);
+    finishmode = () => {
+      overwrap.removeEventListener("mousedown", onMousedown);
+      overwrap.removeEventListener("mousemove", onMousemove);
+      overwrap.removeEventListener("mouseup", onMouseup);
+    };
+  });
+  eraseModeButton.addEventListener("change", () => {
+    finishmode();
+    overwrap.style.display = "block";
+    /** @type {boolean} */
+    let ismousedown = false;
+    /** @param {MouseEvent} e */
+    const onMousedown = (e) => {
+      ismousedown = true;
+      textarea.value = erase(
+        textarea.value,
+        1000,
+        40,
+        [Math.floor(e.offsetY / 18), e.offsetX],
+      );
+    };
+    /** @param {MouseEvent} e */
+    const onMousemove = (e) => {
+      if (!ismousedown) return;
+      textarea.value = erase(
+        textarea.value,
+        1000,
+        40,
+        [Math.floor(e.offsetY / 18), e.offsetX],
+      );
+    };
+    const onMouseup = () => {
+      ismousedown = false;
     };
     overwrap.addEventListener("mousedown", onMousedown);
     overwrap.addEventListener("mousemove", onMousemove);
