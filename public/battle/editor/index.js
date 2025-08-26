@@ -32,7 +32,9 @@ joinForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const formData = new FormData(joinForm);
   const roomName = formData.get("roomName");
-  const userName = formData.get("userName");
+
+  //最大人数チェック用に残してる
+  //const userName = formData.get("userName");
   console.log("join-roomへ送信するroomName:", roomName);
   const res = await fetch("/join-room", { method: "POST", body: formData });
 
@@ -47,7 +49,7 @@ joinForm.addEventListener("submit", async (e) => {
     );*/
 
     ws = new WebSocket(
-      `ws://localhost:8000/ws/battle?ward=${roomName}&user=${userName}`,
+      `ws://localhost:8000/ws/battle?room=${roomName}&user=${userName}`,
     );
 
     ws.onopen = async () => {
@@ -79,7 +81,15 @@ joinForm.addEventListener("submit", async (e) => {
       }
     };
   } else {
-    // 部屋作成失敗
-    alert("部屋番号が違います:");
+    if (res.status === 403) {
+      // 部屋番号が違います
+      alert("人数オーバーです:");
+    } else if (res.status === 404) {
+      // 部屋番号が違います
+      alert("部屋番号が違います:");
+    } else {
+      // その他のエラー
+      alert("部屋作成失敗:");
+    }
   }
 });

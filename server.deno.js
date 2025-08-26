@@ -170,6 +170,9 @@ Deno.serve(async (req) => {
       const cookie = getCookies(req.headers);
       const userName = sessions.get(cookie["sessionid"] ?? "");
       const roomName = formData.get("roomName");
+
+      //最大人数チェック用に残してる
+      //const userName = formData.get("userName");
       console.log("join-roomリクエスト:", roomName, userName);
       console.log("現在の部屋一覧:", [...rooms.keys()]);
 
@@ -179,6 +182,11 @@ Deno.serve(async (req) => {
         return new Response(`Room ${roomName} does not exist.`, {
           status: 404,
         });
+      }
+      // 最大人数を設定（2人）
+      const MAX_USERS = 2;
+      if (room.users.length >= MAX_USERS) {
+        return new Response("この部屋は満員です", { status: 403 });
       }
       if (!room.users.includes(userName)) {
         room.users.push(userName);
