@@ -176,7 +176,7 @@ Deno.serve(async (req) => {
         return new Response("編集権限がありません", { status: 403 });
       }
 
-      const originalTimestamp = originalEntry.value.created_at;
+      const originalTimestamp = originalEntry.value.updated_at;
       const newTimestamp = new Date();
 
       const res = await kv.atomic()
@@ -221,7 +221,7 @@ Deno.serve(async (req) => {
           limit: 50,
         })
       ) {
-        const aaId = entry.key[2];
+        const aaId = entry.value;
         aaIds.push(aaId);
       }
 
