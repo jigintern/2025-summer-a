@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (input.files.length === 0) return;
       const url = URL.createObjectURL(input.files[0]);
       textarea.style.backgroundImage =
-        `linear-gradient(rgba(255,255,255,50%)), url(${url})`;
+        `linear-gradient(rgba(255,255,255,80%)), url(${url})`;
     };
   };
 
