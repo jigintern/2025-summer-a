@@ -136,6 +136,7 @@ Deno.serve(async (req) => {
         username: username2,
         socket: socket2,
       } = waitingUser.get(roomName);
+      waitingUser.delete(roomName);
       battle([username2, socket2], [username, socket]);
     }
 
