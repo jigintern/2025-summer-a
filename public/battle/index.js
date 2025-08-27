@@ -22,8 +22,8 @@ function setDispSize() {
     canvas.style.width = (area.clientHeight * 1000 / 500) + "px";
     canvas.style.height = area.clientHeight + "px";
   }
-  console.log("x:" + canvas.width);
-  console.log("y:" + canvas.height);
+  console.log("x:" + canvas.style.width);
+  console.log("y:" + canvas.style.height);
 }
 
 setDispSize();
@@ -68,7 +68,7 @@ function drawButton() {
   x = canvas.width / 2;
   y = canvas.height - 75;
   ctx.textAlign = "center";
-  ctx.font = "20px 'MS P Gothic'";
+  ctx.font = "20px 'MS UI Gothic'";
   ctx.fillText("Push!!", x, y);
   ctx.closePath();
 }
@@ -349,8 +349,32 @@ function gameFlow() {
   //testDraw();
 }
 
-function userInputRect() {
+function drawUserInputRect() {
   ctx.beginPath();
+  let x = canvas.width / 2 - 40;
+  let y = canvas.height - 100;
+  ctx.rect(x, y, 80, 50);
+  ctx.fillStyle = "#ff0000ff";
+  isMouseOverBt = false;
+  if (mouseX < canvas.width / 2 + 40 && mouseX > canvas.width / 2 - 40) {
+    if (mouseY < canvas.height - 50 && mouseY > canvas.height - 100) {
+      isMouseOverBt = true;
+      if (isMouseDown) {
+        ctx.fillStyle = "#77a3b8ff";
+      } else {
+        ctx.fillStyle = "#0095DD";
+      }
+    }
+  }
+  ctx.fill();
+  ctx.fillStyle = "#000000";
+  ctx.rect(x, y, 80, 50);
+  ctx.stroke();
+  x = canvas.width / 2;
+  y = canvas.height - 75;
+  ctx.textAlign = "center";
+  ctx.font = "20px 'MS UI Gothic'";
+  ctx.fillText("Push!!", x, y);
   ctx.closePath();
 }
 
@@ -363,7 +387,7 @@ function gameOver() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-let isRoomSearch = true;
+let isRoomSearch = false;
 
 let isGameTime = true;
 
