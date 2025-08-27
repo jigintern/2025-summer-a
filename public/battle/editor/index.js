@@ -1,31 +1,12 @@
-const createForm = document.getElementById("createRoomForm");
-
-// ユーザー一覧を更新する関数
-function updateUsersArea(users) {
-  let usersArea = document.getElementById("usersArea");
-  if (!usersArea) {
-    usersArea = document.createElement("div");
-    usersArea.id = "usersArea";
-    document.getElementById("roomArea").after(usersArea);
-  }
-  usersArea.textContent = "参加者: " + users.join(", ");
-}
-
-//ルーム作成
-createForm.addEventListener("submit", async (e) => {
+const form = document.getElementById("joinRoomForm");
+form.addEventListener("submit", (e) => {
   e.preventDefault();
-  const formData = new FormData(createForm);
+  const formData = new FormData(form);
   const roomName = formData.get("roomName");
-  const userNameRes = await fetch("/cookiePlayer", { method: "GET" });
-  const userName = await userNameRes.text();
-  //最大人数チェック用に残してる
-  //const userName = formData.get("userName");
 
-  ws = new WebSocket(
-    `ws://${location.host}/ws/battle?room=${roomName}&user=${userName}`,
-  );
+  const ws = new WebSocket(`ws://${location.host}/ws/battle?room=${roomName}`);
 
-  ws.onopen = async () => {
+  ws.onopen = () => {
     console.log("WebSocket接続が開かれました");
 
     // 部屋入室
@@ -36,36 +17,12 @@ createForm.addEventListener("submit", async (e) => {
     const roomArea = document.getElementById("roomArea");
     roomArea.style.display = "block";
     roomArea.textContent = `部屋名: ${roomName}`;
-
-    // ユーザー一覧取得
-    const usersRes = await fetch(`/room-users?room=${roomName}`);
-    if (usersRes.ok) {
-      const users = await usersRes.json();
-      updateUsersArea(users);
-    } else if (res.status === 403) {
-      // 部屋番号が違います
-      alert("人数オーバーです:");
-    } else if (res.status === 404) {
-      // 部屋番号が違います
-      alert("部屋番号が違います:");
-    } else {
-      // その他のエラー
-      alert("部屋作成失敗:");
-    }
   };
 
-  ws.onmessage = (e) => {
-    try {
-      const data = JSON.parse(e.data);
-      if (data.type === "users") {
-        updateUsersArea(data.users);
-      } else {
-        // 他のtypeの場合（例: チャット）
-        chatPre.textContent += e.data + "\n";
-      }
-    } catch {
-      // JSONでない場合（従来のチャット等）
-      chatPre.textContent += e.data + "\n";
-    }
+  ws.onclose = (e) => {
+    alert(e.reason);
+  };
+  ws.onerror = (e) => {
+    alert(e.type);
   };
 });
