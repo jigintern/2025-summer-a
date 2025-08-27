@@ -129,7 +129,7 @@ Deno.serve(async (req) => {
     const { socket, response } = Deno.upgradeWebSocket(req);
 
     // 部屋がなければ新規作成
-    if (waitingUser.has(roomName)) {
+    if (!waitingUser.has(roomName)) {
       waitingUser.set(roomName, { username, socket });
       socket.onclose = () => {
         waitingUser.delete(roomName);
