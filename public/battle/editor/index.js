@@ -1,5 +1,4 @@
 const createForm = document.getElementById("createRoomForm");
-const joinForm = document.getElementById("joinRoomForm");
 
 // ユーザー一覧を更新する関数
 function updateUsersArea(users) {
@@ -21,7 +20,6 @@ createForm.addEventListener("submit", async (e) => {
   const userName = await userNameRes.text();
   //最大人数チェック用に残してる
   //const userName = formData.get("userName");
-  console.log("join-roomへ送信するroomName:", roomName);
 
   ws = new WebSocket(
     `ws://${location.host}/ws/battle?room=${roomName}&user=${userName}`,
@@ -29,34 +27,30 @@ createForm.addEventListener("submit", async (e) => {
 
   ws.onopen = async () => {
     console.log("WebSocket接続が開かれました");
-    const res = await fetch("/join-room", { method: "POST", body: formData });
 
-    if (res.ok) {
-      // 部屋入室
-      alert("部屋入室:");
+    // 部屋入室
+    alert("部屋入室:");
 
-      // 画面切り替え（例: フォームを非表示、部屋名表示エリアを表示）
-      document.getElementById("formsArea").style.display = "none";
-      const roomArea = document.getElementById("roomArea");
-      roomArea.style.display = "block";
-      roomArea.textContent = `部屋名: ${roomName}`;
-      // ユーザー一覧取得
-      const usersRes = await fetch(`/room-users?room=${roomName}`);
-      if (usersRes.ok) {
-        const users = await usersRes.json();
-        updateUsersArea(users);
-      }
+    // 画面切り替え（例: フォームを非表示、部屋名表示エリアを表示）
+    document.getElementById("formsArea").style.display = "none";
+    const roomArea = document.getElementById("roomArea");
+    roomArea.style.display = "block";
+    roomArea.textContent = `部屋名: ${roomName}`;
+
+    // ユーザー一覧取得
+    const usersRes = await fetch(`/room-users?room=${roomName}`);
+    if (usersRes.ok) {
+      const users = await usersRes.json();
+      updateUsersArea(users);
+    } else if (res.status === 403) {
+      // 部屋番号が違います
+      alert("人数オーバーです:");
+    } else if (res.status === 404) {
+      // 部屋番号が違います
+      alert("部屋番号が違います:");
     } else {
-      if (res.status === 403) {
-        // 部屋番号が違います
-        alert("人数オーバーです:");
-      } else if (res.status === 404) {
-        // 部屋番号が違います
-        alert("部屋番号が違います:");
-      } else {
-        // その他のエラー
-        alert("部屋作成失敗:");
-      }
+      // その他のエラー
+      alert("部屋作成失敗:");
     }
   };
 
