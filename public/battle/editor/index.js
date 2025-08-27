@@ -46,7 +46,6 @@ form.addEventListener("submit", (e) => {
 
     attackBtn.addEventListener("click", () => {
       ws.send(JSON.stringify({
-        type: "player_action",
         power: 3.1419, //力の強さ
         direction: 3.1419,
       }));

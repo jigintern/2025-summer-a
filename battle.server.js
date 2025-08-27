@@ -23,7 +23,7 @@ export const battle = (player1, player2) => {
     player2[1].send(start);
   }
 
-  // クライアントからの情報を受け取る
+  // クライアントからの情報を受け取る ここなんか簡略化できそう
   player1[1].onmessage = (event) => {
     try {
       const data = JSON.parse(event.data);
