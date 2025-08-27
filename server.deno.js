@@ -130,7 +130,6 @@ Deno.serve(async (req) => {
     }
   }
 
-
   // 部屋作成 これ以下追加分
 
   // 部屋情報の初期化
@@ -211,6 +210,7 @@ Deno.serve(async (req) => {
     };
 
     return response;
+  }
 
   // 新規保存
   if (req.method === "POST" && pathname === "/AALibrary") {
@@ -349,7 +349,6 @@ Deno.serve(async (req) => {
       console.error("エラー:", error);
       return new Response("サーバーエラー", { status: 500 });
     }
-
   }
 
   return serveDir(req, {
