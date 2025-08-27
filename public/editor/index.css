@@ -50,6 +50,10 @@ body {
   content: "r";
 }
 
+#title-input {
+  margin-bottom: 5px;
+}
+
 .menu-bar {
   background-color: #ece9d8;
   padding: 3px 4px;
