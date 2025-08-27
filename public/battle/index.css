@@ -1,0 +1,55 @@
+html {
+  height: 100%;
+}
+
+body {
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  background-position: top;
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+#control_panel {
+  display: none;
+}
+
+.window_frame {
+  margin-top: 20px;
+  margin-left: 60px;
+  margin-right: 60px;
+  background: var(--window-fr-grad);
+  border: 2px outset var(--window-fr-color);
+  border-radius: 2px;
+  min-height: 0px;
+}
+
+.window {
+  position: relative;
+  min-height: auto;
+  aspect-ratio: 1000/500;
+}
+
+.window_main {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1000/500;
+}
+
+#battle_canvas {
+  position: absolute;
+}
+
+#room_word {
+  position: absolute;
+  top: 30%;
+  left: 20%;
+  right: 20%;
+  bottom: 50%;
+  font-size: 40px;
+}
