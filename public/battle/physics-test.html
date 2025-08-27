@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>衝突テスト</title>
+  </head>
+  <body>
+    <script type="module">
+      import { AAObj, BattleStatus } from "./physics.js";
+      const canvas = document.createElement("canvas");
+      canvas.width = 480;
+      canvas.height = 360;
+      const ctx = canvas.getContext("2d");
+      document.body.append(canvas);
+      const bs = new BattleStatus(
+        new AAObj(50, [80, 180], [4, 0.3], 0, 0.1),
+        new AAObj(60, [400, 180], [0, 0], 0, 0),
+      );
+      setInterval(() => {
+        bs.nextTick();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        ctx.arc(bs.a.x[0], bs.a.x[1], bs.a.r, 0, 2 * Math.PI);
+        ctx.arc(bs.b.x[0], bs.b.x[1], bs.b.r, 0, 2 * Math.PI);
+        ctx.fillStyle = "#f00";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(bs.a.x[0], bs.a.x[1]);
+        ctx.lineTo(
+          bs.a.x[0] + bs.a.r * Math.cos(bs.a.tt),
+          bs.a.x[1] + bs.a.r * Math.sin(bs.a.tt),
+        );
+        ctx.moveTo(bs.b.x[0], bs.b.x[1]);
+        ctx.lineTo(
+          bs.b.x[0] + bs.b.r * Math.cos(bs.b.tt),
+          bs.b.x[1] + bs.b.r * Math.sin(bs.b.tt),
+        );
+        ctx.stroke();
+      }, 20);
+    </script>
+  </body>
+</html>

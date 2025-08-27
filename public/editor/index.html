@@ -7,7 +7,7 @@
     <link rel="icon" href="data:image/x-icon;,">
     <link rel="stylesheet" href="../util/winXP.css">
     <link rel="stylesheet" href="./index.css">
-    <script src="./index.js"></script>
+    <script type="module" src="./index.js"></script>
   </head>
   <body>
     <div class="window_frame">
@@ -48,17 +48,18 @@
             id="debug-info"
             style="padding: 10px; background: #fff; border: 1px solid #7f9db9; margin-top: 5px"
           >
-          </div><br>
+          </div>
+          <br>
           <div class="main-content">
             <div class="toolbar">
               <input
                 type="radio"
-                id="btn-pen"
+                id="btn-text"
                 name="tool-button"
                 checked
               >
-              <label class="tool-button" for="btn-pen">
-                &#x34;
+              <label class="tool-button" for="btn-text">
+                &gt; <!-- "Aa"みたいなアイコン -->
               </label>
 
               <input
@@ -67,7 +68,12 @@
                 id="btn-line"
               >
               <label class="tool-button" for="btn-line">
-                &#x36;
+                <!-- 線分のアイコン -->
+                <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+                  <line x1="8" y1="22" x2="22" y2="8" stroke-width="2" stroke="currentColor"/>
+                  <circle cx="8" cy="22" r="3", fill="currentColor"/>
+                  <circle cx="22" cy="8" r="3", fill="currentColor"/>
+                </svg>
               </label>
 
               <input
@@ -76,7 +82,25 @@
                 id="btn-erase"
               >
               <label class="tool-button" for="btn-erase">
-                &#x38;
+                <!-- 消しゴムのアイコン -->
+                <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-width="1.5" stroke="currentColor" fill="#ccf" d="
+                    M15,25
+                    H5
+                    V18
+                    L15,5
+                    H25
+                    V12
+                    Z
+                  "/>
+                  <path stroke-width="1.5" stroke="currentColor" fill="none" d="
+                    M5,18
+                    H15
+                    V25
+                    M15,18
+                    L25,5
+                  "/>
+                </svg>
               </label>
 
               <input
@@ -88,7 +112,10 @@
                 s
               </label>
             </div>
-            <textarea class="editor-area"></textarea>
+            <div class="textarea-wrapper">
+              <textarea class="editor-area" id="editor-area"></textarea>
+              <div id="editor-overwrap"></div>
+            </div>
           </div>
 
           <div class="char-bar">

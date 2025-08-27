@@ -15,7 +15,7 @@ export const line = (aa, width, height, start, stop) => {
   const dx = stop[1] - start[1];
   if (dy === 0) {
     const count = Math.round(Math.abs(dx) / 16);
-    const left = (start[1] + stop[1]) / 2 - count * 8;
+    const left = Math.round((start[1] + stop[1]) / 2 - count * 8);
     for (let i = 0; i < count; ++i) {
       cp.addChar(stop[0], left + i * 16, "￣");
     }
