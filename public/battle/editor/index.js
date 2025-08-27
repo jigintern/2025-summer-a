@@ -1,4 +1,6 @@
 const form = document.getElementById("joinRoomForm");
+const roomArea = document.getElementById("roomArea");
+
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   const formData = new FormData(form);
@@ -14,7 +16,6 @@ form.addEventListener("submit", (e) => {
 
     // 画面切り替え（例: フォームを非表示、部屋名表示エリアを表示）
     document.getElementById("formsArea").style.display = "none";
-    const roomArea = document.getElementById("roomArea");
     roomArea.style.display = "block";
     roomArea.textContent = `部屋名: ${roomName}`;
   };
@@ -24,5 +25,30 @@ form.addEventListener("submit", (e) => {
   };
   ws.onerror = (e) => {
     alert(e.type);
+  };
+
+  ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.type === "battle_start") {
+      if (roomArea) {
+        roomArea.textContent = `対戦開始: あなた(${data.players[1]}) vs ${
+          data.players[0]
+        }`;
+      } else {
+        console.warn("要素 #roomArea が見つかりません");
+      }
+    }
+
+    const attackBtn = document.createElement("button");
+    attackBtn.textContent = "攻撃";
+    attackBtn.id = "attackBtn";
+    roomArea.appendChild(attackBtn);
+
+    attackBtn.addEventListener("click", () => {
+      ws.send(JSON.stringify({
+        power: 3.1419, //力の強さ
+        direction: 3.1419,
+      }));
+    });
   };
 });
