@@ -1,5 +1,23 @@
 window.devicePixelRatio = 2;
 
+const popupBackdrop = document.getElementById("popup-backdrop");
+const popupHeaderTitle = document.getElementById("popup-header-title");
+const popupCloseBt = document.getElementById("popup-close-bt");
+
+// ポップアップを閉じる処理
+const closePopup = () => {
+  popupBackdrop.style.display = "none";
+};
+
+// 閉じるボタンと背景クリックでポップアップを閉じる
+popupCloseBt.addEventListener("click", closePopup);
+popupBackdrop.addEventListener("click", (e) => {
+  // ポップアップウィンドウの内側をクリックしたときは閉じないようにする
+  if (e.target === popupBackdrop) {
+    closePopup();
+  }
+});
+
 (async () => {
   try {
     const response = await fetch("/AALibraryList", { method: "GET" });
@@ -55,6 +73,11 @@ window.devicePixelRatio = 2;
         // 少し左に余白を空けて描画
         ctx.fillText(lines[j], 5, y);
       }
+
+      opus.addEventListener("click", () => {
+        popupHeaderTitle.innerText = libraries[i].title; // タイトルをセット
+        popupBackdrop.style.display = "flex"; // ポップアップを表示
+      });
 
       opus.appendChild(opus_canvas);
       opus.appendChild(opus_title);
