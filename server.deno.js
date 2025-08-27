@@ -14,22 +14,12 @@ async function hashPassword(password) {
 
 /**
  * @typedef {Object} Room
- * @property {string} user
+ * @property {string} username
  * @property {WebSocket} socket
  */
 
 /** @type {Map<string, Room>} */
 const waitingUser = new Map();
-
-// ユーザー一覧を全員に送信する関数
-function broadcastUsers(room) {
-  const msg = JSON.stringify({ type: "users", users: room.users });
-  for (const s of room.sockets) {
-    try {
-      s.send(msg);
-    } catch {}
-  }
-}
 
 // ログインが必要なページ一覧
 const needLogin = ["/", "/index.html"];
@@ -130,47 +120,23 @@ Deno.serve(async (req) => {
     }
   }
 
-  // 部屋作成 これ以下追加分
-
-  // 部屋情報の初期化
-  /*room.users = [];
-  room.sockets = [];*/
-
-  if (pathname === "/cookiePlayer" && req.method === "GET") {
-    const cookie = getCookies(req.headers);
-    const userName = sessions.get(cookie["sessionid"] ?? "");
-    return new Response(userName);
-  }
-
-  if (req.method === "GET" && pathname === "/room-users") {
-    const params = new URL(req.url).searchParams; // ← ここで定義
-    const roomName = params.get("room");
-    const room = rooms.get(roomName);
-    if (!room) {
-      return new Response(JSON.stringify([]), { status: 404 });
-    }
-    return new Response(JSON.stringify(room.users), {
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  // WebSocket 接続
-  if (pathname.startsWith("/ws")) {
-    const params = new URL(req.url).searchParams; // ← ここで定義
+  if (pathname === "/ws/battle") {
+    const params = new URL(req.url).searchParams;
     const roomName = params.get("room") ?? "";
-    const userName = params.get("user") ?? "";
+    const cookie = getCookies(req.headers);
+    const username = sessions.get(cookie["sessionid"] ?? "");
 
     const { socket, response } = Deno.upgradeWebSocket(req);
 
     // 部屋がなければ新規作成
     if (waitingUser.has(roomName)) {
-      waitingUser.set(roomName, {
-        users: userName,
-        sockets: socket,
-      });
+      waitingUser.set(roomName, { username, socket });
     } else {
-      const { user: username2, socket: socket2 } = waitingUser.get(roomName);
-      battle([username2, socket2], [userName, socket]);
+      const {
+        username: username2,
+        socket: socket2,
+      } = waitingUser.get(roomName);
+      battle([username2, socket2], [username, socket]);
     }
 
     return response;
