@@ -26,18 +26,23 @@ body {
   background: var(--window-fr-grad);
   border: 2px outset var(--window-fr-color);
   border-radius: 2px;
+  height: auto;
   min-height: 0px;
 }
 
 .window {
   position: relative;
-  min-height: auto;
+  min-height: 0;
+  width: 100%;
+  height: auto;
   aspect-ratio: 1000/500;
+  flex-grow: 0;
 }
 
 .window_main {
   position: relative;
   width: 100%;
+  height: auto;
   aspect-ratio: 1000/500;
 }
 

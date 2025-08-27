@@ -13,6 +13,9 @@ function setDispSize() {
   const area = document.getElementById("window_main");
   console.log(area.clientWidth);
   console.log(area.clientHeight);
+
+//  area.style.height = (area.clientWidth / 2) + "px";
+
   if (area.clientHeight * 1000 > area.clientWidth * 500) {
     aspect = area.clientWidth / canvas.width;
     canvas.style.width = area.clientWidth + "px";
@@ -385,13 +388,35 @@ function fpsUpdate(timestamp) {
 }
 
 function checkDeath() {
-  if (bs.a.x[0] < -bs.a.r || bs.a.x[0] > 1000 + bs.a.r) console.log("death");
-  else if (bs.a.x[1] < -bs.a.r || bs.a.x[1] > 500 + bs.a.r) {
-    console.log("death");
+  if (bs.a.x[0] < -bs.a.r || bs.a.x[0] > 1000 + bs.a.r) {
+    deathX = bs.a.x[0] < 0 ? 0 : 1000;
+    deathY = bs.a.x[1];
+    deathAngle = Math.atan(bs.a.dx[1] / bs.a.dx[0]) + Math.PI;
+    deathSize = bs.a.r;
+    isGameTime = false;
+    isGameOver = true;
+  } else if (bs.a.x[1] < -bs.a.r || bs.a.x[1] > 500 + bs.a.r) {
+    deathX = bs.a.x[0];
+    deathY = bs.a.x[1] < 0 ? 0 : 500;
+    deathAngle = Math.atan(bs.a.dx[1] / bs.a.dx[0]) + Math.PI;
+    deathSize = bs.a.r;
+    isGameTime = false;
+    isGameOver = true;
   }
-  if (bs.b.x[0] < -bs.b.r || bs.b.x[0] > 1000 + bs.b.r) console.log("death");
-  else if (bs.b.x[1] < -bs.b.r || bs.b.x[1] > 500 + bs.b.r) {
-    console.log("death");
+  if (bs.b.x[0] < -bs.b.r || bs.b.x[0] > 1000 + bs.b.r) {
+    deathX = bs.b.x[0] < 0 ? 0 : 1000;
+    deathY = bs.b.x[1];
+    deathAngle = Math.atan(bs.b.dx[1] / bs.b.dx[0]) + Math.PI;
+    deathSize = bs.b.r;
+    isGameTime = false;
+    isGameOver = true;
+  } else if (bs.b.x[1] < -bs.b.r || bs.b.x[1] > 500 + bs.b.r) {
+    deathX = bs.b.x[0];
+    deathY = bs.b.x[1] < 0 ? 0 : 500;
+    deathAngle = Math.atan(bs.b.dx[1] / bs.b.dx[0]) + Math.PI;
+    deathSize = bs.b.r;
+    isGameTime = false;
+    isGameOver = true;
   }
 }
 
@@ -622,20 +647,29 @@ function roomSearch() {
 }
 
 let deathX = 0;
-let deathY = 0;
+let deathY = 250;
 let deathAngle = 0;
+let deathSize = 20;
+
 function drawGameOver() {
   ctx.save();
+  ctx.translate(deathX, deathY);
+  ctx.rotate(deathAngle);
 
-  
+  ctx.beginPath();
+  ctx.ellipse(0, 0, canvas.height / 2, deathSize, 0, 0, Math.PI * 2);
+
+  ctx.fillStyle = "#000000";
+  ctx.fill();
+  ctx.closePath();
 
   ctx.restore();
 }
 
 function gameOver() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawGameOver();
   drawMyAA();
+  drawGameOver();
 }
 
 let isRoomSearch = true;
