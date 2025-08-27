@@ -232,7 +232,7 @@ Deno.serve(async (req) => {
     try {
       const cookie = getCookies(req.headers);
       const sessionid = cookie["sessionid"] ?? "";
-      const username = sessions.get(sessionid);
+      const username = sessions.get(sessionid) ?? "";
       if (!username) {
         return new Response("認証されていません", { status: 401 });
       }
