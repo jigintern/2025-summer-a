@@ -31,8 +31,8 @@ setDispSize();
 window.addEventListener("resize", setDispSize);
 
 const bs = new BattleStatus(
-  new AAObj(50, [80, 180], [0, 0], 0, 0),
-  new AAObj(60, [400, 180], [0, 0], 0, 0),
+  new AAObj(50, [250, 250], [0, 0], 0, 0),
+  new AAObj(50, [750, 250], [0, 0], 0, 0),
 );
 
 let mouseX = 0;
@@ -83,7 +83,8 @@ function onMouseDown() {
 //マウスのクリック検知関数
 function onMouseUp() {
   isMouseDown = false;
-  if (isMouseOverBt) buttonPush();
+  if (isMouseOverBt && isButtonEnable) buttonPush();
+  if (isMouseOverUserBt && isRoomInEnable) roomInButtonPush();
 }
 
 canvas.addEventListener("mousedown", onMouseDown, false);
@@ -108,8 +109,7 @@ function getMousePosition(canvas, evt) {
 
 let metarNum = 0;
 const metarMaxNum = 10;
-const velcVar = 12.5;
-let metarVelc = velcVar;
+const metarVelc = 12.5;
 
 //AAを打ち出す関数
 function AAShoot() {
@@ -129,6 +129,7 @@ function buttonPush() {
     AAShoot();
   }
 }
+
 const powerImg = new Image();
 powerImg.addEventListener("load", () => {
 });
@@ -173,8 +174,8 @@ function drawMeter() {
     y - h,
   );
 
-  gradient2.addColorStop(0, "#acad3fff");
-  gradient2.addColorStop(0.4, "#ffd556ff");
+  gradient2.addColorStop(0, "#6dff8dff");
+  gradient2.addColorStop(0.4, "#dfff87ff");
   gradient2.addColorStop(0.7, "#fc260eff");
   gradient2.addColorStop(1, "#fc590eff");
 
@@ -225,7 +226,7 @@ function drawArrow() {
   ctx.save();
   ctx.translate(bs.a.x[0], bs.a.x[1]);
   ctx.rotate(angle);
-  sizey = 100 + 15 * Math.sin(sizeAngle);
+  sizey = 10 * (1 + metarNum) * (1 + 0.1 * Math.sin(sizeAngle));
   sizex = 100;
   ctx.drawImage(arrowImg, -sizex / 2, -sizey - bs.a.r, sizex, sizey);
   ctx.restore();
@@ -280,14 +281,40 @@ function drawMyAA() {
   ctx.arc(bs.a.x[0], bs.a.x[1], bs.a.r, 0, 2 * Math.PI);
   ctx.stroke();
   ctx.closePath();
-  ctx.beginPath();
-  ctx.arc(bs.a.x[0], bs.a.x[1], bs.a.r, 0, 2 * Math.PI);
-  ctx.stroke();
-  ctx.closePath();
+
   ctx.beginPath();
   ctx.arc(bs.b.x[0], bs.b.x[1], bs.b.r, 0, 2 * Math.PI);
   ctx.stroke();
   ctx.closePath();
+
+  if (isConflict) {
+    ctx.beginPath();
+    ctx.fillStyle = "#ff0000ff";
+    ctx.arc(
+      bs.a.x[0],
+      bs.a.x[1],
+      bs.a.r,
+      conflictAngle - 1.5 * conflictEffectTime,
+      conflictAngle + 1.5 * conflictEffectTime,
+    );
+    ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+    ctx.arc(
+      bs.b.x[0],
+      bs.b.x[1],
+      bs.b.r,
+      conflictAngle - 1.5 * conflictEffectTime - Math.PI,
+      conflictAngle + 1.5 * conflictEffectTime - Math.PI,
+    );
+    ctx.stroke();
+    ctx.closePath();
+    conflictEffectTime -= deltaTime;
+    if (conflictEffectTime < 0) {
+      conflictEffectTime = 0;
+      isConflict = false;
+    }
+  }
 }
 
 function testDraw() {
@@ -299,8 +326,18 @@ function testDraw() {
   ctx.fillText("firstTime:" + firstTimestamp, 100, 140);
 }
 
+let isConflict = false;
+let conflictAngle = 0;
+let conflictEffectTime = 0;
+
 function AAMove() {
-  bs.nextTick();
+  if (bs.nextTick()) {
+    isConflict = true;
+    conflictAngle = Math.atan(
+      (bs.a.x[1] - bs.b.x[1]) / (bs.a.x[0] - bs.b.x[0]),
+    );
+    conflictEffectTime = 0.5;
+  }
 }
 
 let deltaTime = 0;
@@ -319,23 +356,16 @@ function fpsUpdate(timestamp) {
   }
   lastTimestamp = timestamp;
 }
-let textarea = null;
-
-canvas.addEventListener("onclick", function (e) {
-  if (!textarea) {
-    textarea = document.createElement("textarea");
-    textarea.className = "info";
-    document.body.appendChild(textarea);
-  }
-  var x = e.clientX - canvas.offsetLeft,
-    y = e.clientY - canvas.offsetTop;
-  console.log("asasasasasasasasas" + x);
-  textarea.value = "x: " + x + " y: " + y;
-  textarea.style.top = e.clientY + "px";
-  textarea.style.left = e.clientX + "px";
-}, false);
 
 function checkDeath() {
+  if (bs.a.x[0] < -bs.a.r || bs.a.x[0] > 1000 + bs.a.r) console.log("death");
+  else if (bs.a.x[1] < -bs.a.r || bs.a.x[1] > 500 + bs.a.r) {
+    console.log("death");
+  }
+  if (bs.b.x[0] < -bs.b.r || bs.b.x[0] > 1000 + bs.b.r) console.log("death");
+  else if (bs.b.x[1] < -bs.b.r || bs.b.x[1] > 500 + bs.b.r) {
+    console.log("death");
+  }
 }
 
 function gameFlow() {
@@ -349,16 +379,32 @@ function gameFlow() {
   //testDraw();
 }
 
+let isRoomInEnable = true;
+let roomWord = "";
+
+function roomInButtonPush() {
+  const roomInput = document.getElementById("room_word");
+  roomWord = roomInput.value;
+  if (roomWord === "") return;
+  isRoomSearch = false;
+  roomInput.style.display = "none";
+  isGameTime = true;
+}
+
+let isMouseOverUserBt = false;
+
 function drawUserInputRect() {
   ctx.beginPath();
   let x = canvas.width / 2 - 40;
-  let y = canvas.height - 100;
+  let y = 2 * canvas.height / 3 - 25;
   ctx.rect(x, y, 80, 50);
   ctx.fillStyle = "#ff0000ff";
-  isMouseOverBt = false;
+  isMouseOverUserBt = false;
   if (mouseX < canvas.width / 2 + 40 && mouseX > canvas.width / 2 - 40) {
-    if (mouseY < canvas.height - 50 && mouseY > canvas.height - 100) {
-      isMouseOverBt = true;
+    if (
+      mouseY < 2 * canvas.height / 3 + 25 && mouseY > 2 * canvas.height / 3 - 25
+    ) {
+      isMouseOverUserBt = true;
       if (isMouseDown) {
         ctx.fillStyle = "#77a3b8ff";
       } else {
@@ -371,10 +417,18 @@ function drawUserInputRect() {
   ctx.rect(x, y, 80, 50);
   ctx.stroke();
   x = canvas.width / 2;
-  y = canvas.height - 75;
+  y = 2 * canvas.height / 3;
   ctx.textAlign = "center";
   ctx.font = "20px 'MS UI Gothic'";
-  ctx.fillText("Push!!", x, y);
+  ctx.fillText("入室!!", x, y);
+  ctx.closePath();
+
+  ctx.beginPath();
+  x = canvas.width / 2;
+  y = canvas.height / 4;
+  ctx.textAlign = "center";
+  ctx.font = "20px 'MS UI Gothic'";
+  ctx.fillText("あいことばを入力", x, y);
   ctx.closePath();
 }
 
@@ -383,11 +437,15 @@ function roomSearch() {
   drawUserInputRect();
 }
 
-function gameOver() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+function drawGameOver() {
 }
 
-let isRoomSearch = false;
+function gameOver() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawGameOver();
+}
+
+let isRoomSearch = true;
 
 let isGameTime = true;
 

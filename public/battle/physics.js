@@ -57,6 +57,7 @@ export class BattleStatus {
   }
 
   nextTick() {
+    let ans = false;
     this.a.x[0] += this.a.dx[0];
     this.a.x[1] += this.a.dx[1];
     this.a.tt += this.a.dtt;
@@ -64,6 +65,7 @@ export class BattleStatus {
     this.b.x[1] += this.b.dx[1];
     this.b.tt += this.b.dtt;
     if (this.#isConfrict()) {
+      ans = true;
       this.a.x[0] -= this.a.dx[0];
       this.a.x[1] -= this.a.dx[1];
       this.b.x[0] -= this.b.dx[0];
@@ -122,6 +124,8 @@ export class BattleStatus {
       this.b.dx[1] -= this.b.dx[1] / vb * this.b.mu;
       this.b.dtt *= 1 - (this.b.mu / vb);
     }
+
+    return ans;
   }
 
   /**
