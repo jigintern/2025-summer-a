@@ -133,20 +133,26 @@ button {
   cursor: pointer;
   font-size: 1rem;
   margin: 0 0.5rem;
-
   font-family: "MS UI Gothic", sans-serif;
-  background-color: #ece9d8;
   color: black;
-  border: 2px outset #c0c0c0;
-  border-radius: 0;
-
   user-select: none;
+
+  background: linear-gradient(to bottom, #f5f5f5, #e1e1e1);
+  border: 1px solid #666666;
+  border-radius: 3px;
 }
 
 .access_bt:hover {
-  border-color: #a0a0a0;
+  border: 1px solid #3399ff;
+  background: linear-gradient(to bottom, #e1f0ff, #b8d9ff);
 }
 
 .access_bt:active {
-  border-style: inset;
+  border: 1px solid #3399ff;
+  background: linear-gradient(to top, #e1f0ff, #b8d9ff);
+}
+
+.access_bt:focus {
+  outline: 1px dotted #000;
+  outline-offset: -4px;
 }
