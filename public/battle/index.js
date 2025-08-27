@@ -349,10 +349,18 @@ function gameFlow() {
   //testDraw();
 }
 
+function userInputRect() {
+  ctx.beginPath();
+  ctx.closePath();
+}
+
 function roomSearch() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawUserInputRect();
 }
 
 function gameOver() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 let isRoomSearch = true;
