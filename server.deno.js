@@ -15,6 +15,7 @@ async function hashPassword(password) {
  * @typedef {Object} Room
  * @property {string[]} users
  * @property {WebSocket[]} sockets
+ * @property {"waiting"|"playing"} state
  */
 
 /** @type {Map<string, Room>} */
@@ -178,7 +179,7 @@ Deno.serve(async (req) => {
 
     // 部屋がなければ新規作成
     if (!rooms.has(roomName)) {
-      rooms.set(roomName, { users: [], sockets: [] });
+      rooms.set(roomName, { users: [], sockets: [], state: "waiting" });
     }
 
     const room = rooms.get(roomName);
@@ -186,8 +187,7 @@ Deno.serve(async (req) => {
     // 最大人数を設定（2人）
     const MAX_USERS = 2;
     if (rooms.get(roomName).users.length >= MAX_USERS) {
-      socket.close("この部屋は満員です");
-      return;
+      return socket.close("この部屋は満員です", { status: 403 });
     }
 
     // ユーザー追加
@@ -200,6 +200,15 @@ Deno.serve(async (req) => {
       socket.close(1000, "User already in room");
     }
 
+    // 状態を更新
+    if (room.users.length === 2) {
+      room.state = "playing";
+    } else {
+      room.state = "waiting";
+    }
+    console.log("Room state: " + room.state);
+    console.log("Room user count: " + room.users.length);
+
     room.sockets.push(socket);
     // 入室時にユーザー一覧を全員に送信
     broadcastUsers(room);
@@ -209,6 +218,10 @@ Deno.serve(async (req) => {
       room.users = room.users.filter((u) => u !== userName);
       // 退出時もユーザー一覧を全員に送信
       broadcastUsers(room);
+      // 部屋が空になったら削除
+      if (room.users.length === 0) {
+        rooms.delete(roomName);
+      }
     };
 
     return response;
