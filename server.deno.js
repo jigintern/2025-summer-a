@@ -133,13 +133,13 @@ Deno.serve(async (req) => {
       waitingUser.set(roomName, { username, socket });
       socket.onclose = () => {
         waitingUser.delete(roomName);
-        socket2.onclose = null;
-        socket2.onerror = null;
+        socket.onclose = null;
+        socket.onerror = null;
       };
       socket.onerror = () => {
         waitingUser.delete(roomName);
-        socket2.onclose = null;
-        socket2.onerror = null;
+        socket.onclose = null;
+        socket.onerror = null;
       };
     } else {
       const {
