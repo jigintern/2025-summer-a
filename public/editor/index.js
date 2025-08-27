@@ -20,28 +20,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const handleSave = async () => {
     console.log("「保存」ボタンが押されました。");
     // ここに保存処理を書いていく
-    const titleName = document.getElementById("editor-area").value;
+    const title = `作品-${Date.now()}`; // TODO: タイトルを入力できるようにする
     const AA = document.getElementById("editor-area").value;
-    console.log(AA, titleName);
+    const aaId = new URL(location.href).searchParams.get("id");
 
     try {
-      const response = await fetch("/AALibrary", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          "title": titleName,
-          "AA": AA,
-        }),
-      });
+      if (aaId == null) {
+        const response = await fetch("/AALibrary", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, AA }),
+        });
 
-      if (response.ok) {
-        // 成功時の処理
-      } else {
-        alert(
-          "保存に失敗しました",
-        );
+        if (response.ok) {
+          const { aaId } = await response.json();
+          history.replaceState(null, "", `/editor/?id=${aaId}`);
+        } else if (response.status === 401) {
+          alert("ログインして下さい");
+        } else {
+          alert("保存に失敗しました");
+        }
       }
     } catch (error) {
       console.error("エラー:", error);

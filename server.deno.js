@@ -142,7 +142,7 @@ Deno.serve(async (req) => {
       }
 
       console.log("AALibraryに追加:", { title, AA });
-      return new Response("追加しました", { status: 200 });
+      return new Response(JSON.stringify({ aaId }), { status: 200 });
     } catch (error) {
       console.error("エラー:", error);
       return new Response("サーバーエラー", { status: 500 });
