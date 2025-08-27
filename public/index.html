@@ -33,11 +33,15 @@
       </div>
       <div class="window">
         <header id="control_panel">
+          <button
+            class="control_panel_bt"
+            id="to_edit_bt"
+            onclick="location.href = '/editor/'"
+          >
+            新規作成(E)
+          </button>
           <button class="control_panel_bt" id="to_battle_bt">
             対戦(B)
-          </button>
-          <button class="control_panel_bt" id="to_edit_bt">
-            編集(E)
           </button>
           <button
             class="control_panel_bt"
@@ -71,10 +75,6 @@
             -o_           . +               *                                                                    |        
    +        /                                                            +                           +                    
      *                                                     +                 .                                .           </pre>
-          <div class="window_title">
-            <h1>作品</h1>
-            <span id="opus_num">0個</span>
-          </div>
           <div id="access_to_any">
             <div class="access_to_any" id="access_to_edit">
               <button
@@ -85,11 +85,12 @@
                 つくる！
               </button>
             </div>
-            <div class="access_to_any" id="access_to_battle">
+            <!-- このボタンは不要かもしれないので一旦コメントアウト -->
+            <!-- <div class="access_to_any" id="access_to_battle">
               <button class="access_bt" id="access_to_battle_bt">
                 あそぶ！
               </button>
-            </div>
+            </div> -->
           </div>
           <div id="opus_is_none">
             <h1>作品がありません</h1>
