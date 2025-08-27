@@ -15,25 +15,11 @@ function updateUsersArea(users) {
 //ルーム作成
 createForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  console.log("部屋作成中...");
   const formData = new FormData(createForm);
-  const res = await fetch("/create-room", { method: "POST", body: formData });
-  if (res.ok) {
-    // 部屋作成成功
-    alert("部屋作成成功:", res.roomName);
-  } else {
-    // 部屋作成失敗
-    alert("部屋作成失敗:");
-  }
-});
-
-//ルーム参加
-joinForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const formData = new FormData(joinForm);
   const roomName = formData.get("roomName");
   const userNameRes = await fetch("/cookiePlayer", { method: "GET" });
   const userName = await userNameRes.text();
+  console.log(userName + "が部屋に入室しました");
   //最大人数チェック用に残してる
   //const userName = formData.get("userName");
   console.log("join-roomへ送信するroomName:", roomName);
@@ -50,7 +36,7 @@ joinForm.addEventListener("submit", async (e) => {
     );*/
 
     ws = new WebSocket(
-      `ws://localhost:8000/ws/battle?room=${roomName}&user=${userName}`,
+      `ws://${location.host}/ws/battle?room=${roomName}&user=${userName}`,
     );
 
     ws.onopen = async () => {

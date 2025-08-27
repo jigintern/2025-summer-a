@@ -148,15 +148,6 @@ Deno.serve(async (req) => {
   // 部屋作成 これ以下追加分
   if (req.method === "POST" && pathname === "/create-room") {
     return req.formData().then((formData) => {
-      const roomName = formData.get("roomName");
-      if (rooms.has(roomName)) {
-        // 既に同じ名前の部屋が存在する場合は作れない
-        return new Response(`同じ名前の部屋が既に存在します`, {
-          status: 400,
-        });
-      }
-      rooms.set(roomName, { users: [], sockets: [] });
-      return new Response(`部屋作成${roomName}`);
     });
   }
 
@@ -167,40 +158,43 @@ Deno.serve(async (req) => {
   if (pathname === "/cookiePlayer" && req.method === "GET") {
     const cookie = getCookies(req.headers);
     const userName = sessions.get(cookie["sessionid"] ?? "");
+    console.log(userName + "が部屋に入室しました");
     return new Response(userName);
   }
 
   // 部屋入室
   if (pathname === "/join-room" && req.method === "POST") {
     return req.formData().then((formData) => {
+      const roomName = formData.get("roomName");
       const cookie = getCookies(req.headers);
       //cookieからユーザー名を取得
       const userName = sessions.get(cookie["sessionid"] ?? "");
-      const roomName = formData.get("roomName");
+
+      if (rooms.has(roomName)) {
+        // 最大人数を設定（2人）
+        const MAX_USERS = 2;
+        if (rooms.get(roomName).users.length >= MAX_USERS) {
+          return new Response("この部屋は満員です", { status: 403 });
+        }
+        if (!rooms.get(roomName).users.includes(userName)) {
+          rooms.get(roomName).users.push(userName);
+        }
+        return new Response(`入室`);
+      } else {
+        rooms.set(roomName, { users: [], sockets: [] });
+        if (!rooms.get(roomName).users.includes(userName)) {
+          rooms.get(roomName).users.push(userName);
+        }
+        return new Response(`入室`);
+      }
 
       //最大人数チェック用に残してる
       //const userName = formData.get("userName");
       //console.log("join-roomリクエスト:", roomName, userName);
       //console.log("現在の部屋一覧:", [...rooms.keys()]);
-
-      const room = rooms.get(roomName);
-      if (!room) {
-        console.log("部屋が存在しません:", roomName);
-        return new Response(`Room ${roomName} does not exist.`, {
-          status: 404,
-        });
-      }
-      // 最大人数を設定（2人）
-      const MAX_USERS = 2;
-      if (room.users.length >= MAX_USERS) {
-        return new Response("この部屋は満員です", { status: 403 });
-      }
-      if (!room.users.includes(userName)) {
-        room.users.push(userName);
-      }
-      return new Response(`入室`);
     });
   }
+
   if (req.method === "GET" && pathname === "/room-users") {
     const params = new URL(req.url).searchParams; // ← ここで定義
     const roomName = params.get("room");
