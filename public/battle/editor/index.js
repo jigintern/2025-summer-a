@@ -34,9 +34,26 @@ form.addEventListener("submit", (e) => {
         roomArea.textContent = `対戦開始: あなた(${data.rival[1]}) vs ${
           data.rival[0]
         }`;
+
+        //サーバーに情報を送る
+        ws.send(JSON.stringify({
+          type: "join",
+        }));
       } else {
         console.warn("要素 #roomArea が見つかりません");
       }
     }
+
+    const attackBtn = document.createElement("button");
+    attackBtn.textContent = "攻撃";
+    attackBtn.id = "attackBtn";
+    roomArea.appendChild(attackBtn);
+
+    attackBtn.addEventListener("click", () => {
+      ws.send(JSON.stringify({
+        type: "player_action",
+        value: "punch", // 例: 攻撃の種類
+      }));
+    });
   };
 });

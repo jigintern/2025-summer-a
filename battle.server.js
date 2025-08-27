@@ -6,15 +6,39 @@ export const battle = (player1, player2) => {
   // TODO: 対戦を実装する
   console.log(`対戦開始: ${player1[0]} vs ${player2[0]}`);
 
-  // クライアントに対戦開始メッセージを送信
+  // 初期状態を設定
   const startInformation = {
     type: "battle_start",
     rival: [player1[0], player2[0]],
   };
-  const start = JSON.stringify(startInformation);
 
+  //初期状態を送信
+  const start = JSON.stringify(startInformation);
   player1[1].send(start);
   player2[1].send(start);
+
+  // クライアントからの情報を受け取る
+  player1[1].onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      console.log(`player1から受信:`, data);
+      // ここで処理を追加
+    } catch (e) {
+      console.error("player1: JSON parse error", e);
+    }
+  };
+
+  player2[1].onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      console.log(`player2から受信:`, data);
+      // ここで処理を追加
+    } catch (e) {
+      console.error("player2: JSON parse error", e);
+    }
+  };
+
+  //クライアント側から情報を受け取る
 
   //player1[1].close(4000, "まだ作ってない!");
   //player2[1].close(4000, "まだ作ってない!");
