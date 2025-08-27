@@ -186,7 +186,8 @@ Deno.serve(async (req) => {
     // 最大人数を設定（2人）
     const MAX_USERS = 2;
     if (rooms.get(roomName).users.length >= MAX_USERS) {
-      return new Response("この部屋は満員です", { status: 403 });
+      socket.close("この部屋は満員です");
+      return;
     }
 
     // ユーザー追加
