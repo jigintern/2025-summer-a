@@ -4,8 +4,6 @@ window.devicePixelRatio = 2;
   try {
     const response = await fetch("/AALibraryList", { method: "GET" });
     if (!response.ok) {
-      // ログインページなど、エラー時のリダイレクト先があればここに記述します。
-      // location.href = "/login/";
       return;
     }
     const json = await response.json();
@@ -75,7 +73,5 @@ window.devicePixelRatio = 2;
     }
   } catch (error) {
     console.error("エラー:", error);
-    // ログインページなど、エラー時のリダイレクト先があればここに記述します。
-    // location.href = "/login/";
   }
 })();
