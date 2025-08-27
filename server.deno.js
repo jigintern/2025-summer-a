@@ -128,29 +128,31 @@ Deno.serve(async (req) => {
 
     const { socket, response } = Deno.upgradeWebSocket(req);
 
-    // 部屋がなければ新規作成
-    if (!waitingUser.has(roomName)) {
-      waitingUser.set(roomName, { username, socket });
-      socket.onclose = () => {
+    socket.onopen = () => {
+      // 部屋がなければ新規作成
+      if (!waitingUser.has(roomName)) {
+        waitingUser.set(roomName, { username, socket });
+        socket.onclose = () => {
+          waitingUser.delete(roomName);
+          socket.onclose = null;
+          socket.onerror = null;
+        };
+        socket.onerror = () => {
+          waitingUser.delete(roomName);
+          socket.onclose = null;
+          socket.onerror = null;
+        };
+      } else {
+        const {
+          username: username2,
+          socket: socket2,
+        } = waitingUser.get(roomName);
         waitingUser.delete(roomName);
-        socket.onclose = null;
-        socket.onerror = null;
-      };
-      socket.onerror = () => {
-        waitingUser.delete(roomName);
-        socket.onclose = null;
-        socket.onerror = null;
-      };
-    } else {
-      const {
-        username: username2,
-        socket: socket2,
-      } = waitingUser.get(roomName);
-      waitingUser.delete(roomName);
-      socket2.onclose = null;
-      socket2.onerror = null;
-      battle([username2, socket2], [username, socket]);
-    }
+        socket2.onclose = null;
+        socket2.onerror = null;
+        battle([username2, socket2], [username, socket]);
+      }
+    };
 
     return response;
   }
