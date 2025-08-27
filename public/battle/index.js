@@ -406,6 +406,122 @@ function gameFlow() {
   //testDraw();
 }
 
+let waitTime = 0;
+
+function waitingText() {
+  ctx.beginPath();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#000000";
+  ctx.fillText(Math.floor(waitTime * 10) / 10, 100, 100);
+  ctx.closePath();
+}
+
+function hourglass() {
+  const x = canvas.width / 2;
+  const y = canvas.height / 2;
+  const w = canvas.width / 7;
+  const h = canvas.height / 3;
+  let animNum = 2 * (waitTime % 3) / 3;
+
+  let sundStyle = "rgba(255, 255, 255, 1)";
+  let glassStyle = "rgba(143, 143, 143, 1)";
+  let angleStyle;
+
+  ctx.save();
+  ctx.translate(x, y);
+  let animAngle = -1;
+  if (animNum > 1) {
+    if (animNum - 1 < 0.5) {
+      animAngle = (1 - Math.cos((animNum - 1) * Math.PI / 2)) /
+        (2 - Math.sqrt(2));
+    } else {
+      animAngle = 1 -
+        (1 - Math.sin((animNum - 1) * Math.PI / 2)) / (2 - Math.sqrt(2));
+    }
+    ctx.rotate(animAngle * Math.PI);
+    animNum = 1;
+  }
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(-w / 2, -h / 2);
+  ctx.lineTo(w / 2, -h / 2);
+  ctx.lineTo(0, 0);
+  ctx.fillStyle = sundStyle;
+  ctx.fill();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(-w / 2, h / 2);
+  ctx.lineTo(w / 2, h / 2);
+  ctx.lineTo(0, 0);
+  if (animAngle != -1) {
+    angleStyle = "rgba(" + (143 + (255 - 143) * animAngle) + "," +
+      (143 + (255 - 143) * animAngle) + "," + (143 + (255 - 143) * animAngle) +
+      "," + 1 + ")";
+  } else angleStyle = glassStyle;
+  ctx.fillStyle = angleStyle;
+  ctx.fill();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(-w / 2 * (1 - animNum) / 2, -h / 2 * (1 - animNum) / 2);
+  ctx.lineTo(w / 2 * (1 - animNum) / 2, -h / 2 * (1 - animNum) / 2);
+  ctx.lineTo(0, 0);
+  ctx.fillStyle = glassStyle;
+  ctx.fill();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(-w / 2 * (2 - animNum) / 2, h / 2 * (2 - animNum) / 2);
+  ctx.lineTo(w / 2 * (2 - animNum) / 2, h / 2 * (2 - animNum) / 2);
+  ctx.lineTo(0, 0);
+
+  if (animAngle != -1) {
+    angleStyle = "rgba(" + (255 - (255 - 143) * animAngle) + "," +
+      (255 - (255 - 143) * animAngle) + "," + (255 - (255 - 143) * animAngle) +
+      "," + 1 + ")";
+  } else angleStyle = sundStyle;
+  ctx.fillStyle = angleStyle;
+  ctx.fill();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(-w / 2, -h / 2);
+  ctx.lineTo(w / 2, -h / 2);
+  ctx.lineTo(0, 0);
+  ctx.strokeStyle = "#585858ff";
+  ctx.stroke();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(-w / 2, +h / 2);
+  ctx.lineTo(w / 2, +h / 2);
+  ctx.lineTo(0, 0);
+  ctx.stroke();
+  ctx.closePath();
+
+  ctx.restore();
+}
+
+function waitingAnim() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  waitingText();
+  hourglass();
+
+  if (waitTime > 10) {
+    console.log("test");
+    isWaiting = false;
+    isGameTime = true;
+  }
+  waitTime += deltaTime;
+}
+
 let isRoomInEnable = true;
 let roomWord = "";
 
@@ -413,9 +529,11 @@ function roomInButtonPush() {
   const roomInput = document.getElementById("room_word");
   roomWord = roomInput.value;
   if (roomWord === "") return;
+  isRoomInEnable = false;
   isRoomSearch = false;
+  waitTime = 0;
+  isWaiting = true;
   roomInput.style.display = "none";
-  isGameTime = true;
 }
 
 let isMouseOverUserBt = false;
@@ -511,6 +629,8 @@ function gameOver() {
 
 let isRoomSearch = true;
 
+let isWaiting = true;
+
 let isGameTime = true;
 
 let isGameOver = true;
@@ -527,6 +647,8 @@ function draw(timestamp) {
   resetStyle();
   if (isRoomSearch) {
     roomSearch();
+  } else if (isWaiting) {
+    waitingAnim();
   } else if (isGameTime) {
     gameFlow();
   } else if (isGameOver) {
