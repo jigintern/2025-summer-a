@@ -19,27 +19,22 @@ createForm.addEventListener("submit", async (e) => {
   const roomName = formData.get("roomName");
   const userNameRes = await fetch("/cookiePlayer", { method: "GET" });
   const userName = await userNameRes.text();
-  console.log(userName + "が部屋に入室しました");
   //最大人数チェック用に残してる
   //const userName = formData.get("userName");
   console.log("join-roomへ送信するroomName:", roomName);
-  const res = await fetch("/join-room", { method: "POST", body: formData });
 
-  if (res.ok) {
-    // 部屋入室
-    alert("部屋入室:");
+  ws = new WebSocket(
+    `ws://${location.host}/ws/battle?room=${roomName}&user=${userName}`,
+  );
 
-    // WebSocket接続
-    /*
-    ws = new WebSocket(
-      `ws://localhost:8000/ws?room=${roomName}&user=${userName}`,
-    );*/
+  ws.onopen = async () => {
+    console.log("WebSocket接続が開かれました");
+    const res = await fetch("/join-room", { method: "POST", body: formData });
 
-    ws = new WebSocket(
-      `ws://${location.host}/ws/battle?room=${roomName}&user=${userName}`,
-    );
+    if (res.ok) {
+      // 部屋入室
+      alert("部屋入室:");
 
-    ws.onopen = async () => {
       // 画面切り替え（例: フォームを非表示、部屋名表示エリアを表示）
       document.getElementById("formsArea").style.display = "none";
       const roomArea = document.getElementById("roomArea");
@@ -51,32 +46,32 @@ createForm.addEventListener("submit", async (e) => {
         const users = await usersRes.json();
         updateUsersArea(users);
       }
-    };
+    } else {
+      if (res.status === 403) {
+        // 部屋番号が違います
+        alert("人数オーバーです:");
+      } else if (res.status === 404) {
+        // 部屋番号が違います
+        alert("部屋番号が違います:");
+      } else {
+        // その他のエラー
+        alert("部屋作成失敗:");
+      }
+    }
+  };
 
-    ws.onmessage = (e) => {
-      try {
-        const data = JSON.parse(e.data);
-        if (data.type === "users") {
-          updateUsersArea(data.users);
-        } else {
-          // 他のtypeの場合（例: チャット）
-          chatPre.textContent += e.data + "\n";
-        }
-      } catch {
-        // JSONでない場合（従来のチャット等）
+  ws.onmessage = (e) => {
+    try {
+      const data = JSON.parse(e.data);
+      if (data.type === "users") {
+        updateUsersArea(data.users);
+      } else {
+        // 他のtypeの場合（例: チャット）
         chatPre.textContent += e.data + "\n";
       }
-    };
-  } else {
-    if (res.status === 403) {
-      // 部屋番号が違います
-      alert("人数オーバーです:");
-    } else if (res.status === 404) {
-      // 部屋番号が違います
-      alert("部屋番号が違います:");
-    } else {
-      // その他のエラー
-      alert("部屋作成失敗:");
+    } catch {
+      // JSONでない場合（従来のチャット等）
+      chatPre.textContent += e.data + "\n";
     }
-  }
+  };
 });
