@@ -46,7 +46,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const handleOpen = () => {
     console.log("「開く」ボタンが押されました。");
-    // ここにファイルを開く処理を書いていく
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.showPicker();
+    input.onchange = () => {
+      if (input.files.length === 0) return;
+      const url = URL.createObjectURL(input.files[0]);
+      textarea.style.backgroundImage =
+        `linear-gradient(rgba(255,255,255,80%)), url(${url})`;
+      textarea.style.backgroundPosition = "center";
+      textarea.style.backgroundRepeat = "no-repeat";
+      textarea.style.backgroundSize = "contain";
+    };
   };
 
   const handleSave = async () => {
