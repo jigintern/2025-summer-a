@@ -10,6 +10,23 @@ document.addEventListener("DOMContentLoaded", () => {
   /** @type {HTMLTextAreaElement} */
   const textarea = document.querySelector("#editor-area");
 
+  // AAの読み込み
+  {
+    const aaId = new URL(location.href).searchParams.get("id");
+    textarea.value = "Loading...";
+    if (aaId) {
+      fetch(`/AALibrary/${encodeURIComponent(aaId)}`)
+        .then((r) => r.json())
+        .then((aainfo) => {
+          textarea.value = aainfo.content;
+        })
+        .catch(() => {
+          alert("AAの読み込みに失敗しました");
+          if (textarea.value === "Loading...") textarea.value = "";
+        });
+    }
+  }
+
   const handleNew = () => {
     console.log("「新規作成」ボタンが押されました。");
     // ここに新規作成の処理を書いていく
