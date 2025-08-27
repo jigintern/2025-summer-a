@@ -1,81 +1,67 @@
 window.devicePixelRatio = 2;
 
-let opuses_length = 0;
-
 (async () => {
-  const response = await fetch("/AALibraryList", [method, "GET"]);
-  const json = await response.json();
-  const libraries = json["AA"];
-  document.getElementById("opus_num").innerText = libraries.length;
-});
-
-const libraries = [["name1", "(・w・)"], ["name2", "test"], [
-  "name3",
-  "　 ∧＿∧　\n（｡･ω･｡)つ━☆・*。\n⊂　　 ノ 　　　・゜+.\n　しーＪ　　　°。+ *´¨)\n　　　　　　　　　.· ´¸.·*´¨) ¸.·*¨)\n　　　　　　　　　　(¸.·´ (¸.·'* ☆",
-]];
-
-opuses_length = libraries.length;
-
-if (opuses_length === 0) {
-  document.getElementById("opus_is_none").style.display = "block";
-  console.log(opuses_length);
-} else {
-  document.getElementById("opus_is_none").style.display = "none";
-}
-
-const library_parent = document.getElementById("opuses");
-
-const row_string_cnt = 100;
-
-const font_size = 50;
-
-for (let i = 0; i < libraries.length; i++) {
-  const opus = document.createElement("button");
-  const opus_canvas = document.createElement("canvas");
-  const opus_title = document.createElement("p");
-  opus.classList.add("opus");
-  opus.id = "opus_" + libraries[i][0];
-  opus_canvas.classList.add("opus_image");
-  opus_canvas.id = "opus_img_" + libraries[i][0];
-  opus_title.classList.add("opus_title");
-  opus_title.id = "opus_tt_" + libraries[i][0];
-
-  opus_title.innerText = libraries[i][0];
-
-  const aryText = libraries[i][1];
-
-  const aryRow = [];
-  aryRow[0] = "";
-  let row_cnt = 0;
-
-  for (let j = 0; j < aryText.length; j++) {
-    let text = aryText[j];
-    if (aryRow[row_cnt].length >= row_string_cnt) {
-      row_cnt++;
-      aryRow[row_cnt] = "";
+  try {
+    const response = await fetch("/AALibraryList", { method: "GET" });
+    if (!response.ok) {
+      return;
     }
-    if (text == "\n") {
-      row_cnt++;
-      aryRow[row_cnt] = "";
-      text = "";
+    const json = await response.json();
+    const libraries = json["AA"];
+    document.getElementById("opus_num").innerText = libraries.length + "個";
+
+    if (libraries.length === 0) {
+      document.getElementById("opus_is_none").style.display = "block";
+    } else {
+      document.getElementById("opus_is_none").style.display = "none";
     }
-    aryRow[row_cnt] += text;
+
+    const library_parent = document.getElementById("opuses");
+
+    for (let i = 0; i < libraries.length; i++) {
+      const opus = document.createElement("button");
+      const opus_canvas = document.createElement("canvas");
+      const opus_title = document.createElement("p");
+
+      opus.classList.add("opus");
+      opus.id = "opus_" + libraries[i].title;
+      opus_canvas.classList.add("opus_image");
+      opus_canvas.id = "opus_img_" + libraries[i].title;
+      opus_title.classList.add("opus_title");
+      opus_title.id = "opus_tt_" + libraries[i].title;
+      opus_title.innerText = libraries[i].title;
+
+      // Canvasの描画サイズを高解像度ディスプレイに対応させる
+      opus_canvas.width = 160 * window.devicePixelRatio;
+      opus_canvas.height = 160 * window.devicePixelRatio;
+
+      const ctx = opus_canvas.getContext("2d");
+
+      // プレビュー用のフォントと行の高さを設定
+      const fontSize = 16; // 12pt ≒ 16px
+      const lineHeight = 18;
+      ctx.font = `${fontSize}px 'MS PGothic', sans-serif`;
+      ctx.fillStyle = "black";
+
+      const aaContent = libraries[i].content;
+      const lines = aaContent.split("\n");
+
+      // アスキーアートを一行ずつCanvasに描画する
+      for (let j = 0; j < lines.length; j++) {
+        const y = (j * lineHeight) + fontSize;
+        // Canvasの表示領域を超える場合は描画を中断
+        if (y > opus_canvas.height) {
+          break;
+        }
+        // 少し左に余白を空けて描画
+        ctx.fillText(lines[j], 5, y);
+      }
+
+      opus.appendChild(opus_canvas);
+      opus.appendChild(opus_title);
+      library_parent.appendChild(opus);
+    }
+  } catch (error) {
+    console.error("エラー:", error);
   }
-
-  const ctx = opus_canvas.getContext("2d");
-
-  for (let j = 0; j < aryRow.length; j++) {
-    aryStr = aryRow[j].split("");
-    for (let k = 0; k < aryStr.length; k++) {
-      ctx.fillText(
-        aryStr[k],
-        k * font_size / 4 + 0.5,
-        (j * font_size) / 4 + 10 + 0.5,
-      );
-    }
-  }
-
-  opus.appendChild(opus_canvas);
-  opus.appendChild(opus_title);
-  library_parent.appendChild(opus);
-}
+})();

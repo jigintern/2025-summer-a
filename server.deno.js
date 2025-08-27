@@ -214,22 +214,30 @@ Deno.serve(async (req) => {
       }
 
       const aaIds = [];
-
       for await (
         const entry of kv.list({ prefix: ["aa_by_user", username] }, {
           reverse: true,
           limit: 50,
         })
       ) {
-        const aaId = entry.value;
-        aaIds.push(aaId);
+        if (entry.value && typeof entry.value.aa_id === "string") {
+          aaIds.push(entry.value.aa_id);
+        }
       }
 
-      // 取得したIDのリストを使って、AA本体のデータをまとめて取得
-      const aaKeys = aaIds.map((id) => ["aa", id]);
-      const aaEntries = await kv.getMany(aaKeys);
+      // getManyは一度に10件までしかキーを取得できないため、分割して処理する
+      const chunkSize = 10;
+      let allAaEntries = [];
+      for (let i = 0; i < aaIds.length; i += chunkSize) {
+        const chunkIds = aaIds.slice(i, i + chunkSize);
+        const aaKeys = chunkIds.map((id) => ["aa", id]);
+        const aaEntries = await kv.getMany(aaKeys);
+        allAaEntries = allAaEntries.concat(aaEntries);
+      }
 
-      const AALibrary = aaEntries.map((entry) => entry.value);
+      const AALibrary = allAaEntries
+        .map((entry) => entry.value)
+        .filter((v) => v !== null);
 
       return new Response(JSON.stringify({ AA: AALibrary }), {
         status: 200,
