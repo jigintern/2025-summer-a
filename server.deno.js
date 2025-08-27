@@ -172,10 +172,9 @@ Deno.serve(async (req) => {
 
   // WebSocket 接続
   if (pathname.startsWith("/ws")) {
-    const { socket, response } = Deno.upgradeWebSocket(req);
     const params = new URL(req.url).searchParams; // ← ここで定義
     const roomName = params.get("room");
-    const userName = params.get("user");
+    const userName = params.get("user") ?? "";
 
     // 部屋がなければ新規作成
     if (!rooms.has(roomName)) {
@@ -187,7 +186,7 @@ Deno.serve(async (req) => {
     // 最大人数を設定（2人）
     const MAX_USERS = 2;
     if (rooms.get(roomName).users.length >= MAX_USERS) {
-      return socket.close("この部屋は満員です", { status: 403 });
+      return new Response("この部屋は満員です", { status: 403 });
     }
 
     // ユーザー追加
@@ -195,9 +194,9 @@ Deno.serve(async (req) => {
       room.users.push(userName);
     } else {
       if (!userName) {
-        socket.close(1000, "User no name");
+        return new Response("ログインしていません", { status: 400 });
       }
-      socket.close(1000, "User already in room");
+      return new Response("User already in room", { status: 400 });
     }
 
     // 状態を更新
@@ -208,6 +207,8 @@ Deno.serve(async (req) => {
     }
     console.log("Room state: " + room.state);
     console.log("Room user count: " + room.users.length);
+
+    const { socket, response } = Deno.upgradeWebSocket(req);
 
     room.sockets.push(socket);
     // 入室時にユーザー一覧を全員に送信
