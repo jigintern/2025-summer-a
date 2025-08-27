@@ -3,10 +3,14 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
-    <title>ようこそ、jigインターンへ！</title>
+    <title>ASCII Art ピン</title>
     <link rel="icon" href="data:image/x-icon;,">
     <link rel="stylesheet" href="util/winXP.css">
     <link rel="stylesheet" href="style.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/udev-gothic-web/css/udev-gothic.min.css"
+    >
   </head>
   <body>
     <div class="window_frame">
@@ -29,11 +33,15 @@
       </div>
       <div class="window">
         <header id="control_panel">
+          <button
+            class="control_panel_bt"
+            id="to_edit_bt"
+            onclick="location.href = '/editor/'"
+          >
+            新規作成(E)
+          </button>
           <button class="control_panel_bt" id="to_battle_bt">
             対戦(B)
-          </button>
-          <button class="control_panel_bt" id="to_edit_bt">
-            編集(E)
           </button>
           <button
             class="control_panel_bt"
@@ -44,10 +52,29 @@
           </button>
         </header>
         <div class="window_main">
-          <div class="window_title">
-            <h1>作品</h1>
-            <span id="opus_num">0個</span>
-          </div>
+          <pre
+            style="font-family: 'UDEV Gothic LG', monospace; font-size: 12pt; text-align: center"
+          >
+                  .-.          .                          +          +              '    .           .                    
+                 ( (      .                  .                                                *                           
+                  `-'              '                                                                                      
+                                  +~~   +                                                        *                        
+   ':.           .                  o                               '           .                                 +   +   
+     '::._   '            .                                                                                       o       
+       '._)                                   +                                            .  *           +           |   
+             |                                      '    .                    '                                      -o-  
+            -o-   █████╗ ███████╗ ██████╗██╗██╗     █████╗ ██████╗ ████████╗    ██████╗ ██╗███╗   ██╗██╗              |   
+             |   ██╔══██╗██╔════╝██╔════╝██║██║    ██╔══██╗██╔══██╗╚══██╔══╝    ██╔══██╗██║████╗  ██║██║            .     
+                 ███████║███████╗██║     ██║██║    ███████║██████╔╝   ██║       ██████╔╝██║██╔██╗ ██║██║                  
+  _|_            ██╔══██║╚════██║██║     ██║██║    ██╔══██║██╔══██╗   ██║       ██╔═══╝ ██║██║╚██╗██║╚═╝      +           
+   |             ██║  ██║███████║╚██████╗██║██║    ██║  ██║██║  ██║   ██║       ██║     ██║██║ ╚████║██╗                  
+                 ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝╚═╝    ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝       ╚═╝     ╚═╝╚═╝  ╚═══╝╚═╝                  
+                                                              .  .                               o           '            
+                   _|_                   +                    .                          +                       |        
+        .     /     |                       o            '                    +                           +     -o-       
+            -o_           . +               *                                                                    |        
+   +        /                                                            +                           +                    
+     *                                                     +                 .                                .           </pre>
           <div id="access_to_any">
             <div class="access_to_any" id="access_to_edit">
               <button
@@ -58,11 +85,12 @@
                 つくる！
               </button>
             </div>
-            <div class="access_to_any" id="access_to_battle">
+            <!-- このボタンは不要かもしれないので一旦コメントアウト -->
+            <!-- <div class="access_to_any" id="access_to_battle">
               <button class="access_bt" id="access_to_battle_bt">
                 あそぶ！
               </button>
-            </div>
+            </div> -->
           </div>
           <div id="opus_is_none">
             <h1>作品がありません</h1>

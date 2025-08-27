@@ -8,7 +8,6 @@ window.devicePixelRatio = 2;
     }
     const json = await response.json();
     const libraries = json["AA"];
-    document.getElementById("opus_num").innerText = libraries.length + "個";
 
     if (libraries.length === 0) {
       document.getElementById("opus_is_none").style.display = "block";
