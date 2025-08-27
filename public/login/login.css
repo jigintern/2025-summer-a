@@ -2,6 +2,7 @@
   padding: 2rem 4rem;
   width: 100%;
   box-sizing: border-box;
+  user-select: none;
 }
 
 .form-group {
