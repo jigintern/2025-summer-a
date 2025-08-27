@@ -215,3 +215,42 @@ button {
   color: white;
   font-size: 11px;
 }
+
+/* --- ポップアップの中身のスタイル --- */
+#popup-content-wrapper {
+  display: flex;
+  flex-direction: column; /* 要素を縦に並べる */
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+#popup-aa-canvas {
+  flex-grow: 1; /* 残りの高さをすべて埋める */
+  background-color: #fff; /* 背景を白にする */
+  border: 1px solid #7f9db9; /* 枠線を追加 */
+  max-width: 100%; /* 親要素の幅を超えないようにする */
+  max-height: 100%; /* 親要素の高さを超えないようにする */
+  object-fit: contain; /* アスペクト比を維持して縮小 */
+}
+
+#popup-buttons {
+  display: flex;
+  justify-content: center; /* ボタンを中央に配置 */
+  gap: 10px; /* ボタン間の隙間 */
+  padding-top: 10px;
+  flex-shrink: 0; /* ボタンエリアが縮まないようにする */
+}
+/* --- ポップアップの情報欄 --- */
+#popup-aa-info {
+  background-color: #f0f0f0;
+  border: 1px inset #7f9db9;
+  padding: 8px;
+  margin-bottom: 10px;
+  font-family: "MS UI Gothic", sans-serif;
+  font-size: 11px;
+}
+
+#popup-aa-info p {
+  margin: 0 0 5px 0;
+}
