@@ -160,3 +160,58 @@ button {
   outline: 1px dotted #000;
   outline-offset: -4px;
 }
+
+#popup-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+#popup-window {
+  width: 60vw;
+  height: 70vh;
+  min-width: 400px;
+  min-height: 300px;
+}
+
+#popup-close-bt {
+  background: linear-gradient(
+    to bottom,
+    #f93707,
+    #ff9090 10%,
+    #f93707 40%,
+    #f93707 60%,
+    #ff9090 90%,
+    #f93707 100%
+  );
+}
+#popup-close-bt:active {
+  background: linear-gradient(
+    to bottom,
+    #ff9090,
+    #ffc0c0 10%,
+    #ff9090 40%,
+    #ff9090 60%,
+    #ffc0c0 90%,
+    #ff9090 100%
+  );
+}
+
+.window_header .window_header_left span {
+  font-family: "MS UI Gothic", sans-serif;
+  color: white;
+  font-size: 11px;
+}
+
+#popup-header-title {
+  font-family: "MS UI Gothic", sans-serif;
+  color: white;
+  font-size: 11px;
+}
