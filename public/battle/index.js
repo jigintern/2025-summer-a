@@ -45,13 +45,13 @@ let isMetarEnable = true;
 
 //ボタンの描画関数
 function drawButton() {
-  let x, y,alt;
+  let x, y, alt;
   ctx.beginPath();
   ctx.filter = "blur(4px)";
   x = bs.a.x[0] - 40;
-  y = bs.a.x[1] + bs.a.r+10;
-  alt = (y > 400)y=bs.a.x[1]-bs.a.r-10;
-  if(alt)y=bs.a.x[1]
+  y = bs.a.x[1] + bs.a.r + 10;
+  alt = y > 400;
+  if (alt) y = bs.a.x[1] - bs.a.r - 75;
   ctx.strokeStyle = "#0a3cd1ff";
   createRoundRectPath(x, y, 80, 50, 5);
   ctx.stroke();
@@ -90,6 +90,7 @@ function drawButton() {
   ctx.filter = "blur(10px)";
   x = bs.a.x[0] - 40;
   y = bs.a.x[1] + 75;
+  if (alt) y = bs.a.x[1] - bs.a.r - 50;
   ctx.strokeStyle = "#54ddf9e1";
   createRoundRectPath(x, y, 80, 50, 5);
   ctx.stroke();
@@ -161,7 +162,8 @@ powerImg.src = "power.png";
 
 //メーター描画用関数
 function drawMeter() {
-  const x = bs.a.x[0] + canvas.width / 5;
+  let x = bs.a.x[0] + canvas.width / 5;
+  if (x > 800) x = bs.a.x[0] - canvas.width / 5;
   const y = canvas.height - 150;
   const w = canvas.height / 5;
   const h = canvas.height / 3;
