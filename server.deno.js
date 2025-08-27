@@ -182,10 +182,6 @@ Deno.serve(async (req) => {
     }
 
     const room = rooms.get(roomName);
-    if (!room) {
-      socket.close(1000, "Room does not exist");
-      return response;
-    }
 
     // 最大人数を設定（2人）
     const MAX_USERS = 2;
@@ -196,6 +192,11 @@ Deno.serve(async (req) => {
     // ユーザー追加
     if (userName && !room.users.includes(userName)) {
       room.users.push(userName);
+    } else {
+      if (!userName) {
+        socket.close(1000, "User no name");
+      }
+      socket.close(1000, "User already in room");
     }
 
     room.sockets.push(socket);
