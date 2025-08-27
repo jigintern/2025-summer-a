@@ -126,6 +126,9 @@ Deno.serve(async (req) => {
     const cookie = getCookies(req.headers);
     const username = sessions.get(cookie["sessionid"] ?? "");
 
+    if (username === "") {
+      return Response("ログインしていません", { status: 401 });
+    }
     const { socket, response } = Deno.upgradeWebSocket(req);
 
     socket.onopen = () => {
