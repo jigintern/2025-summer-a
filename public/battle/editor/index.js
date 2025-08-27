@@ -31,8 +31,8 @@ form.addEventListener("submit", (e) => {
     const data = JSON.parse(event.data);
     if (data.type === "battle_start") {
       if (roomArea) {
-        roomArea.textContent = `対戦開始: あなた(${data.rival[1]}) vs ${
-          data.rival[0]
+        roomArea.textContent = `対戦開始: あなた(${data.players[1]}) vs ${
+          data.players[0]
         }`;
       } else {
         console.warn("要素 #roomArea が見つかりません");
