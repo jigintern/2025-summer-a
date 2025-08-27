@@ -50,6 +50,24 @@ body {
   content: "r";
 }
 
+.toolbar .tool-button + .tooltip {
+  display: none;
+
+  & > div {
+    user-select: none;
+    position: absolute;
+    z-index: 100;
+    background-color: #fff;
+    border: 1px solid #000;
+    font: 10pt "MS UI Gothic";
+    padding: 2px;
+    /*width: 300px;*/
+  }
+}
+.toolbar .tool-button:hover + .tooltip {
+  display: block;
+}
+
 #title-input {
   margin-bottom: 5px;
 }
