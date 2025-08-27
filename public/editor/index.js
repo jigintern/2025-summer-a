@@ -56,6 +56,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const url = URL.createObjectURL(input.files[0]);
       textarea.style.backgroundImage =
         `linear-gradient(rgba(255,255,255,80%)), url(${url})`;
+      textarea.style.backgroundPosition = "center";
+      textarea.style.backgroundRepeat = "no-repeat";
+      textarea.style.backgroundSize = "contain";
     };
   };
 
