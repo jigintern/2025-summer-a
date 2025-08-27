@@ -9,21 +9,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /** @type {HTMLTextAreaElement} */
   const textarea = document.querySelector("#editor-area");
+  /** @type {HTMLInputElement} */
+  const titleInput = document.querySelector("#title-input");
 
   // AAの読み込み
   {
     const aaId = new URL(location.href).searchParams.get("id");
-    textarea.value = "Loading...";
+    titleInput.value = "Loading...";
     if (aaId) {
       fetch(`/AALibrary/${encodeURIComponent(aaId)}`)
         .then((r) => r.json())
         .then((aainfo) => {
+          titleInput.value = aainfo.title;
           textarea.value = aainfo.content;
         })
         .catch(() => {
           alert("AAの読み込みに失敗しました");
-          if (textarea.value === "Loading...") textarea.value = "";
+          if (titleInput.value === "Loading...") titleInput.value = "";
         });
+    } else {
+      const now = new Date();
+      titleInput.value = `無題 ${now.getFullYear()}-${
+        String(now.getMonth() + 1).padStart(2, "0")
+      }-${String(now.getDate()).padStart(2, "0")} ${
+        String(now.getHours()).padStart(2, "0")
+      }:${String(now.getMinutes()).padStart(2, "0")}:${
+        String(now.getSeconds()).padStart(2, "0")
+      }`;
     }
   }
 
@@ -40,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const handleSave = async () => {
     console.log("「保存」ボタンが押されました。");
     // ここに保存処理を書いていく
-    const title = `作品-${Date.now()}`; // TODO: タイトルを入力できるようにする
+    const title = titleInput.value;
     const AA = textarea.value;
     const aaId = new URL(location.href).searchParams.get("id");
 
@@ -194,42 +206,4 @@ document.addEventListener("DOMContentLoaded", () => {
       window.removeEventListener("mouseup", onMouseup);
     };
   });
-
-  // デバッグ用処理
-  {
-    const debugInfoElement = document.getElementById("debug-info");
-
-    // ラジオボタンのグループを取得
-    const toolButtons = document.querySelectorAll('input[name="tool-button"]');
-    const charButtons = document.querySelectorAll('input[name="char-bar"]');
-
-    // 選択されている情報を更新して表示する
-    const updateDebugInfo = () => {
-      // 現在選択されているラジオボタンの要素を取得
-      const selectedTool = document.querySelector(
-        'input[name="tool-button"]:checked',
-      );
-      const selectedChar = document.querySelector(
-        'input[name="char-bar"]:checked',
-      );
-
-      const selectedToolId = selectedTool ? selectedTool.id : "none";
-      const selectedCharId = selectedChar ? selectedChar.id : "none";
-
-      // デバッグ用
-      debugInfoElement.textContent =
-        `選択中のツール: ${selectedToolId} | 選択中のオプション: ${selectedCharId}`;
-    };
-
-    // 各ボタンにイベントリスナーを設定する
-    toolButtons.forEach((button) => {
-      button.addEventListener("change", updateDebugInfo);
-    });
-
-    charButtons.forEach((button) => {
-      button.addEventListener("change", updateDebugInfo);
-    });
-    // 一回呼んどくか
-    updateDebugInfo();
-  }
 });
