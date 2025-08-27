@@ -1,23 +1,43 @@
 window.devicePixelRatio = 2;
 
+// --- DOM要素の取得 ---
 const popupBackdrop = document.getElementById("popup-backdrop");
 const popupHeaderTitle = document.getElementById("popup-header-title");
 const popupCloseBt = document.getElementById("popup-close-bt");
+const popupAAImage = document.getElementById("popup-aa-canvas");
+const popupAATitle = document.getElementById("popup-aa-title");
+const popupAACreated = document.getElementById("popup-aa-created");
+const popupAAUpdated = document.getElementById("popup-aa-updated");
 
-// ポップアップを閉じる処理
+// --- 関数定義 ---
+
+// ポップアップを閉じる関数
 const closePopup = () => {
   popupBackdrop.style.display = "none";
 };
 
-// 閉じるボタンと背景クリックでポップアップを閉じる
+// 日付文字列を YYYY/MM/DD HH:mm 形式にフォーマットする関数
+const formatDate = (isoString) => {
+  if (!isoString) return "N/A";
+  const date = new Date(isoString);
+  const y = date.getFullYear();
+  const mo = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  const h = String(date.getHours()).padStart(2, "0");
+  const mi = String(date.getMinutes()).padStart(2, "0");
+  return `${y}/${mo}/${d} ${h}:${mi}`;
+};
+
+// --- イベントリスナー設定 ---
+
 popupCloseBt.addEventListener("click", closePopup);
 popupBackdrop.addEventListener("click", (e) => {
-  // ポップアップウィンドウの内側をクリックしたときは閉じないようにする
   if (e.target === popupBackdrop) {
     closePopup();
   }
 });
 
+// --- メイン処理 ---
 (async () => {
   try {
     const response = await fetch("/AALibraryList", { method: "GET" });
@@ -39,44 +59,61 @@ popupBackdrop.addEventListener("click", (e) => {
       const opus = document.createElement("button");
       const opus_canvas = document.createElement("canvas");
       const opus_title = document.createElement("p");
+      const aaData = libraries[i];
 
       opus.classList.add("opus");
-      opus.id = "opus_" + libraries[i].title;
       opus_canvas.classList.add("opus_image");
-      opus_canvas.id = "opus_img_" + libraries[i].title;
       opus_title.classList.add("opus_title");
-      opus_title.id = "opus_tt_" + libraries[i].title;
-      opus_title.innerText = libraries[i].title;
+      opus_title.innerText = aaData.title;
 
-      // Canvasの描画サイズを高解像度ディスプレイに対応させる
+      // 一覧のプレビュー描画
       opus_canvas.width = 160 * window.devicePixelRatio;
       opus_canvas.height = 160 * window.devicePixelRatio;
-
-      const ctx = opus_canvas.getContext("2d");
-
-      // プレビュー用のフォントと行の高さを設定
-      const fontSize = 16; // 12pt ≒ 16px
+      const listCtx = opus_canvas.getContext("2d");
+      const fontSize = 16;
       const lineHeight = 18;
-      ctx.font = `${fontSize}px 'MS PGothic', sans-serif`;
-      ctx.fillStyle = "black";
-
-      const aaContent = libraries[i].content;
-      const lines = aaContent.split("\n");
-
-      // アスキーアートを一行ずつCanvasに描画する
+      listCtx.font = `${fontSize}px 'MS PGothic', sans-serif`;
+      listCtx.fillStyle = "black";
+      const lines = aaData.content.split("\n");
       for (let j = 0; j < lines.length; j++) {
         const y = (j * lineHeight) + fontSize;
-        // Canvasの表示領域を超える場合は描画を中断
-        if (y > opus_canvas.height) {
-          break;
-        }
-        // 少し左に余白を空けて描画
-        ctx.fillText(lines[j], 5, y);
+        if (y > opus_canvas.height) break;
+        listCtx.fillText(lines[j], 5, y);
       }
 
+      // ポップアップ表示のイベントリスナー
       opus.addEventListener("click", () => {
-        popupHeaderTitle.innerText = libraries[i].title; // タイトルをセット
-        popupBackdrop.style.display = "flex"; // ポップアップを表示
+        popupHeaderTitle.innerText = aaData.title;
+        popupAATitle.innerText = aaData.title;
+        popupAACreated.innerText = formatDate(aaData.created_at);
+        popupAAUpdated.innerText = formatDate(aaData.updated_at);
+
+        popupBackdrop.style.display = "flex";
+
+        // ポップアップ内のCanvasに描画
+        const popupCtx = popupAAImage.getContext("2d");
+        const AA_MAX_WIDTH = 800;
+        const AA_MAX_HEIGHT = 560;
+
+        popupAAImage.width = AA_MAX_WIDTH * window.devicePixelRatio;
+        popupAAImage.height = AA_MAX_HEIGHT * window.devicePixelRatio;
+        popupAAImage.style.width = `${AA_MAX_WIDTH}px`;
+        popupAAImage.style.height = `${AA_MAX_HEIGHT}px`;
+
+        popupCtx.fillStyle = "white";
+        popupCtx.fillRect(0, 0, popupAAImage.width, popupAAImage.height);
+
+        popupCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+        popupCtx.font = `${fontSize}px 'MS PGothic', sans-serif`;
+        popupCtx.fillStyle = "black";
+
+        const popupLines = aaData.content.split("\n");
+        for (let j = 0; j < popupLines.length; j++) {
+          const y = (j * lineHeight) + fontSize;
+          if (y > AA_MAX_HEIGHT) break;
+          popupCtx.fillText(popupLines[j], 5, y);
+        }
       });
 
       opus.appendChild(opus_canvas);
