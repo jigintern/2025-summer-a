@@ -48,50 +48,59 @@
           <br>
           <div class="main-content">
             <div class="toolbar">
-              <input
-                type="radio"
-                id="btn-text"
-                name="tool-button"
-                checked
-              >
-              <label class="tool-button" for="btn-text">
-                &gt; <!-- "Aa"みたいなアイコン -->
-              </label>
-
-              <input
-                type="radio"
-                name="tool-button"
-                id="btn-line"
-              >
-              <label class="tool-button" for="btn-line">
-                <!-- 線分のアイコン -->
-                <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
-                  <line
-                    x1="8"
-                    y1="22"
-                    x2="22"
-                    y2="8"
-                    stroke-width="2"
-                    stroke="currentColor"
-                  />
-                  <circle cx="8" cy="22" r="3" , fill="currentColor" />
-                  <circle cx="22" cy="8" r="3" , fill="currentColor" />
-                </svg>
-              </label>
-
-              <input
-                type="radio"
-                name="tool-button"
-                id="btn-erase"
-              >
-              <label class="tool-button" for="btn-erase">
-                <!-- 消しゴムのアイコン -->
-                <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    fill="#ccf"
-                    d="
+              <div>
+                <input
+                  type="radio"
+                  id="btn-text"
+                  name="tool-button"
+                  checked
+                >
+                <label class="tool-button" for="btn-text">
+                  &gt; <!-- "Aa"みたいなアイコン -->
+                </label>
+                <div class="tooltip">
+                  <div>直接テキストを入力します</div>
+                </div>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  name="tool-button"
+                  id="btn-line"
+                >
+                <label class="tool-button" for="btn-line">
+                  <!-- 線分のアイコン -->
+                  <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+                    <line
+                      x1="8"
+                      y1="22"
+                      x2="22"
+                      y2="8"
+                      stroke-width="2"
+                      stroke="currentColor"
+                    />
+                    <circle cx="8" cy="22" r="3" , fill="currentColor" />
+                    <circle cx="22" cy="8" r="3" , fill="currentColor" />
+                  </svg>
+                </label>
+                <div class="tooltip">
+                  <div>直線を引きます</div>
+                </div>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  name="tool-button"
+                  id="btn-erase"
+                >
+                <label class="tool-button" for="btn-erase">
+                  <!-- 消しゴムのアイコン -->
+                  <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      fill="#ccf"
+                      d="
                     M15,25
                     H5
                     V18
@@ -100,21 +109,25 @@
                     V12
                     Z
                   "
-                  />
-                  <path
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    fill="none"
-                    d="
+                    />
+                    <path
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      fill="none"
+                      d="
                     M5,18
                     H15
                     V25
                     M15,18
                     L25,5
                   "
-                  />
-                </svg>
-              </label>
+                    />
+                  </svg>
+                </label>
+                <div class="tooltip">
+                  <div>なぞったところの文字を消します</div>
+                </div>
+              </div>
             </div>
             <div class="textarea-wrapper">
               <textarea class="editor-area" id="editor-area"></textarea>

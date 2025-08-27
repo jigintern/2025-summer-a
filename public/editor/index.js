@@ -206,4 +206,6 @@ document.addEventListener("DOMContentLoaded", () => {
       window.removeEventListener("mouseup", onMouseup);
     };
   });
+
+  textModeButton.addEventListener("mouseenter", () => {});
 });
