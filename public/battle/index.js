@@ -45,31 +45,55 @@ let isMetarEnable = true;
 
 //ボタンの描画関数
 function drawButton() {
+  let x, y,alt;
   ctx.beginPath();
-  let x = canvas.width / 2 - 40;
-  let y = canvas.height - 100;
-  ctx.rect(x, y, 80, 50);
-  ctx.fillStyle = "#ff0000ff";
+  ctx.filter = "blur(4px)";
+  x = bs.a.x[0] - 40;
+  y = bs.a.x[1] + bs.a.r+10;
+  alt = (y > 400)y=bs.a.x[1]-bs.a.r-10;
+  if(alt)y=bs.a.x[1]
+  ctx.strokeStyle = "#0a3cd1ff";
+  createRoundRectPath(x, y, 80, 50, 5);
+  ctx.stroke();
+  ctx.closePath();
+  ctx.beginPath();
+  ctx.filter = "none";
+  createRoundRectPath(x, y, 80, 50, 5);
+  ctx.fillStyle = "#fefefeff";
   isMouseOverBt = false;
-  if (mouseX < canvas.width / 2 + 40 && mouseX > canvas.width / 2 - 40) {
-    if (mouseY < canvas.height - 50 && mouseY > canvas.height - 100) {
+  if (mouseX < x + 80 && mouseX > x) {
+    if (mouseY < y + 50 && mouseY > y) {
       isMouseOverBt = true;
       if (isMouseDown) {
-        ctx.fillStyle = "#77a3b8ff";
+        ctx.fillStyle = "#8edbffff";
       } else {
-        ctx.fillStyle = "#0095DD";
+        ctx.fillStyle = "#caedffff";
       }
     }
   }
   ctx.fill();
-  ctx.fillStyle = "#000000";
-  ctx.rect(x, y, 80, 50);
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#0a3cd1ff";
+  createRoundRectPath(x, y, 80, 50, 5);
   ctx.stroke();
-  x = canvas.width / 2;
-  y = canvas.height - 75;
+  ctx.closePath();
+  ctx.beginPath();
+  ctx.fillStyle = "#000000ff";
+  x += 40;
+  y += 25;
   ctx.textAlign = "center";
   ctx.font = "20px 'MS UI Gothic'";
   ctx.fillText("Push!!", x, y);
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.filter = "blur(10px)";
+  x = bs.a.x[0] - 40;
+  y = bs.a.x[1] + 75;
+  ctx.strokeStyle = "#54ddf9e1";
+  createRoundRectPath(x, y, 80, 50, 5);
+  ctx.stroke();
+  ctx.filter = "none";
   ctx.closePath();
 }
 
@@ -289,7 +313,8 @@ function drawMyAA() {
 
   if (isConflict) {
     ctx.beginPath();
-    ctx.fillStyle = "#ff0000ff";
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#ff0000ff";
     ctx.arc(
       bs.a.x[0],
       bs.a.x[1],
@@ -394,11 +419,21 @@ function roomInButtonPush() {
 let isMouseOverUserBt = false;
 
 function drawUserInputRect() {
+  let x, y;
   ctx.beginPath();
-  let x = canvas.width / 2 - 40;
-  let y = 2 * canvas.height / 3 - 25;
-  ctx.rect(x, y, 80, 50);
-  ctx.fillStyle = "#ff0000ff";
+  ctx.filter = "blur(4px)";
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#3300ccff";
+  x = canvas.width / 2 - 40;
+  y = 2 * canvas.height / 3 - 25;
+  createRoundRectPath(x, y, 80, 50, 5);
+  ctx.stroke();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.filter = "none";
+  createRoundRectPath(x, y, 80, 50, 5);
+  ctx.fillStyle = "#fefefeff";
   isMouseOverUserBt = false;
   if (mouseX < canvas.width / 2 + 40 && mouseX > canvas.width / 2 - 40) {
     if (
@@ -406,15 +441,17 @@ function drawUserInputRect() {
     ) {
       isMouseOverUserBt = true;
       if (isMouseDown) {
-        ctx.fillStyle = "#77a3b8ff";
+        ctx.fillStyle = "#a1e1ffff";
       } else {
-        ctx.fillStyle = "#0095DD";
+        ctx.fillStyle = "#9dfffaff";
       }
     }
   }
   ctx.fill();
+  ctx.lineWidth = 2;
   ctx.fillStyle = "#000000";
-  ctx.rect(x, y, 80, 50);
+  ctx.strokeStyle = "#180061ff";
+  createRoundRectPath(x, y, 80, 50, 5);
   ctx.stroke();
   x = canvas.width / 2;
   y = 2 * canvas.height / 3;
@@ -424,11 +461,36 @@ function drawUserInputRect() {
   ctx.closePath();
 
   ctx.beginPath();
+  ctx.filter = "blur(10px)";
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#00a4dbc8";
+  x = canvas.width / 2 - 40;
+  y = 2 * canvas.height / 3 - 25;
+  createRoundRectPath(x, y, 80, 50, 5);
+  ctx.stroke();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.filter = "none";
   x = canvas.width / 2;
   y = canvas.height / 4;
   ctx.textAlign = "center";
   ctx.font = "20px 'MS UI Gothic'";
   ctx.fillText("あいことばを入力", x, y);
+  ctx.closePath();
+}
+
+function createRoundRectPath(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arc(x + w - r, y + r, r, Math.PI * (3 / 2), 0, false);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arc(x + w - r, y + h - r, r, 0, Math.PI * (1 / 2), false);
+  ctx.lineTo(x + r, y + h);
+  ctx.arc(x + r, y + h - r, r, Math.PI * (1 / 2), Math.PI, false);
+  ctx.lineTo(x, y + r);
+  ctx.arc(x + r, y + r, r, Math.PI, Math.PI * (3 / 2), false);
   ctx.closePath();
 }
 
@@ -451,9 +513,16 @@ let isGameTime = true;
 
 let isGameOver = true;
 
+function resetStyle() {
+  ctx.filter = "none";
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "#000000";
+}
+
 //メインの描画関数
 function draw(timestamp) {
   fpsUpdate(timestamp);
+  resetStyle();
   if (isRoomSearch) {
     roomSearch();
   } else if (isGameTime) {
