@@ -150,6 +150,34 @@ Deno.serve(async (req) => {
   }
 
   // 上書き保存（共通の処理が多いけど一旦保留）
+  if (req.method === "GET" && pathname.startsWith("/AALibrary/")) {
+    try {
+      const aaId = pathname.split("/")[2];
+      const entry = await kv.get(["aa", aaId]);
+
+      if (entry.value) {
+        const value = entry.value;
+        return new Response(JSON.stringify(entry.value), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            author: value.author,
+            title: value.title,
+            content: value.content,
+            created_at: +value.created_at,
+            updated_at: +value.created_at,
+          }),
+        });
+      } else {
+        return new Response(null, { status: 404 });
+      }
+    } catch (error) {
+      console.error("更新エラー:", error);
+      return new Response("サーバーエラー", { status: 500 });
+    }
+  }
+
+  // 上書き保存（共通の処理が多いけど一旦保留）
   if (req.method === "PUT" && pathname.startsWith("/AALibrary/")) {
     try {
       const cookie = getCookies(req.headers);
