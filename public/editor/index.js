@@ -40,6 +40,20 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           alert("保存に失敗しました");
         }
+      } else {
+        const response = await fetch(`/AALibrary/${encodeURIComponent(aaId)}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, AA }),
+        });
+
+        if (response.ok) {
+          // なんかポップアップ出したい
+        } else if (response.status === 401) {
+          alert("ログインして下さい");
+        } else {
+          alert("保存に失敗しました");
+        }
       }
     } catch (error) {
       console.error("エラー:", error);
