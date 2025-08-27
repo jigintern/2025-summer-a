@@ -538,6 +538,7 @@ function roomInButtonPush() {
 
 let isMouseOverUserBt = false;
 
+//あいことば入力画面の描画
 function drawUserInputRect() {
   let x, y;
   ctx.beginPath();
@@ -600,6 +601,7 @@ function drawUserInputRect() {
   ctx.closePath();
 }
 
+//角が丸い長方形の描画
 function createRoundRectPath(x, y, w, h, r) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
@@ -619,12 +621,21 @@ function roomSearch() {
   drawUserInputRect();
 }
 
+let deathX = 0;
+let deathY = 0;
+let deathAngle = 0;
 function drawGameOver() {
+  ctx.save();
+
+  
+
+  ctx.restore();
 }
 
 function gameOver() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawGameOver();
+  drawMyAA();
 }
 
 let isRoomSearch = true;
