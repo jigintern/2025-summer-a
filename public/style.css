@@ -118,15 +118,19 @@ button {
 
 #access_to_any {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
-
+/* 
 .access_to_any {
   margin-top: 20px;
 
   width: 30%;
   height: 50px;
-}
+} */
 
 .access_bt {
   padding: 0.5rem 1.5rem;
