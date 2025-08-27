@@ -1,5 +1,6 @@
 import { serveDir } from "jsr:@std/http/file-server";
 import { getCookies, setCookie } from "jsr:@std/http/cookie";
+import { battle } from "./battle.server.js";
 
 // パスワードハッシュ化の関数
 async function hashPassword(password) {
@@ -13,23 +14,12 @@ async function hashPassword(password) {
 
 /**
  * @typedef {Object} Room
- * @property {string[]} users
- * @property {WebSocket[]} sockets
- * @property {"waiting"|"playing"} state
+ * @property {string} username
+ * @property {WebSocket} socket
  */
 
 /** @type {Map<string, Room>} */
-const rooms = new Map();
-
-// ユーザー一覧を全員に送信する関数
-function broadcastUsers(room) {
-  const msg = JSON.stringify({ type: "users", users: room.users });
-  for (const s of room.sockets) {
-    try {
-      s.send(msg);
-    } catch {}
-  }
-}
+const waitingUser = new Map();
 
 // ログインが必要なページ一覧
 const needLogin = ["/", "/index.html"];
@@ -130,82 +120,40 @@ Deno.serve(async (req) => {
     }
   }
 
-  // 部屋作成 これ以下追加分
-
-  // 部屋情報の初期化
-  /*room.users = [];
-  room.sockets = [];*/
-
-  if (pathname === "/cookiePlayer" && req.method === "GET") {
+  if (pathname === "/ws/battle") {
+    const params = new URL(req.url).searchParams;
+    const roomName = params.get("room") ?? "";
     const cookie = getCookies(req.headers);
-    const userName = sessions.get(cookie["sessionid"] ?? "");
-    return new Response(userName);
-  }
+    const username = sessions.get(cookie["sessionid"] ?? "");
 
-  if (req.method === "GET" && pathname === "/room-users") {
-    const params = new URL(req.url).searchParams; // ← ここで定義
-    const roomName = params.get("room");
-    const room = rooms.get(roomName);
-    if (!room) {
-      return new Response(JSON.stringify([]), { status: 404 });
+    if (username === "") {
+      return Response("ログインしていません", { status: 401 });
     }
-    return new Response(JSON.stringify(room.users), {
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  // WebSocket 接続
-  if (pathname.startsWith("/ws")) {
-    const params = new URL(req.url).searchParams; // ← ここで定義
-    const roomName = params.get("room");
-    const userName = params.get("user") ?? "";
-
-    // 部屋がなければ新規作成
-    if (!rooms.has(roomName)) {
-      rooms.set(roomName, { users: [], sockets: [], state: "waiting" });
-    }
-
-    const room = rooms.get(roomName);
-
-    // 最大人数を設定（2人）
-    const MAX_USERS = 2;
-    if (rooms.get(roomName).users.length >= MAX_USERS) {
-      return new Response("この部屋は満員です", { status: 403 });
-    }
-
-    // ユーザー追加
-    if (userName && !room.users.includes(userName)) {
-      room.users.push(userName);
-    } else {
-      if (!userName) {
-        return new Response("ログインしていません", { status: 400 });
-      }
-      return new Response("User already in room", { status: 400 });
-    }
-
-    // 状態を更新
-    if (room.users.length === 2) {
-      room.state = "playing";
-    } else {
-      room.state = "waiting";
-    }
-    console.log("Room state: " + room.state);
-    console.log("Room user count: " + room.users.length);
-
     const { socket, response } = Deno.upgradeWebSocket(req);
 
-    room.sockets.push(socket);
-    // 入室時にユーザー一覧を全員に送信
-    broadcastUsers(room);
-
-    socket.onclose = () => {
-      room.sockets = room.sockets.filter((s) => s !== socket);
-      room.users = room.users.filter((u) => u !== userName);
-      // 退出時もユーザー一覧を全員に送信
-      broadcastUsers(room);
-      // 部屋が空になったら削除
-      if (room.users.length === 0) {
-        rooms.delete(roomName);
+    socket.onopen = () => {
+      // 部屋がなければ新規作成
+      if (!waitingUser.has(roomName)) {
+        waitingUser.set(roomName, { username, socket });
+        socket.onclose = () => {
+          waitingUser.delete(roomName);
+          socket.onclose = null;
+          socket.onerror = null;
+        };
+        socket.onerror = () => {
+          waitingUser.delete(roomName);
+          socket.onclose = null;
+          socket.onerror = null;
+        };
+      } else {
+        const {
+          username: username2,
+          socket: socket2,
+        } = waitingUser.get(roomName);
+        waitingUser.delete(roomName);
+        socket2.onclose = null;
+        socket2.onerror = null;
+        battle([username2, socket2], [username, socket]);
       }
     };
 
@@ -284,7 +232,7 @@ Deno.serve(async (req) => {
     try {
       const cookie = getCookies(req.headers);
       const sessionid = cookie["sessionid"] ?? "";
-      const username = sessions.get(sessionid);
+      const username = sessions.get(sessionid) ?? "";
       if (!username) {
         return new Response("認証されていません", { status: 401 });
       }
