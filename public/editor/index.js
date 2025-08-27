@@ -7,6 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const saveButton = document.getElementById("btn-save");
   const backButton = document.getElementById("btn-back");
 
+  /** @type {HTMLTextAreaElement} */
+  const textarea = document.querySelector("#editor-area");
+
   const handleNew = () => {
     console.log("「新規作成」ボタンが押されました。");
     // ここに新規作成の処理を書いていく
@@ -21,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("「保存」ボタンが押されました。");
     // ここに保存処理を書いていく
     const title = `作品-${Date.now()}`; // TODO: タイトルを入力できるようにする
-    const AA = document.getElementById("editor-area").value;
+    const AA = textarea.value;
     const aaId = new URL(location.href).searchParams.get("id");
 
     try {
@@ -79,8 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /** @type {HTMLDivElement} */
   const overwrap = document.querySelector("#editor-overwrap");
-  /** @type {HTMLTextAreaElement} */
-  const textarea = document.querySelector("#editor-area");
   /** @type {HTMLInputElement} */
   const textModeButton = document.querySelector("#btn-text");
   /** @type {HTMLInputElement} */
