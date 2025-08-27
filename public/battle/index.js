@@ -30,6 +30,11 @@ setDispSize();
 
 window.addEventListener("resize", setDispSize);
 
+const bs = new BattleStatus(
+  new AAObj(50, [80, 180], [0, 0], 0, 0),
+  new AAObj(60, [400, 180], [0, 0], 0, 0),
+);
+
 let mouseX = 0;
 let mouseY = 0;
 
@@ -108,8 +113,9 @@ let metarVelc = velcVar;
 
 //AAを打ち出す関数
 function AAShoot() {
-  vx_m = metarNum * 20 * Math.cos(angle - Math.PI / 2);
-  vy_m = metarNum * 20 * Math.sin(angle - Math.PI / 2);
+  bs.a.dx[0] = metarNum * 0.5 * Math.cos(angle - Math.PI / 2);
+  bs.a.dx[1] = metarNum * 0.5 * Math.sin(angle - Math.PI / 2);
+  bs.a.dtt = metarNum * 0.1 * (Math.random() - 0.5);
 }
 
 //ボタンの処理
@@ -128,15 +134,9 @@ powerImg.addEventListener("load", () => {
 });
 powerImg.src = "power.png";
 
-let x_m = 200;
-let y_m = 200;
-let vx_m = 0;
-let vy_m = 0;
-let size_m = 75;
-
 //メーター描画用関数
 function drawMeter() {
-  const x = x_m + canvas.width / 5;
+  const x = bs.a.x[0] + canvas.width / 5;
   const y = canvas.height - 150;
   const w = canvas.height / 5;
   const h = canvas.height / 3;
@@ -166,7 +166,7 @@ function drawMeter() {
   ctx.fill();
   ctx.closePath();
 
-  gradient2 = ctx.createLinearGradient(
+  const gradient2 = ctx.createLinearGradient(
     x,
     y,
     x,
@@ -223,11 +223,11 @@ let sizey = 1;
 function drawArrow() {
   ctx.beginPath();
   ctx.save();
-  ctx.translate(x_m, y_m);
+  ctx.translate(bs.a.x[0], bs.a.x[1]);
   ctx.rotate(angle);
   sizey = 100 + 15 * Math.sin(sizeAngle);
   sizex = 100;
-  ctx.drawImage(arrowImg, -sizex / 2, -sizey - size_m, sizex, sizey);
+  ctx.drawImage(arrowImg, -sizex / 2, -sizey - bs.a.r, sizex, sizey);
   ctx.restore();
   ctx.closePath();
   sizeAngle -= angleVelc * 3.25 * deltaTime;
@@ -236,10 +236,56 @@ function drawArrow() {
   if (sizeAngle < 0) sizeAngle += Math.PI * 2;
 }
 
+const playerImgA = new Image();
+playerImgA.addEventListener("load", () => {
+});
+playerImgA.src = "power.png";
+
+const playerImgB = new Image();
+playerImgB.addEventListener("load", () => {
+});
+playerImgB.src = "power.png";
+
 //AA描画用関数(今は円だけ)
 function drawMyAA() {
   ctx.beginPath();
-  ctx.arc(x_m, y_m, size_m, 0, 2 * Math.PI);
+  ctx.save();
+  ctx.translate(bs.a.x[0], bs.a.x[1]);
+  ctx.rotate(bs.a.tt);
+  ctx.drawImage(
+    playerImgA,
+    -bs.a.r * Math.sqrt(2) / 2,
+    -bs.a.r * Math.sqrt(2) / 2,
+    bs.a.r * Math.sqrt(2),
+    bs.a.r * Math.sqrt(2),
+  );
+  ctx.restore();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.save();
+  ctx.translate(bs.b.x[0], bs.b.x[1]);
+  ctx.rotate(bs.b.tt);
+  ctx.drawImage(
+    playerImgA,
+    -bs.b.r * Math.sqrt(2) / 2,
+    -bs.b.r * Math.sqrt(2) / 2,
+    bs.b.r * Math.sqrt(2),
+    bs.b.r * Math.sqrt(2),
+  );
+  ctx.restore();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.arc(bs.a.x[0], bs.a.x[1], bs.a.r, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.closePath();
+  ctx.beginPath();
+  ctx.arc(bs.a.x[0], bs.a.x[1], bs.a.r, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.closePath();
+  ctx.beginPath();
+  ctx.arc(bs.b.x[0], bs.b.x[1], bs.b.r, 0, 2 * Math.PI);
   ctx.stroke();
   ctx.closePath();
 }
@@ -254,8 +300,7 @@ function testDraw() {
 }
 
 function AAMove() {
-  x_m += vx_m * deltaTime;
-  y_m += vy_m * deltaTime;
+  bs.nextTick();
 }
 
 let deltaTime = 0;
@@ -274,17 +319,58 @@ function fpsUpdate(timestamp) {
   }
   lastTimestamp = timestamp;
 }
+let textarea = null;
 
-//メインの描画関数
-function draw(timestamp) {
-  fpsUpdate(timestamp);
+canvas.addEventListener("onclick", function (e) {
+  if (!textarea) {
+    textarea = document.createElement("textarea");
+    textarea.className = "info";
+    document.body.appendChild(textarea);
+  }
+  var x = e.clientX - canvas.offsetLeft,
+    y = e.clientY - canvas.offsetTop;
+  console.log("asasasasasasasasas" + x);
+  textarea.value = "x: " + x + " y: " + y;
+  textarea.style.top = e.clientY + "px";
+  textarea.style.left = e.clientX + "px";
+}, false);
+
+function checkDeath() {
+}
+
+function gameFlow() {
   AAMove();
+  checkDeath();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawMyAA();
   if (isButtonEnable) drawButton();
   if (isMetarEnable) drawMeter();
   if (isArrow) drawArrow();
-  testDraw();
+  //testDraw();
+}
+
+function roomSearch() {
+}
+
+function gameOver() {
+}
+
+let isRoomSearch = true;
+
+let isGameTime = true;
+
+let isGameOver = true;
+
+//メインの描画関数
+function draw(timestamp) {
+  fpsUpdate(timestamp);
+  if (isRoomSearch) {
+    roomSearch();
+  } else if (isGameTime) {
+    gameFlow();
+  } else if (isGameOver) {
+    gameOver();
+  }
   window.requestAnimationFrame(draw);
 }
 
