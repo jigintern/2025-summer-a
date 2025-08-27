@@ -70,6 +70,7 @@ body {
 
 #title-input {
   margin-bottom: 5px;
+  outline: none;
 }
 
 .menu-bar {
