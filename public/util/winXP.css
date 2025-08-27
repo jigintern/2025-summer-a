@@ -1,3 +1,9 @@
+@font-face {
+  font-family: "titleLogoFont";
+  src: url("UDEVGothic-Regular.woff2") format("woff2");
+  src: url("UDEVGothic-Regular.ttf") format("tunetype");
+}
+
 :root {
   --window-bg-color: #ece9d8;
   --window-fr-color: #0057e8;
