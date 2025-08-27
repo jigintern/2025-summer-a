@@ -1,4 +1,10 @@
+import { AAObj, BattleStatus } from "./physics.js";
+
 const canvas = document.getElementById("battle_canvas");
+
+canvas.width = 1000;
+canvas.height = 500;
+let aspect = 1;
 
 const ctx = canvas.getContext("2d");
 
@@ -7,8 +13,15 @@ function setDispSize() {
   const area = document.getElementById("window_main");
   console.log(area.clientWidth);
   console.log(area.clientHeight);
-  canvas.width = area.clientWidth;
-  canvas.height = area.clientHeight;
+  if (area.clientHeight * 1000 > area.clientWidth * 500) {
+    aspect = area.clientWidth / canvas.width;
+    canvas.style.width = area.clientWidth + "px";
+    canvas.style.height = (area.clientWidth * 500 / 1000) + "px";
+  } else {
+    aspect = area.clientHeight / canvas.height;
+    canvas.style.width = (area.clientHeight * 1000 / 500) + "px";
+    canvas.style.height = area.clientHeight + "px";
+  }
   console.log("x:" + canvas.width);
   console.log("y:" + canvas.height);
 }
@@ -73,8 +86,13 @@ canvas.addEventListener("mouseup", onMouseUp, false);
 
 canvas.addEventListener("mousemove", function (evt) {
   const mousePos = getMousePosition(canvas, evt);
-  mouseX = mousePos[0];
-  mouseY = mousePos[1];
+  if (aspect === 0) {
+    mouseX = -1000;
+    mouseY = -1000;
+  } else {
+    mouseX = mousePos[0] / aspect;
+    mouseY = mousePos[1] / aspect;
+  }
 }, false);
 
 //マウスの座標をとる関数
