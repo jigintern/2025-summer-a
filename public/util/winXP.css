@@ -1,3 +1,9 @@
+@font-face {
+  font-family: "titleLogoFont";
+  src: url("UDEVGothic-Regular.woff2") format("woff2");
+  src: url("UDEVGothic-Regular.ttf") format("tunetype");
+}
+
 :root {
   --window-bg-color: #ece9d8;
   --window-fr-color: #0057e8;
@@ -56,6 +62,9 @@ h1 {
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow: auto;
+  scrollbar-color: #b6fcfe #ffffff;
+  scrollbar-width: 50px;
 }
 
 .window_header {
