@@ -27,14 +27,14 @@ export const battle = (player1, player2) => {
     const json = game.getJson();
     // それぞれのクライアントに自分の名前を含めて送信
     player1[1].send(JSON.stringify({
-      type: "start",
+      type: "init",
       field: json,
       players: [player1[0], player2[0]],
       myName: player1[0],
       sign: "A",
     }));
     player2[1].send(JSON.stringify({
-      type: "start",
+      type: "init",
       field: json,
       players: [player1[0], player2[0]],
       myName: player2[0],
@@ -43,7 +43,7 @@ export const battle = (player1, player2) => {
   };
 
   // ターン情報を送信
-  const sendTurnInfo = () => {
+  /*const sendTurnInfo = () => {
     console.log("ターン情報を送信");
 
     const json = game.getJson();
@@ -59,7 +59,7 @@ export const battle = (player1, player2) => {
       players: [player1[0], player2[0]],
       sign: game.turn,
     }));
-  };
+  };*/
 
   // ターン処理
   const handleTurn = (playerKey, rivalKey) => async (event) => {
@@ -123,7 +123,7 @@ export const battle = (player1, player2) => {
 
       // 次のターンへ
 
-      sendTurnInfo();
+      //sendTurnInfo();
       setTurnHandler();
     } catch (e) {
       console.error(`${playerMap[playerKey][0]}: JSON parse error`, e);
@@ -144,7 +144,7 @@ export const battle = (player1, player2) => {
   console.log("最初のターン通知");
   // 最初の状態・ターン通知
   sendState();
-  sendTurnInfo();
+  //sendTurnInfo();
   setTurnHandler();
 
   //クライアント側から情報を受け取る
