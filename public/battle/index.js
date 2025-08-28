@@ -165,7 +165,6 @@ function AAShoot() {
   } else {
     bs.a = gs.field.b;
   }
-
   ws.send(JSON.stringify({
     type: "attack",
     direction: angle - Math.PI / 2,
@@ -296,24 +295,31 @@ function drawArrow() {
 
 const myAA = new URL(decodeURIComponent(document.location.href)).searchParams
   .get("id");
-console.log(myAA);
+
+let enemyAA;
 
 const playerImgA = new Image();
+const playerImgB = new Image();
+let AATitle;
+let AATitle_e;
 
 playerImgA.src = "";
-aa2blob(aaData.content).then((url) => {
-  popupAAImage.src = url;
-});
-
-const playerImgA = new Image();
-playerImgA.addEventListener("load", () => {
-});
-playerImgA.src = "power.png";
-
-const playerImgB = new Image();
-playerImgB.addEventListener("load", () => {
-});
-playerImgB.src = "power.png";
+if (myAA) {
+  fetch(`/AALibrary/${encodeURIComponent(myAA)}`)
+    .then((r) => r.json())
+    .then((aainfo) => {
+      AATitle = aainfo.title;
+      aa2blob(aainfo.content).then((url) => {
+        playerImgA.src = url;
+      });
+    })
+    .catch(() => {
+      alert("AAの読み込みに失敗しました");
+      aa2blob("error...\n[悲報]エラー").then((url) => {
+        playerImgA.src = url;
+      });
+    });
+}
 
 //AA描画用関数(今は円だけ)
 function drawMyAA() {
@@ -336,7 +342,7 @@ function drawMyAA() {
   ctx.translate(bs.b.x[0], bs.b.x[1]);
   ctx.rotate(bs.b.tt);
   ctx.drawImage(
-    playerImgA,
+    playerImgB,
     -bs.b.r * Math.sqrt(2) / 2,
     -bs.b.r * Math.sqrt(2) / 2,
     bs.b.r * Math.sqrt(2),
@@ -496,8 +502,6 @@ function checkTurnEnd() {
     } else {
       waitTurn();
     }
-
-    console.log(gs_a);
 
     gs.updateFromJSON(gs_a.getJson());
     if (mySign === "A") {
@@ -664,8 +668,8 @@ function roomInButtonPush() {
   roomWord = roomInput.value;
   if (roomWord === "") return;
   ws = new WebSocket(
-    `ws://${location.host}/ws/battle?room=${roomWord}`,
-  ); //test
+    `ws://${location.host}/ws/battle?id=${myAA}&room=${roomWord}`,
+  );
   console.log(ws);
 
   ws.onmessage = (event) => {
@@ -678,6 +682,10 @@ function roomInButtonPush() {
 
   ws.onerror = (error) => {
     getError(error);
+  };
+
+  ws.onclose = (event) => {
+    getClose(event);
   };
 
   isRoomInEnable = false;
@@ -939,6 +947,26 @@ function getMessage(event) {
       gs.turn = msg.sign;
       console.log(msg.field);
       gs.updateFromJSON(msg.field);
+
+      enemyAA = msg.AAId;
+      playerImgB.src = "";
+      if (enemyAA || true) {
+        fetch(`/AALibrary/${encodeURIComponent(enemyAA)}`)
+          .then((r) => r.json())
+          .then((aainfo) => {
+            AATitle_e = aainfo.title;
+            aa2blob(aainfo.content).then((url) => {
+              playerImgB.src = url;
+            });
+          })
+          .catch(() => {
+            alert("AAの読み込みに失敗しました");
+            aa2blob("error...\n[悲報]エラー").then((url) => {
+              playerImgB.src = url;
+            });
+          });
+      }
+
       if (mySign === "A") {
         bs.a = gs.field.a;
         bs.b = gs.field.b;
@@ -948,10 +976,8 @@ function getMessage(event) {
         bs.b = gs.field.a;
         waitTurn();
       }
-      console.log("hello");
       break;
     case "turn":
-      console.log(msg.afterField);
       gs_a.updateFromJSON(msg.afterField);
 
       gs.updateFromJSON(msg.beforeField);
@@ -979,12 +1005,17 @@ function waitTurn() {
 
 function getOpen(event) {
   console.log("通信接続イベント受信");
-  console.log(event.data);
+  console.log(event);
 }
 
 function getError(error) {
   console.log("エラー発生");
-  console.log(error.data);
+  console.log(error);
+}
+
+function getClose(event) {
+  console.log("通信切断イベント受信");
+  console.log(event);
 }
 
 //メインの描画関数
