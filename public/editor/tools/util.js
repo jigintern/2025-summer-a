@@ -118,4 +118,26 @@ export class CharPlace {
       return r;
     }).join("\n").trimEnd();
   }
+
+  /**
+   * @returns {[number, number, number, number]} [上端, 右端, 下端, 左端]
+   */
+  getRect() {
+    const r = [this.#chars.length, 0, 0, this.#width];
+    let flg = true;
+    for (let i = 0; i < this.#chars.length; ++i) {
+      const line = this.#chars[i];
+      for (const { offset, char } of line) {
+        flg = false;
+        const roffset = offset + charwidth[char];
+        if (i < r[0]) r[0] = i;
+        if (roffset > r[1]) r[1] = roffset;
+        if (i + 1 > r[2]) r[2] = i + 1;
+        if (offset < r[3]) r[3] = offset;
+      }
+    }
+    // 文字が無い場合, バグらないように適当な領域を割り当てる
+    if (flg) return [0, 18, 1, 0];
+    return r;
+  }
 }
