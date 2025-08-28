@@ -22,6 +22,9 @@ export class GameStatus {
    * @param {number} dtt 回転の具合 (-1 ~ 1)
    */
   addAccel(player, direction, power, dtt) {
+    if (!this.field.isStopping()) {
+      throw new Error("ターンがまだ終わっていないのに攻撃が行なわれました");
+    }
     if (power < 0 || 1 < power) return;
     if (dtt < 0 || 1 < dtt) return;
     const obj = player === "A" ? this.field.a : this.field.b;
