@@ -9,21 +9,26 @@ export const battle = (player1, player2) => {
   console.log(`対戦開始: ${player1[0]} vs ${player2[0]}`);
 
   player1[1].addEventListener("close", () => {
+    // player2がOPENのときだけ通知＆close
     if (player2[1].readyState === 1) {
-      player2[1].send(JSON.stringify({
-        type: "info",
-        message: "相手が切断しました",
-      }));
-      player2[1].close(4000, "相手が切断しました");
+      if (player2[1].readyState === 1) {
+        player2[1].close(4000, "相手が切断しました");
+      }
+    }
+    // 自分自身もclose（すでにclose済みでなければ）
+    if (player1[1].readyState === 1) {
+      player1[1].close(4000, "自分も終了");
     }
   });
+
   player2[1].addEventListener("close", () => {
     if (player1[1].readyState === 1) {
-      player1[1].send(JSON.stringify({
-        type: "info",
-        message: "相手が切断しました",
-      }));
-      player1[1].close(4000, "相手が切断しました");
+      if (player1[1].readyState === 1) {
+        player1[1].close(4000, "相手が切断しました");
+      }
+    }
+    if (player2[1].readyState === 1) {
+      player2[1].close(4000, "自分も終了");
     }
   });
 
@@ -101,17 +106,12 @@ export const battle = (player1, player2) => {
 
       // 5. ゲーム終了判定
       if (!game.field.isGameEnd() || outPlayers.length > 0) { // 勝者判定（例：場外に出ていない方が勝ち）
-        if (game.turn === "A") {
-          console.log("Aのターンが終了");
-          if (player2[1].readyState === 1) {
-            player2[1].close(4000, "ゲーム終了");
-          }
-        } else {
-          console.log("Bのターンが終了");
-          if (player1[1].readyState === 1) {
-            player1[1].close(4000, "ゲーム終了");
-          }
+        console.log("ターンが終了");
+        if (playerMap[playerKey][1].readyState === 1) {
+          console.log("サーバーから受信:", playerMap[rivalKey][1]);
+          playerMap[rivalKey][1].close(4000, "ゲーム終了");
         }
+        return;
       }
 
       // 盤面情報を両者に送信

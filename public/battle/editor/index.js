@@ -55,13 +55,14 @@ form.addEventListener("submit", (e) => {
         if (ws.readyState === WebSocket.OPEN) {
           // サーバー経由で切断したい場合は下記を使う
           // ws.send(JSON.stringify({ type: "leave" }));
+          console.log("サーバーから受信:", ws);
           ws.close(1000, "ユーザーによる退出");
         }
         // location.href = "/"; // oncloseで遷移するのでここは不要
       });
     }
 
-    if (data.type === "inita") {
+    if (data.type === "init" || data.type === "yourTurn") {
       // 自分のターンだけ攻撃ボタンを表示
       if (data.sign === sign) {
         if (!attackBtn) {
