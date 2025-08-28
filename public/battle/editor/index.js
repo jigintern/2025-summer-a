@@ -55,8 +55,8 @@ form.addEventListener("submit", (e) => {
           roomArea.appendChild(attackBtn);
           attackBtn.addEventListener("click", () => {
             ws.send(JSON.stringify({
-              power: 0,
-              direction: 0,
+              power: 0.5,
+              direction: 0.5,
             }));
             attackBtn.disabled = true; // 連打防止
           });
@@ -74,6 +74,10 @@ form.addEventListener("submit", (e) => {
     if (data.type === "myselfAction") {
       // 自分の行動を表示したい場合
       console.log("自分の行動:", data);
+    }
+    if (data.type === "gameEnd") {
+      // ゲーム終了
+      console.log("ゲーム終了勝者は", data.winner);
     }
   };
 });

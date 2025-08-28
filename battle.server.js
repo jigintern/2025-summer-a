@@ -78,6 +78,30 @@ export const battle = (player1, player2) => {
       // 4. getJson（ターン終了後の盤面）
       const afterJson = game.getJson();
 
+      // 5. ゲーム終了判定
+      if (game.field.isGameEnd() || outPlayers.length > 0) { // 勝者判定（例：場外に出ていない方が勝ち）
+        let winner = null;
+        if (outPlayers.length === 1) {
+          winner = outPlayers[0] === "A" ? playerMap.B[0] : playerMap.A[0];
+        }
+        console.log("ゲーム終了勝者は", winner);
+        // 両者にゲーム終了通知
+        player1[1].send(JSON.stringify({
+          type: "gameEnd",
+          winner,
+          field: afterJson,
+        }));
+        player2[1].send(JSON.stringify({
+          type: "gameEnd",
+          winner,
+          field: afterJson,
+        }));
+
+        //player1[1].close();
+        //player2[1].close();
+        return;
+      }
+
       // 盤面情報を両者に送信
 
       playerMap[playerKey][1].send(JSON.stringify({
