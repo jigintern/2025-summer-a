@@ -145,6 +145,18 @@ document.addEventListener("DOMContentLoaded", () => {
       textarea.removeEventListener("change", onchange);
     };
   });
+  // 初期でテキスト入力モードにする
+  {
+    textModeButton.click();
+    overwrap.style.display = "none";
+    const onchange = () => {
+      textarea.value = new CharPlace(textarea.value, 1000, 40).toAA();
+    };
+    textarea.addEventListener("change", onchange);
+    finishmode = () => {
+      textarea.removeEventListener("change", onchange);
+    };
+  }
   lineModeButton.addEventListener("change", () => {
     finishmode();
     overwrap.style.display = "block";
