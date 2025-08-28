@@ -414,6 +414,7 @@ function fpsUpdate(timestamp) {
 }
 
 function setDeath(x, y, angle, size, player) {
+  console.log(angle);
   deathX = x;
   deathY = y;
   deathAngle = angle;
@@ -429,7 +430,7 @@ function checkDeath() {
     setDeath(
       bs.a.x[0] < 0 ? 0 : 1000,
       bs.a.x[1],
-      Math.atan(bs.a.dx[1] / bs.a.dx[0]) + bs.a.x[0] < 0 ? Math.PI : 0,
+      Math.atan2(bs.a.dx[1], bs.a.dx[0]),
       bs.a.r,
       0,
     );
@@ -437,7 +438,7 @@ function checkDeath() {
     setDeath(
       bs.a.x[0],
       bs.a.x[1] < 0 ? 0 : 500,
-      Math.atan(bs.a.dx[1] / bs.a.dx[0]) + bs.a.x[1] < 0 ? Math.PI : 0,
+      Math.atan2(bs.a.dx[1], bs.a.dx[0]),
       bs.a.r,
       0,
     );
@@ -446,7 +447,7 @@ function checkDeath() {
     setDeath(
       bs.b.x[0] < 0 ? 0 : 1000,
       bs.b.x[1],
-      Math.atan(bs.b.dx[1] / bs.b.dx[0]) + bs.b.x[0] < 0 ? Math.PI : 0,
+      Math.atan2(bs.b.dx[1], bs.b.dx[0]),
       bs.b.r,
       1,
     );
@@ -454,7 +455,7 @@ function checkDeath() {
     setDeath(
       bs.b.x[0],
       bs.b.x[1] < 0 ? 0 : 500,
-      Math.atan(bs.b.dx[1] / bs.b.dx[0]) + bs.b.x[1] < 0 ? Math.PI : 0,
+      Math.atan2(bs.b.dx[1], bs.b.dx[0]),
       bs.b.r,
       1,
     );
@@ -482,15 +483,17 @@ function checkTurnEnd() {
     } else {
       waitTurn();
     }
-    /*
+
+    console.log(gs_a);
+
     gs.updateFromJSON(gs_a.getJson());
     if (mySign === "A") {
-      bs.a = gs.a;
-      bs.b = gs.b;
+      bs.a = gs.field.a;
+      bs.b = gs.field.b;
     } else {
-      bs.a = gs.b;
-      bs.b = gs.a;
-    }*/
+      bs.a = gs.field.b;
+      bs.b = gs.field.a;
+    }
   }
   isMoving = !bs.isStopping();
 }
@@ -935,7 +938,7 @@ function getMessage(event) {
       console.log("hello");
       break;
     case "turn":
-      //console.log(msg.beforeField);
+      console.log(msg.afterField);
       gs_a.updateFromJSON(msg.afterField);
 
       gs.updateFromJSON(msg.beforeField);
