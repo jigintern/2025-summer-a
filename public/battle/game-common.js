@@ -31,7 +31,7 @@ export class GameStatus {
     }
     this.#timeSpend = 0;
     if (power < 0 || 1 < power) return;
-    if (dtt < 0 || 1 < dtt) return;
+    if (dtt < -1 || 1 < dtt) return;
     const obj = this.turn === "A" ? this.field.a : this.field.b;
     this.turn = this.turn === "A" ? "B" : "A";
     obj.dx = [power * Math.cos(direction) / 2, power * Math.cos(direction / 2)];
@@ -97,12 +97,12 @@ export class GameStatus {
         dtt: this.field.a.dtt,
       },
       b: {
-        r: this.field.a.r,
-        mu: this.field.a.mu,
-        x: this.field.a.x,
-        dx: this.field.a.dx,
-        tt: this.field.a.tt,
-        dtt: this.field.a.dtt,
+        r: this.field.b.r,
+        mu: this.field.b.mu,
+        x: this.field.b.x,
+        dx: this.field.b.dx,
+        tt: this.field.b.tt,
+        dtt: this.field.b.dtt,
       },
     });
   }
