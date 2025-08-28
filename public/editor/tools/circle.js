@@ -1,5 +1,7 @@
 import { CharPlace } from "./util.js";
 import { line } from "./line.js";
+import charwidth from "../../util/charwidth.json" with { type: "json" };
+window.charwidth = charwidth;
 
 /**
  * AAに円を描く
@@ -34,5 +36,38 @@ export const circle = (aa, width, height, cx, top, bottom) => {
       [i + 1, cx - Math.sqrt(r ** 2 - ((cy - i - 1) * 18) ** 2)],
     );
   }
-  return aa;
+  const cp = new CharPlace(aa, width, height);
+
+  const count = Math.round(Math.sqrt(r ** 2 - (r - 18) ** 2) / 8);
+  const l = cx - count * 8;
+  const lowL = Math.round(
+    (cx - Math.sqrt(r ** 2 - (r - 13.5) ** 2) - l) / 16,
+  );
+  const midL = Math.round((cx - Math.sqrt(r ** 2 - (r - 4.5) ** 2) - l) / 16);
+  const high = Math.round((cx + Math.sqrt(r ** 2 - (r - 4.5) ** 2) - l) / 16);
+  const midR = Math.round(
+    (cx + Math.sqrt(r ** 2 - (r - 13.5) ** 2) - l) / 16,
+  );
+  for (let i = 0; i < lowL; ++i) {
+    cp.addChar(top, l + i * 16, "＿");
+    cp.addChar(bottom - 1, l + i * 16, "￣");
+  }
+  for (let i = lowL; i < midL; ++i) {
+    cp.addChar(top, l + i * 16, "─");
+    cp.addChar(bottom - 1, l + i * 16, "─");
+  }
+  for (let i = midL; i < high; ++i) {
+    cp.addChar(top, l + i * 16, "￣");
+    cp.addChar(bottom - 1, l + i * 16, "＿");
+  }
+  for (let i = high; i < midR; ++i) {
+    cp.addChar(top, l + i * 16, "─");
+    cp.addChar(bottom - 1, l + i * 16, "─");
+  }
+  for (let i = midR; i < count; ++i) {
+    cp.addChar(top, l + i * 16, "＿");
+    cp.addChar(bottom - 1, l + i * 16, "￣");
+  }
+
+  return cp.toAA();
 };
