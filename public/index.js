@@ -2,16 +2,14 @@ import { aa2blob } from "./util/aa2img.js";
 
 window.devicePixelRatio = 2;
 
-// --- DOM要素の取得 ---
 const popupBackdrop = document.getElementById("popup-backdrop");
 const popupHeaderTitle = document.getElementById("popup-header-title");
 const popupCloseBt = document.getElementById("popup-close-bt");
-const popupAAImage = document.getElementById("popup-aa-img"); // img要素を取得
+const popupAAImage = document.getElementById("popup-aa-img");
 const popupAATitle = document.getElementById("popup-aa-title");
 const popupAACreated = document.getElementById("popup-aa-created");
 const popupAAUpdated = document.getElementById("popup-aa-updated");
 
-// --- 関数定義 ---
 const closePopup = () => {
   popupBackdrop.style.display = "none";
 };
@@ -27,7 +25,6 @@ const formatDate = (isoString) => {
   return `${y}/${mo}/${d} ${h}:${mi}`;
 };
 
-// --- イベントリスナー設定 ---
 popupCloseBt.addEventListener("click", closePopup);
 popupBackdrop.addEventListener("click", (e) => {
   if (e.target === popupBackdrop) {
@@ -35,7 +32,6 @@ popupBackdrop.addEventListener("click", (e) => {
   }
 });
 
-// --- メイン処理 ---
 (async () => {
   try {
     const response = await fetch("/AALibraryList", { method: "GET" });
@@ -51,7 +47,7 @@ popupBackdrop.addEventListener("click", (e) => {
 
     for (const aaData of libraries) {
       const opus = document.createElement("button");
-      const opus_img = document.createElement("img"); // canvasからimgに変更
+      const opus_img = document.createElement("img");
       const opus_title = document.createElement("p");
 
       opus.classList.add("opus");
