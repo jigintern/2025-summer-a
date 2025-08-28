@@ -11,6 +11,7 @@ const popupAACreated = document.getElementById("popup-aa-created");
 const popupAAUpdated = document.getElementById("popup-aa-updated");
 const popupEditBt = document.getElementById("popup-edit-bt");
 const popupBattleBt = document.getElementById("popup-battle-bt");
+const popupDeleteBt = document.getElementById("popup-delete-bt");
 
 const closePopup = () => {
   popupBackdrop.style.display = "none";
@@ -40,6 +41,36 @@ popupBattleBt.addEventListener("click", () => {
     location.href = `/battle/?id=${aaId}`;
   }
 });
+popupDeleteBt.addEventListener("click", async () => {
+  const aaId = popupDeleteBt.dataset.aaId;
+  if (!aaId) return;
+
+  if (
+    confirm(
+      "本当にこのアスキーアートを削除しますか？\nこの操作は取り消せません。",
+    )
+  ) {
+    try {
+      const response = await fetch(`/AALibrary/${aaId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        closePopup();
+        const elementToRemove = document.getElementById(`opus-${aaId}`);
+        if (elementToRemove) {
+          elementToRemove.remove();
+        }
+      } else {
+        const errorMessage = await response.text();
+        alert(`削除に失敗しました: ${errorMessage}`);
+      }
+    } catch (error) {
+      console.error("削除処理でエラー:", error);
+      alert("削除中にエラーが発生しました。");
+    }
+  }
+});
 popupBackdrop.addEventListener("click", (e) => {
   if (e.target === popupBackdrop) {
     closePopup();
@@ -61,6 +92,7 @@ popupBackdrop.addEventListener("click", (e) => {
 
     for (const aaData of libraries) {
       const opus = document.createElement("button");
+      opus.id = `opus-${aaData.id}`;
       const opus_img = document.createElement("img");
       const opus_title = document.createElement("p");
 
@@ -81,7 +113,8 @@ popupBackdrop.addEventListener("click", (e) => {
         popupAACreated.innerText = formatDate(aaData.created_at);
         popupAAUpdated.innerText = formatDate(aaData.updated_at);
 
-        popupEditBt.dataset.aaId = popupBattleBt.dataset.aaId = aaData.id;
+        popupEditBt.dataset.aaId = popupBattleBt.dataset.aaId = popupDeleteBt
+          .dataset.aaId = aaData.id;
 
         popupAAImage.src = "";
         aa2blob(aaData.content).then((url) => {

@@ -199,7 +199,6 @@ Deno.serve(async (req) => {
     }
   }
 
-  // 上書き保存（共通の処理が多いけど一旦保留）
   if (req.method === "GET" && pathname.startsWith("/AALibrary/")) {
     try {
       const aaId = pathname.split("/")[2];
@@ -326,6 +325,65 @@ Deno.serve(async (req) => {
       });
     } catch (error) {
       console.error("エラー:", error);
+      return new Response("サーバーエラー", { status: 500 });
+    }
+  }
+
+  if (req.method === "DELETE" && pathname.startsWith("/AALibrary/")) {
+    try {
+      const cookie = getCookies(req.headers);
+      const sessionid = cookie["sessionid"] ?? "";
+      const username = sessions.get(sessionid);
+
+      if (!username) {
+        return new Response("認証されていません", { status: 401 });
+      }
+
+      const aaId = pathname.split("/")[2];
+      if (!aaId) {
+        return new Response("IDが指定されていません", { status: 400 });
+      }
+      const aaKey = ["aa", aaId];
+      const aaEntry = await kv.get(aaKey);
+      if (!aaEntry.value) {
+        return new Response("削除対象のAAが見つかりません", { status: 404 });
+      }
+
+      if (aaEntry.value.author !== username) {
+        return new Response("削除権限がありません", { status: 403 });
+      }
+
+      let userAaRefKey = null;
+      const iter = kv.list({ prefix: ["aa_by_user", username] });
+      for await (const entry of iter) {
+        if (entry.value && entry.value.aa_id === aaId) {
+          userAaRefKey = entry.key;
+          break;
+        }
+      }
+
+      if (!userAaRefKey) {
+        await kv.delete(aaKey);
+        return new Response(
+          "削除しました (参照データ不整合の可能性があります。)",
+          {
+            status: 200,
+          },
+        );
+      }
+
+      const res = await kv.atomic()
+        .delete(aaKey)
+        .delete(userAaRefKey)
+        .commit();
+
+      if (!res.ok) {
+        throw new Error("データベースからの削除に失敗しました。");
+      }
+
+      return new Response("削除しました", { status: 200 });
+    } catch (error) {
+      console.error("削除エラー:", error);
       return new Response("サーバーエラー", { status: 500 });
     }
   }
