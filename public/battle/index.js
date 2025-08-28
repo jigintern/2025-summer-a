@@ -482,15 +482,15 @@ function checkTurnEnd() {
     } else {
       waitTurn();
     }
-
-    gs = gs_a;
+    /*
+    gs.updateFromJSON(gs_a.getJson());
     if (mySign === "A") {
       bs.a = gs.a;
       bs.b = gs.b;
     } else {
       bs.a = gs.b;
       bs.b = gs.a;
-    }
+    }*/
   }
   isMoving = !bs.isStopping();
 }
