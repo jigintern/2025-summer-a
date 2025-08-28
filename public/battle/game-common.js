@@ -24,6 +24,9 @@ export class GameStatus {
     if (!this.field.isStopping()) {
       throw new Error("ターンがまだ終わっていないのに攻撃が行なわれました");
     }
+    if (this.field.isGameEnd()) {
+      throw new Error("既にゲームは終了しています");
+    }
     if (power < 0 || 1 < power) return;
     if (dtt < 0 || 1 < dtt) return;
     const obj = this.turn === "A" ? this.field.a : this.field.b;
