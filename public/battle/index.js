@@ -2,6 +2,8 @@ import { AAObj, BattleStatus } from "./physics.js";
 
 import { GameStatus } from "./game-common.js";
 
+import { aa2blob } from "../util/aa2img.js";
+
 const canvas = document.getElementById("battle_canvas");
 
 canvas.width = 1000;
@@ -291,6 +293,17 @@ function drawArrow() {
   if (angle < 0) angle += Math.PI * 2;
   if (sizeAngle < 0) sizeAngle += Math.PI * 2;
 }
+
+const myAA = new URL(decodeURIComponent(document.location.href)).searchParams
+  .get("id");
+console.log(myAA);
+
+const playerImgA = new Image();
+
+playerImgA.src = "";
+aa2blob(aaData.content).then((url) => {
+  popupAAImage.src = url;
+});
 
 const playerImgA = new Image();
 playerImgA.addEventListener("load", () => {
