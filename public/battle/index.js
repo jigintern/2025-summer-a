@@ -512,12 +512,7 @@ function checkTurnEnd() {
     if (mySign === "A") {
       bs.a = gs.field.a;
       bs.b = gs.field.b;
-      bs.a = gs.field.a;
-      bs.b = gs.field.b;
     } else {
-      bs.a = gs.field.b;
-      bs.b = gs.field.a;
-    }
       bs.a = gs.field.b;
       bs.b = gs.field.a;
     }
