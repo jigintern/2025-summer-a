@@ -305,17 +305,20 @@ Deno.serve(async (req) => {
 
       // getManyは一度に10件までしかキーを取得できないため、分割して処理する
       const chunkSize = 10;
-      let allAaEntries = [];
+      const AALibrary = [];
       for (let i = 0; i < aaIds.length; i += chunkSize) {
         const chunkIds = aaIds.slice(i, i + chunkSize);
         const aaKeys = chunkIds.map((id) => ["aa", id]);
         const aaEntries = await kv.getMany(aaKeys);
-        allAaEntries = allAaEntries.concat(aaEntries);
-      }
 
-      const AALibrary = allAaEntries
-        .map((entry) => entry.value)
-        .filter((v) => v !== null);
+        const processedEntries = aaEntries
+          .filter((entry) => entry.value !== null)
+          .map((entry) => {
+            const id = entry.key[1];
+            return { ...entry.value, id: id };
+          });
+        AALibrary.push(...processedEntries);
+      }
 
       return new Response(JSON.stringify({ AA: AALibrary }), {
         status: 200,

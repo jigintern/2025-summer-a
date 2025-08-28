@@ -9,6 +9,7 @@ const popupAAImage = document.getElementById("popup-aa-img");
 const popupAATitle = document.getElementById("popup-aa-title");
 const popupAACreated = document.getElementById("popup-aa-created");
 const popupAAUpdated = document.getElementById("popup-aa-updated");
+const popupEditBt = document.getElementById("popup-edit-bt");
 
 const closePopup = () => {
   popupBackdrop.style.display = "none";
@@ -26,6 +27,12 @@ const formatDate = (isoString) => {
 };
 
 popupCloseBt.addEventListener("click", closePopup);
+popupEditBt.addEventListener("click", () => {
+  const aaId = popupEditBt.dataset.aaId;
+  if (aaId) {
+    location.href = `/editor/?id=${aaId}`;
+  }
+});
 popupBackdrop.addEventListener("click", (e) => {
   if (e.target === popupBackdrop) {
     closePopup();
@@ -61,14 +68,16 @@ popupBackdrop.addEventListener("click", (e) => {
       });
 
       // ポップアップ表示
-      opus.addEventListener("click", async () => {
+      opus.addEventListener("click", () => {
         popupHeaderTitle.innerText = aaData.title;
         popupAATitle.innerText = aaData.title;
         popupAACreated.innerText = formatDate(aaData.created_at);
         popupAAUpdated.innerText = formatDate(aaData.updated_at);
 
+        popupEditBt.dataset.aaId = aaData.id;
+
         popupAAImage.src = "";
-        await aa2blob(aaData.content).then((url) => {
+        aa2blob(aaData.content).then((url) => {
           popupAAImage.src = url;
         });
 
