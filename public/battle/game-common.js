@@ -78,4 +78,44 @@ export class GameStatus {
   isTurnFinished() {
     return this.field.isStopping() || this.field.isGameEnd();
   }
+
+  /**
+   * 盤面情報を管理するJSONを取得する
+   * @returns {{
+   *   a: {r: number, mu: number, x: [number, number], dx: [number, number], tt: number, dtt: number},
+   *   b: {r: number, mu: number, x: [number, number], dx: [number, number], tt: number, dtt: number},
+   * }}
+   */
+  getJson() {
+    return structuredClone({
+      a: {
+        r: this.field.a.r,
+        mu: this.field.a.mu,
+        x: this.field.a.x,
+        dx: this.field.a.dx,
+        tt: this.field.a.tt,
+        dtt: this.field.a.dtt,
+      },
+      b: {
+        r: this.field.a.r,
+        mu: this.field.a.mu,
+        x: this.field.a.x,
+        dx: this.field.a.dx,
+        tt: this.field.a.tt,
+        dtt: this.field.a.dtt,
+      },
+    });
+  }
+
+  /**
+   * getJSONで得た盤面の状態に更新する
+   * @param {{
+   *   a: {r: number, mu: number, x: [number, number], dx: [number, number], tt: number, dtt: number},
+   *   b: {r: number, mu: number, x: [number, number], dx: [number, number], tt: number, dtt: number},
+   * }} json
+   */
+  updateFromJSON(json) {
+    Object.assign(this.field.a, json.a);
+    Object.assign(this.field.b, json.b);
+  }
 }
