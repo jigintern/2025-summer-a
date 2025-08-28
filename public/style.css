@@ -127,8 +127,7 @@ button {
   margin-top: 20px;
   margin-bottom: 20px;
 }
-/* 
-.access_to_any {
+/* .access_to_any {
   margin-top: 20px;
 
   width: 30%;
@@ -288,41 +287,24 @@ button {
   top: 5px;
   right: 5px;
   z-index: 10;
-
   margin: 1px;
   padding: 0;
-  width: 60px;
-  height: 60px;
-  border-color: white;
-  border-width: 1px;
-  border-style: outset;
+  width: 40px;
+  height: 40px;
+  border: 1px outset #fff;
   border-radius: 3px;
   cursor: pointer;
-  background: linear-gradient(
-    to bottom,
-    #f93707,
-    #ff9090 10%,
-    #f93707 40%,
-    #f93707 60%,
-    #ff9090 90%,
-    #f93707 100%
-  );
-}
-#popup-delete-bt:active {
-  background: linear-gradient(
-    to bottom,
-    #ff9090,
-    #ffc0c0 10%,
-    #ff9090 40%,
-    #ff9090 60%,
-    #ffc0c0 90%,
-    #ff9090 100%
-  );
+  background: #f0f0f0;
 }
 
-#popup-delete-bt .window_fr_bt_img {
-  color: white;
-  font-family: "Webdings", sans-serif;
-  user-select: none;
-  font-size: 16pt;
+#popup-delete-bt:active {
+  background: #e0e0e0;
+  border-style: inset;
+}
+
+#popup-delete-bt img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  margin: 10%;
 }
