@@ -20,10 +20,25 @@ form.addEventListener("submit", (e) => {
     document.getElementById("formsArea").style.display = "none";
     roomArea.style.display = "block";
     roomArea.textContent = `部屋名: ${roomName}`;
+    // 退出ボタン追加
+
+    let leaveBtn = document.createElement("button");
+    leaveBtn.textContent = "退出";
+    leaveBtn.id = "leaveBtn";
+    roomArea.appendChild(leaveBtn);
+    leaveBtn.addEventListener("click", () => {
+      if (ws.readyState === WebSocket.OPEN) {
+        // サーバー経由で切断したい場合は下記を使う
+        // ws.send(JSON.stringify({ type: "leave" }));
+        ws.close(1000, "ユーザーによる退出");
+      }
+      // location.href = "/"; // oncloseで遷移するのでここは不要
+    });
   };
 
   ws.onclose = (e) => {
     alert(e.reason);
+    location.href = "/"; // ホームに遷移
   };
   ws.onerror = (e) => {
     alert(e.type);

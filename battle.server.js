@@ -10,6 +10,11 @@ export const battle = (player1, player2) => {
 
   // ゲーム状態を生成
   const game = new GameStatus();
+  let a = 0;
+  if (a === 0) {
+    a = 1;
+    player2[1].close(4000, "まだ作ってない!");
+  }
 
   // ランダムで先攻後攻を決める
   if (Math.random() < 0.5) {
