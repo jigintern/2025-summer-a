@@ -1,12 +1,13 @@
 import { GameStatus } from "./public/battle/game-common.js";
 
 /**
- * @param {[string, WebSocket]} player1
- * @param {[string, WebSocket]} player2
+ * @param {[string, WebSocket, string]} player1
+ * @param {[string, WebSocket, string]} player2
  */
 export const battle = (player1, player2) => {
   // TODO: 対戦を実装する
   console.log(`対戦開始: ${player1[0]} vs ${player2[0]}`);
+  console.log(`player1 aaId: ${player1[2]}, player2 aaId: ${player2[2]}`);
 
   player1[1].addEventListener("close", () => {
     // player2がOPENのときだけ通知＆close
@@ -56,6 +57,7 @@ export const battle = (player1, player2) => {
       players: [player1[0], player2[0]],
       myName: player1[0],
       sign: "A",
+      aaId: player1[2],
     }));
     player2[1].send(JSON.stringify({
       type: "init",
@@ -63,6 +65,7 @@ export const battle = (player1, player2) => {
       players: [player1[0], player2[0]],
       myName: player2[0],
       sign: "B",
+      aaId: player2[2],
     }));
   };
 
