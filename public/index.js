@@ -56,7 +56,7 @@ popupBackdrop.addEventListener("click", (e) => {
       opus_title.innerText = aaData.title;
 
       // 一覧のプレビュー画像の生成
-      await aa2blob(aaData.content, 160, 160).then((url) => {
+      await aa2blob(aaData.content).then((url) => {
         opus_img.src = url;
       });
 
@@ -68,7 +68,7 @@ popupBackdrop.addEventListener("click", (e) => {
         popupAAUpdated.innerText = formatDate(aaData.updated_at);
 
         popupAAImage.src = "";
-        await aa2blob(aaData.content, 800, 560).then((url) => {
+        await aa2blob(aaData.content).then((url) => {
           popupAAImage.src = url;
         });
 
