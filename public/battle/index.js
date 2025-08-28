@@ -461,10 +461,12 @@ function hourglass() {
   const y = canvas.height / 2;
   const w = canvas.width / 7;
   const h = canvas.height / 3;
+  const h2 = canvas.height / 12.5;
   let animNum = 2 * (waitTime % 3) / 3;
 
   const sundStyle = "rgba(255, 255, 255, 1)";
   const glassStyle = "rgba(143, 143, 143, 1)";
+  const blockStyle = "rgba(49, 49, 49, 1)";
   let angleStyle;
 
   ctx.save();
@@ -533,7 +535,7 @@ function hourglass() {
   ctx.lineTo(-w / 2, -h / 2);
   ctx.lineTo(w / 2, -h / 2);
   ctx.lineTo(0, 0);
-  ctx.strokeStyle = "#585858ff";
+  ctx.strokeStyle = blockStyle;
   ctx.stroke();
   ctx.closePath();
 
@@ -545,6 +547,39 @@ function hourglass() {
   ctx.stroke();
   ctx.closePath();
 
+  ctx.beginPath();
+  ctx.moveTo(-w / 2, +h / 2);
+  ctx.lineTo(-w / 2, +h / 2 + h2);
+  ctx.lineTo(w / 2, +h / 2 + h2);
+  ctx.lineTo(w / 2, +h / 2);
+  ctx.fillStyle = blockStyle;
+  ctx.fill();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.moveTo(-w / 2, +h / 2);
+  ctx.lineTo(-w / 2, +h / 2 + h2);
+  ctx.lineTo(w / 2, +h / 2 + h2);
+  ctx.lineTo(w / 2, +h / 2);
+  ctx.stroke();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.moveTo(-w / 2, -h / 2);
+  ctx.lineTo(-w / 2, -h / 2 - h2);
+  ctx.lineTo(w / 2, -h / 2 - h2);
+  ctx.lineTo(w / 2, -h / 2);
+  ctx.fill();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.moveTo(-w / 2, -h / 2);
+  ctx.lineTo(-w / 2, -h / 2 - h2);
+  ctx.lineTo(w / 2, -h / 2 - h2);
+  ctx.lineTo(w / 2, -h / 2);
+  ctx.stroke();
+  ctx.closePath();
+
   ctx.restore();
 }
 
@@ -553,12 +588,6 @@ function waitingAnim() {
 
   waitingText();
   hourglass();
-
-  if (waitTime > 10) {
-    console.log("test");
-    isWaiting = false;
-    isGameTime = true;
-  }
   waitTime += deltaTime;
 }
 
@@ -569,6 +598,23 @@ function roomInButtonPush() {
   const roomInput = document.getElementById("room_word");
   roomWord = roomInput.value;
   if (roomWord === "") return;
+  ws = new WebSocket(
+    "ws://localhost:8000/ws/battle?word=" + roomWord,
+  ); //test
+  console.log(ws);
+
+  ws.onmessage = (event) => {
+    getMessage(event);
+  };
+
+  ws.onopen = (event) => {
+    getOpen(event);
+  };
+
+  ws.onerror = (error) => {
+    getError(error);
+  };
+
   isRoomInEnable = false;
   isRoomSearch = false;
   waitTime = 0;
@@ -809,6 +855,23 @@ function resetStyle() {
   ctx.filter = "none";
   ctx.lineWidth = 1;
   ctx.strokeStyle = "#000000";
+}
+
+let ws;
+
+function getMessage(event) {
+  console.log("メッセージ");
+  console.log(event.data);
+}
+
+function getOpen(event) {
+  console.log("通信接続イベント受信");
+  console.log(event.data);
+}
+
+function getError(error) {
+  console.log("エラー発生");
+  console.log(error.data);
 }
 
 //メインの描画関数
