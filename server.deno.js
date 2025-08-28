@@ -32,7 +32,7 @@ const sessions = new Map();
  * @param {string} username ログインしたユーザー名
  * @returns {Headers}
  */
-const makeSession = (username) => {
+const makeSession = async (username, kv) => {
   const sessionid = crypto.randomUUID();
   const headers = new Headers();
   setCookie(headers, {
@@ -41,7 +41,10 @@ const makeSession = (username) => {
     httpOnly: true,
     maxAge: 86400 * 14, // 2週間
   });
-  sessions.set(sessionid, username);
+  // Deno KVにセッションを保存（expireInで14日後に自動削除）
+  await kv.set(["sessions", sessionid], username, {
+    expireIn: 86400 * 14 * 1000,
+  });
   return headers;
 };
 
@@ -52,7 +55,9 @@ Deno.serve(async (req) => {
 
   if (needLogin.includes(pathname)) {
     const cookie = getCookies(req.headers);
-    if (!sessions.has(cookie["sessionid"] ?? "")) {
+    const sessionid = cookie["sessionid"] ?? "";
+    const sessionEntry = await kv.get(["sessions", sessionid]);
+    if (sessionEntry.value === null) {
       const url = new URL(req.url);
       url.pathname = "/login";
       url.search = "";
@@ -63,7 +68,7 @@ Deno.serve(async (req) => {
 
   if (pathname === "/logout") {
     const cookie = getCookies(req.headers);
-    sessions.delete(cookie["sessionid"] ?? "");
+    await kv.delete(["sessions", cookie["sessionid"] ?? ""]);
 
     const headers = new Headers({
       Location: new URL(req.url).origin + "/login/",
@@ -92,7 +97,7 @@ Deno.serve(async (req) => {
       };
       await kv.set(key, value);
 
-      return new Response(null, { headers: makeSession(username) });
+      return new Response(null, { headers: await makeSession(username, kv) });
     } catch (error) {
       console.error("登録エラー:", error);
       return new Response("サーバーエラー", { status: 500 });
@@ -111,7 +116,7 @@ Deno.serve(async (req) => {
       const hashedPassword = await hashPassword(password);
 
       if (user && user.password_hash === hashedPassword) {
-        return new Response(null, { headers: makeSession(username) });
+        return new Response(null, { headers: await makeSession(username, kv) });
       }
       return new Response("ログイン失敗", { status: 401 });
     } catch (error) {
@@ -124,7 +129,9 @@ Deno.serve(async (req) => {
     const params = new URL(req.url).searchParams;
     const roomName = params.get("room") ?? "";
     const cookie = getCookies(req.headers);
-    const username = sessions.get(cookie["sessionid"] ?? "");
+    const sessionid = cookie["sessionid"] ?? "";
+    const sessionEntry = await kv.get(["sessions", sessionid]);
+    const username = sessionEntry.value ?? "";
 
     if (username === "") {
       return Response("ログインしていません", { status: 401 });
@@ -166,7 +173,8 @@ Deno.serve(async (req) => {
       // セッションからユーザー名を取得
       const cookie = getCookies(req.headers);
       const sessionid = cookie["sessionid"] ?? "";
-      const username = sessions.get(sessionid);
+      const sessionEntry = await kv.get(["sessions", sessionid]);
+      const username = sessionEntry.value;
 
       if (!username) {
         return new Response("認証されていません", { status: 401 });
@@ -231,7 +239,8 @@ Deno.serve(async (req) => {
     try {
       const cookie = getCookies(req.headers);
       const sessionid = cookie["sessionid"] ?? "";
-      const username = sessions.get(sessionid) ?? "";
+      const sessionEntry = await kv.get(["sessions", sessionid]);
+      const username = sessionEntry.value ?? "";
       if (!username) {
         return new Response("認証されていません", { status: 401 });
       }
@@ -284,7 +293,8 @@ Deno.serve(async (req) => {
       // セッションからユーザー名を取得
       const cookie = getCookies(req.headers);
       const sessionid = cookie["sessionid"] ?? "";
-      const username = sessions.get(sessionid);
+      const sessionEntry = await kv.get(["sessions", sessionid]);
+      const username = sessionEntry.value;
 
       if (!username) {
         return new Response("認証されていません", { status: 401 });
@@ -333,7 +343,8 @@ Deno.serve(async (req) => {
     try {
       const cookie = getCookies(req.headers);
       const sessionid = cookie["sessionid"] ?? "";
-      const username = sessions.get(sessionid);
+      const sessionEntry = await kv.get(["sessions", sessionid]);
+      const username = sessionEntry.value;
 
       if (!username) {
         return new Response("認証されていません", { status: 401 });

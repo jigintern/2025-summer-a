@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const { aaId } = await response.json();
           history.replaceState(null, "", `/editor/?id=${aaId}`);
         } else if (response.status === 401) {
-          alert("ログインして下さい");
+          alert("ログインして下さい１");
         } else {
           alert("保存に失敗しました");
         }
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (response.ok) {
           // なんかポップアップ出したい
         } else if (response.status === 401) {
-          alert("ログインして下さい");
+          alert("ログインして下さい２");
         } else {
           alert("保存に失敗しました");
         }
