@@ -2,6 +2,8 @@ import { AAObj, BattleStatus } from "./physics.js";
 
 import { GameStatus } from "./game-common.js";
 
+import { aa2blob } from "../util/aa2img.js";
+
 const canvas = document.getElementById("battle_canvas");
 
 canvas.width = 1000;
@@ -163,7 +165,6 @@ function AAShoot() {
   } else {
     bs.a = gs.field.b;
   }
-
   ws.send(JSON.stringify({
     type: "attack",
     direction: angle - Math.PI / 2,
@@ -292,15 +293,33 @@ function drawArrow() {
   if (sizeAngle < 0) sizeAngle += Math.PI * 2;
 }
 
-const playerImgA = new Image();
-playerImgA.addEventListener("load", () => {
-});
-playerImgA.src = "power.png";
+const myAA = new URL(decodeURIComponent(document.location.href)).searchParams
+  .get("id");
 
+let enemyAA;
+
+const playerImgA = new Image();
 const playerImgB = new Image();
-playerImgB.addEventListener("load", () => {
-});
-playerImgB.src = "power.png";
+let AATitle;
+let AATitle_e;
+
+playerImgA.src = "";
+if (myAA) {
+  fetch(`/AALibrary/${encodeURIComponent(myAA)}`)
+    .then((r) => r.json())
+    .then((aainfo) => {
+      AATitle = aainfo.title;
+      aa2blob(aainfo.content).then((url) => {
+        playerImgA.src = url;
+      });
+    })
+    .catch(() => {
+      alert("AAの読み込みに失敗しました");
+      aa2blob("error...\n[悲報]エラー").then((url) => {
+        playerImgA.src = url;
+      });
+    });
+}
 
 //AA描画用関数(今は円だけ)
 function drawMyAA() {
@@ -323,7 +342,7 @@ function drawMyAA() {
   ctx.translate(bs.b.x[0], bs.b.x[1]);
   ctx.rotate(bs.b.tt);
   ctx.drawImage(
-    playerImgA,
+    playerImgB,
     -bs.b.r * Math.sqrt(2) / 2,
     -bs.b.r * Math.sqrt(2) / 2,
     bs.b.r * Math.sqrt(2),
@@ -350,8 +369,8 @@ function drawMyAA() {
       bs.a.x[0],
       bs.a.x[1],
       bs.a.r,
-      conflictAngle - 1.5 * conflictEffectTime,
-      conflictAngle + 1.5 * conflictEffectTime,
+      conflictAngle - 1.5 * conflictEffectTime - (mySign !== "A" ? Math.PI : 0),
+      conflictAngle + 1.5 * conflictEffectTime - (mySign !== "A" ? Math.PI : 0),
     );
     ctx.stroke();
     ctx.closePath();
@@ -360,8 +379,8 @@ function drawMyAA() {
       bs.b.x[0],
       bs.b.x[1],
       bs.b.r,
-      conflictAngle - 1.5 * conflictEffectTime - Math.PI,
-      conflictAngle + 1.5 * conflictEffectTime - Math.PI,
+      conflictAngle - 1.5 * conflictEffectTime - (mySign === "A" ? Math.PI : 0),
+      conflictAngle + 1.5 * conflictEffectTime - (mySign === "A" ? Math.PI : 0),
     );
     ctx.stroke();
     ctx.closePath();
@@ -414,6 +433,8 @@ function fpsUpdate(timestamp) {
 }
 
 function setDeath(x, y, angle, size, player) {
+  console.log(angle);
+  console.log(angle);
   deathX = x;
   deathY = y;
   deathAngle = angle;
@@ -429,7 +450,7 @@ function checkDeath() {
     setDeath(
       bs.a.x[0] < 0 ? 0 : 1000,
       bs.a.x[1],
-      Math.atan(bs.a.dx[1] / bs.a.dx[0]) + bs.a.x[0] < 0 ? Math.PI : 0,
+      Math.atan2(bs.a.dx[1], bs.a.dx[0]),
       bs.a.r,
       0,
     );
@@ -437,7 +458,7 @@ function checkDeath() {
     setDeath(
       bs.a.x[0],
       bs.a.x[1] < 0 ? 0 : 500,
-      Math.atan(bs.a.dx[1] / bs.a.dx[0]) + bs.a.x[1] < 0 ? Math.PI : 0,
+      Math.atan2(bs.a.dx[1], bs.a.dx[0]),
       bs.a.r,
       0,
     );
@@ -446,7 +467,7 @@ function checkDeath() {
     setDeath(
       bs.b.x[0] < 0 ? 0 : 1000,
       bs.b.x[1],
-      Math.atan(bs.b.dx[1] / bs.b.dx[0]) + bs.b.x[0] < 0 ? Math.PI : 0,
+      Math.atan2(bs.b.dx[1], bs.b.dx[0]),
       bs.b.r,
       1,
     );
@@ -454,7 +475,7 @@ function checkDeath() {
     setDeath(
       bs.b.x[0],
       bs.b.x[1] < 0 ? 0 : 500,
-      Math.atan(bs.b.dx[1] / bs.b.dx[0]) + bs.b.x[1] < 0 ? Math.PI : 0,
+      Math.atan2(bs.b.dx[1], bs.b.dx[0]),
       bs.b.r,
       1,
     );
@@ -482,15 +503,15 @@ function checkTurnEnd() {
     } else {
       waitTurn();
     }
-    /*
+
     gs.updateFromJSON(gs_a.getJson());
     if (mySign === "A") {
-      bs.a = gs.a;
-      bs.b = gs.b;
+      bs.a = gs.field.a;
+      bs.b = gs.field.b;
     } else {
-      bs.a = gs.b;
-      bs.b = gs.a;
-    }*/
+      bs.a = gs.field.b;
+      bs.b = gs.field.a;
+    }
   }
   isMoving = !bs.isStopping();
 }
@@ -648,8 +669,8 @@ function roomInButtonPush() {
   roomWord = roomInput.value;
   if (roomWord === "") return;
   ws = new WebSocket(
-    `ws://${location.host}/ws/battle?room=${roomWord}`,
-  ); //test
+    `ws://${location.host}/ws/battle?id=${myAA}&room=${roomWord}`,
+  );
   console.log(ws);
 
   ws.onmessage = (event) => {
@@ -662,6 +683,10 @@ function roomInButtonPush() {
 
   ws.onerror = (error) => {
     getError(error);
+  };
+
+  ws.onclose = (event) => {
+    getClose(event);
   };
 
   isRoomInEnable = false;
@@ -793,6 +818,8 @@ function drawGameOver() {
     Math.PI * 2,
   );
 
+  console.log(deathPlayer);
+
   ctx.fillStyle = deathColor[deathPlayer][0];
   ctx.fill();
   ctx.closePath();
@@ -923,6 +950,26 @@ function getMessage(event) {
       gs.turn = msg.sign;
       console.log(msg.field);
       gs.updateFromJSON(msg.field);
+
+      enemyAA = msg.AAId;
+      playerImgB.src = "";
+      if (enemyAA || true) {
+        fetch(`/AALibrary/${encodeURIComponent(enemyAA)}`)
+          .then((r) => r.json())
+          .then((aainfo) => {
+            AATitle_e = aainfo.title;
+            aa2blob(aainfo.content).then((url) => {
+              playerImgB.src = url;
+            });
+          })
+          .catch(() => {
+            alert("AAの読み込みに失敗しました");
+            aa2blob("error...\n[悲報]エラー").then((url) => {
+              playerImgB.src = url;
+            });
+          });
+      }
+
       if (mySign === "A") {
         bs.a = gs.field.a;
         bs.b = gs.field.b;
@@ -932,10 +979,8 @@ function getMessage(event) {
         bs.b = gs.field.a;
         waitTurn();
       }
-      console.log("hello");
       break;
     case "turn":
-      //console.log(msg.beforeField);
       gs_a.updateFromJSON(msg.afterField);
 
       gs.updateFromJSON(msg.beforeField);
@@ -963,12 +1008,17 @@ function waitTurn() {
 
 function getOpen(event) {
   console.log("通信接続イベント受信");
-  console.log(event.data);
+  console.log(event);
 }
 
 function getError(error) {
   console.log("エラー発生");
-  console.log(error.data);
+  console.log(error);
+}
+
+function getClose(event) {
+  console.log("通信切断イベント受信");
+  console.log(event);
 }
 
 //メインの描画関数
