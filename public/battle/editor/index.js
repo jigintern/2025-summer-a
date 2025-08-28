@@ -34,7 +34,7 @@ form.addEventListener("submit", (e) => {
     const data = JSON.parse(event.data);
     console.log("サーバーから受信:", data);
 
-    if (data.type === "battle_start") {
+    if (data.type === "init") {
       myName = data.myName; // サーバーから自分の名前を取得
       if (roomArea) {
         roomArea.textContent = `対戦開始: あなた(${myName}) vs ${
@@ -55,8 +55,8 @@ form.addEventListener("submit", (e) => {
           roomArea.appendChild(attackBtn);
           attackBtn.addEventListener("click", () => {
             ws.send(JSON.stringify({
-              power: 3.1419,
-              direction: 3.1419,
+              power: 0,
+              direction: 0,
             }));
             attackBtn.disabled = true; // 連打防止
           });
