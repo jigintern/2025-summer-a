@@ -57,12 +57,18 @@ export class GameStatus {
   /**
    * アニメーション用に少しずつ時間を進める
    * @param {number} delta 攻撃開始からの経過時間 (ミリ秒)
+   * @returns {("A" | "B")[]} 場外に出たプレイヤーの配列.
    */
   advance(delta) {
     while (this.#timeSpend < delta) {
       this.field.nextTick();
       this.#timeSpend += 1;
     }
+    /** @type {("A" | "B")[]} */
+    const r = [];
+    if (!this.field.a.isInField()) r.push("A");
+    if (!this.field.b.isInField()) r.push("B");
+    return r;
   }
 
   /**
