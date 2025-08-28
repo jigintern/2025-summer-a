@@ -10,6 +10,7 @@ const popupAATitle = document.getElementById("popup-aa-title");
 const popupAACreated = document.getElementById("popup-aa-created");
 const popupAAUpdated = document.getElementById("popup-aa-updated");
 const popupEditBt = document.getElementById("popup-edit-bt");
+const popupBattleBt = document.getElementById("popup-battle-bt");
 
 const closePopup = () => {
   popupBackdrop.style.display = "none";
@@ -31,6 +32,12 @@ popupEditBt.addEventListener("click", () => {
   const aaId = popupEditBt.dataset.aaId;
   if (aaId) {
     location.href = `/editor/?id=${aaId}`;
+  }
+});
+popupBattleBt.addEventListener("click", () => {
+  const aaId = popupBattleBt.dataset.aaId;
+  if (aaId) {
+    location.href = `/battle/?id=${aaId}`;
   }
 });
 popupBackdrop.addEventListener("click", (e) => {
@@ -74,7 +81,7 @@ popupBackdrop.addEventListener("click", (e) => {
         popupAACreated.innerText = formatDate(aaData.created_at);
         popupAAUpdated.innerText = formatDate(aaData.updated_at);
 
-        popupEditBt.dataset.aaId = aaData.id;
+        popupEditBt.dataset.aaId = popupBattleBt.dataset.aaId = aaData.id;
 
         popupAAImage.src = "";
         aa2blob(aaData.content).then((url) => {
