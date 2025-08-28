@@ -85,6 +85,9 @@ button {
 .opus_image {
   width: 100%;
   height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  user-select: none;
 }
 
 .opus_title {
@@ -159,4 +162,167 @@ button {
 .access_bt:focus {
   outline: 1px dotted #000;
   outline-offset: -4px;
+}
+
+#popup-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+#popup-window {
+  width: 60vw;
+  height: 70vh;
+  min-width: 400px;
+  min-height: 300px;
+  position: relative;
+  margin: 0;
+  top: auto;
+  left: auto;
+  right: auto;
+  animation: none;
+  user-select: none;
+}
+
+#popup-close-bt {
+  background: linear-gradient(
+    to bottom,
+    #f93707,
+    #ff9090 10%,
+    #f93707 40%,
+    #f93707 60%,
+    #ff9090 90%,
+    #f93707 100%
+  );
+}
+#popup-close-bt:active {
+  background: linear-gradient(
+    to bottom,
+    #ff9090,
+    #ffc0c0 10%,
+    #ff9090 40%,
+    #ff9090 60%,
+    #ffc0c0 90%,
+    #ff9090 100%
+  );
+}
+
+.window_header .window_header_left span {
+  font-family: "MS UI Gothic", sans-serif;
+  color: white;
+  font-size: 11px;
+}
+
+#popup-header-title {
+  font-family: "MS UI Gothic", sans-serif;
+  color: white;
+  font-size: 11px;
+}
+
+#popup-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+#popup-aa-canvas {
+  flex-grow: 1;
+  background-color: #fff;
+  border: 1px solid #7f9db9;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+#popup-aa-img {
+  flex-grow: 1;
+  background-color: #fff;
+  border: 1px solid #7f9db9;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  min-height: 0;
+  /* image-rendering: pixelated; */
+  user-select: none;
+}
+
+#popup-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 10px;
+  flex-shrink: 0;
+}
+
+#popup-aa-info {
+  background-color: #f0f0f0;
+  border: 1px inset #7f9db9;
+  padding: 8px;
+  margin-bottom: 10px;
+  font-family: "MS UI Gothic", sans-serif;
+  font-size: 11px;
+}
+
+#popup-aa-info p {
+  margin: 0 0 5px 0;
+}
+
+#popup-aa-container {
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  min-height: 0;
+}
+
+#popup-delete-bt {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 10;
+
+  margin: 1px;
+  padding: 0;
+  width: 60px;
+  height: 60px;
+  border-color: white;
+  border-width: 1px;
+  border-style: outset;
+  border-radius: 3px;
+  cursor: pointer;
+  background: linear-gradient(
+    to bottom,
+    #f93707,
+    #ff9090 10%,
+    #f93707 40%,
+    #f93707 60%,
+    #ff9090 90%,
+    #f93707 100%
+  );
+}
+#popup-delete-bt:active {
+  background: linear-gradient(
+    to bottom,
+    #ff9090,
+    #ffc0c0 10%,
+    #ff9090 40%,
+    #ff9090 60%,
+    #ffc0c0 90%,
+    #ff9090 100%
+  );
+}
+
+#popup-delete-bt .window_fr_bt_img {
+  color: white;
+  font-family: "Webdings", sans-serif;
+  user-select: none;
+  font-size: 16pt;
 }
