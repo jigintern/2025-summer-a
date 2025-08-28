@@ -39,7 +39,7 @@ export class GameStatus {
    * 全てのオブジェクトが止まるか, 誰かが場外に出るまで時間をすすめる
    * @returns {("A" | "B")[]} 場外に出たプレイヤーの配列. 空なら続行
    */
-  turnend() {
+  toTurnend() {
     while (!this.isTurnFinished()) {
       this.field.nextTick();
     }
