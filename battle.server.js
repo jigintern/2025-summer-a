@@ -57,7 +57,7 @@ export const battle = (player1, player2) => {
       players: [player1[0], player2[0]],
       myName: player1[0],
       sign: "A",
-      aaId: player1[2],
+      aaId: player2[2],
     }));
     player2[1].send(JSON.stringify({
       type: "init",
@@ -65,7 +65,7 @@ export const battle = (player1, player2) => {
       players: [player1[0], player2[0]],
       myName: player2[0],
       sign: "B",
-      aaId: player2[2],
+      aaId: player1[2],
     }));
   };
 
