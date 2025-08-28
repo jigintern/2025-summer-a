@@ -31,7 +31,7 @@ export const battle = (player1, player2) => {
   player2[1].addEventListener("close", () => {
     if (player1[1].readyState === 1) {
       if (type !== "timeout") {
-        player2[1].send(JSON.stringify({
+        player1[1].send(JSON.stringify({
           type: "cutting",
           message: "相手が切断しました",
         }));
