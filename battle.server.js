@@ -1,3 +1,5 @@
+import { GameStatus } from "./public/battle/game-common.js";
+
 /**
  * @param {[string, WebSocket]} player1
  * @param {[string, WebSocket]} player2
@@ -6,81 +8,125 @@ export const battle = (player1, player2) => {
   // TODO: 対戦を実装する
   console.log(`対戦開始: ${player1[0]} vs ${player2[0]}`);
 
-  // 初期状態を設定
-  let currentTurn = Math.random() < 0.5 ? 1 : 2;
-  const startInformation = {
-    type: "battle_start", //ゲームの進行
-    players: [player1[0], player2[0]], //ユーザー名
-    power: 0, //力の強さ
-    direction: 0, //力の方向
-    player1Coordinates: { x: 0, y: 0 }, // プレイヤー1の座標(今)
-    player2Coordinates: { x: 0, y: 0 }, // プレイヤー2の座標(今)
-    turn: currentTurn === 1 ? player1[0] : player2[0],
+  // ゲーム状態を生成
+  const game = new GameStatus();
+
+  // ランダムで先攻後攻を決める
+  if (Math.random() < 0.5) {
+    [player1, player2] = [player2, player1];
+  }
+
+  // プレイヤー名とターンの対応
+  const playerMap = {
+    A: player1,
+    B: player2,
   };
 
   // 初期状態を送信
-  const start1 = JSON.stringify({
-    ...startInformation,
-    myName: player1[0], // 受信者自身の名前
-  });
-  const start2 = JSON.stringify({
-    ...startInformation,
-    myName: player2[0], // 受信者自身の名前
-  });
-  player1[1].send(start1);
-  player2[1].send(start2);
+  const sendState = () => {
+    const json = game.getJson();
+    // それぞれのクライアントに自分の名前を含めて送信
+    player1[1].send(JSON.stringify({
+      type: "init",
+      field: json,
+      players: [player1[0], player2[0]],
+      myName: player1[0],
+      sign: "A",
+    }));
+    player2[1].send(JSON.stringify({
+      type: "init",
+      field: json,
+      players: [player1[0], player2[0]],
+      myName: player2[0],
+      sign: "B",
+    }));
+  };
 
   // ターン情報を送信
-  const sendTurnInfo = () => {
+  /*const sendTurnInfo = () => {
     console.log("ターン情報を送信");
-    const turnInfo = {
-      type: "turn",
-      turn: currentTurn === 1 ? player1[0] : player2[0],
-    };
 
-    player1[1].send(JSON.stringify(turnInfo));
-    player2[1].send(JSON.stringify(turnInfo));
-  };
-
-  const Logic = () => {
-    // ゲームのロジックをここに実装
-  };
+    const json = game.getJson();
+    player1[1].send(JSON.stringify({
+      type: "init",
+      field: json,
+      players: [player1[0], player2[0]],
+      sign: game.turn,
+    }));
+    player2[1].send(JSON.stringify({
+      type: "init",
+      field: json,
+      players: [player1[0], player2[0]],
+      sign: game.turn,
+    }));
+  };*/
 
   // ターン処理
-  const handleTurn = (player, rival, nextTurn) => async (event) => {
+  const handleTurn = (playerKey, rivalKey) => async (event) => {
     console.log("ターン処理");
     try {
       const data = JSON.parse(event.data);
       // ここでゲームロジックを追加（例：状態更新や勝敗判定など）
-      Logic();
+      console.log(`${playerKey[0]}から受信:`, data);
+      // 1.物理演算を進める
+      game.addAccel(data.direction, data.power, data.dtt ?? 0);
 
-      console.log(`${player[0]}から受信:`, data);
+      // 2. getJson（攻撃直後の盤面）
+      const beforeJson = game.getJson();
 
-      // 相手にも行動内容を通知
-      rival[1].send(
-        JSON.stringify({
-          type: "opponentAction",
-          power: data.power,
-          direction: data.direction,
-          data,
-        }),
-      );
+      // 3. toTurnend（物理演算を進める）
+      const outPlayers = game.toTurnend();
 
-      player[1].send(
-        JSON.stringify({
-          type: "myselfAction",
-          power: data.power,
-          direction: data.direction,
-          data,
-        }),
-      );
+      // 4. getJson（ターン終了後の盤面）
+      const afterJson = game.getJson();
+
+      /*/ 5. ゲーム終了判定
+      if (game.field.isGameEnd() || outPlayers.length > 0) { // 勝者判定（例：場外に出ていない方が勝ち）
+        let winner = null;
+        if (outPlayers.length === 1) {
+          winner = outPlayers[0] === "A" ? playerMap.B[0] : playerMap.A[0];
+        }
+        console.log("ゲーム終了勝者は", winner);
+        // 両者にゲーム終了通知
+        player1[1].send(JSON.stringify({
+          winner,
+          field: afterJson,
+        }));
+        player2[1].send(JSON.stringify({
+          winner,
+          field: afterJson,
+        }));
+
+        //player1[1].close();
+        //player2[1].close();
+        return;
+      }*/
+
+      // 盤面情報を両者に送信
+
+      playerMap[playerKey][1].send(JSON.stringify({
+        type: "turn",
+        power: data.power,
+        direction: data.direction,
+        dtt: data.dtt ?? 0,
+        beforeField: beforeJson,
+        afterField: afterJson,
+      }));
+      playerMap[rivalKey][1].send(JSON.stringify({
+        type: "turn",
+        power: data.power,
+        direction: data.direction,
+        dtt: data.dtt ?? 0,
+        beforeField: beforeJson,
+        afterField: afterJson,
+      }));
 
       // 次のターンへ
-      currentTurn = nextTurn;
-      sendTurnInfo();
+
+      //sendTurnInfo();
       setTurnHandler();
     } catch (e) {
-      console.error(`${player[0]}: JSON parse error`, e);
+      console.error(`${playerMap[playerKey][0]}: JSON parse error`, e);
     }
   };
 
@@ -88,18 +134,18 @@ export const battle = (player1, player2) => {
   const setTurnHandler = () => {
     player1[1].onmessage = null;
     player2[1].onmessage = null;
-    if (currentTurn === 1) {
-      player1[1].onmessage = handleTurn(player1, player2, 2);
+    if (game.turn === "A") {
+      player1[1].onmessage = handleTurn("A", "B");
     } else {
-      player2[1].onmessage = handleTurn(player2, player1, 1);
+      player2[1].onmessage = handleTurn("B", "A");
     }
   };
 
   console.log("最初のターン通知");
-  // 最初のターン通知
-  sendTurnInfo();
+  // 最初の状態・ターン通知
+  sendState();
+  //sendTurnInfo();
   setTurnHandler();
-  console.log("setTurnHandler後");
 
   //クライアント側から情報を受け取る
 
