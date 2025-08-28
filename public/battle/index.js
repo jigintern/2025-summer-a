@@ -451,7 +451,6 @@ function checkDeath() {
       bs.a.x[0] < 0 ? 0 : 1000,
       bs.a.x[1],
       Math.atan2(bs.a.dx[1], bs.a.dx[0]),
-      Math.atan2(bs.a.dx[1], bs.a.dx[0]),
       bs.a.r,
       0,
     );
@@ -459,7 +458,6 @@ function checkDeath() {
     setDeath(
       bs.a.x[0],
       bs.a.x[1] < 0 ? 0 : 500,
-      Math.atan2(bs.a.dx[1], bs.a.dx[0]),
       Math.atan2(bs.a.dx[1], bs.a.dx[0]),
       bs.a.r,
       0,
@@ -470,7 +468,6 @@ function checkDeath() {
       bs.b.x[0] < 0 ? 0 : 1000,
       bs.b.x[1],
       Math.atan2(bs.b.dx[1], bs.b.dx[0]),
-      Math.atan2(bs.b.dx[1], bs.b.dx[0]),
       bs.b.r,
       1,
     );
@@ -478,7 +475,6 @@ function checkDeath() {
     setDeath(
       bs.b.x[0],
       bs.b.x[1] < 0 ? 0 : 500,
-      Math.atan2(bs.b.dx[1], bs.b.dx[0]),
       Math.atan2(bs.b.dx[1], bs.b.dx[0]),
       bs.b.r,
       1,
@@ -821,6 +817,8 @@ function drawGameOver() {
     0,
     Math.PI * 2,
   );
+
+  console.log(deathPlayer);
 
   ctx.fillStyle = deathColor[deathPlayer][0];
   ctx.fill();
