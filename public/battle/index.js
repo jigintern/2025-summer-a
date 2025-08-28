@@ -1,5 +1,7 @@
 import { AAObj, BattleStatus } from "./physics.js";
 
+import{GameStatus}from"./game-common.js";
+
 const canvas = document.getElementById("battle_canvas");
 
 canvas.width = 1000;
@@ -36,6 +38,10 @@ window.addEventListener("resize", setDispSize);
 const bs = new BattleStatus(
   new AAObj(50, [250, 250], [0, 0], 0, 0),
   new AAObj(50, [750, 250], [0, 0], 0, 0),
+);
+
+const gs = new GameStatus(
+  
 );
 
 let mouseX = 0;
@@ -866,10 +872,33 @@ function getMessage(event) {
   const msg = JSON.parse(event.data);
 
   switch (msg.type) {
-    case "battle_start":
+    case "init":
+      isWaiting = false;
+      isGameTime = true;
+      if (msg.sign === "A") {
+        myTurn();
+      } else {
+        waitTurn();
+      }
       console.log("hello");
       break;
+    case "turn":
+      msg.before.;//
+      msg.after.
+      break;
   }
+}
+
+function myTurn() {
+  isMetarEnable = true;
+  isButtonEnable = true;
+  isArrow = false;
+}
+
+function waitTurn() {
+  isMetarEnable = false;
+  isButtonEnable = false;
+  isArrow = false;
 }
 
 function getOpen(event) {
