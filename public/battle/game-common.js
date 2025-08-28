@@ -16,18 +16,18 @@ export class GameStatus {
 
   /**
    * 加速度を与える
-   * @param {"A" | "B"} player
    * @param {number} direction 向き (弧度法で指定)
    * @param {number} power 攻撃の強さ (0 ~ 1)
    * @param {number} dtt 回転の具合 (-1 ~ 1)
    */
-  addAccel(player, direction, power, dtt) {
+  addAccel(direction, power, dtt) {
     if (!this.field.isStopping()) {
       throw new Error("ターンがまだ終わっていないのに攻撃が行なわれました");
     }
     if (power < 0 || 1 < power) return;
     if (dtt < 0 || 1 < dtt) return;
-    const obj = player === "A" ? this.field.a : this.field.b;
+    const obj = this.turn === "A" ? this.field.a : this.field.b;
+    this.turn = this.turn === "A" ? "B" : "A";
     obj.dx = [power * Math.cos(direction) / 2, power * Math.cos(direction / 2)];
     obj.dtt = 4 * Math.PI * dtt;
   }
