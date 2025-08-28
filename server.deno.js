@@ -123,6 +123,7 @@ Deno.serve(async (req) => {
   if (pathname === "/ws/battle") {
     const params = new URL(req.url).searchParams;
     const roomName = params.get("room") ?? "";
+    const aaId = params.get("AAid") ?? "";
     const cookie = getCookies(req.headers);
     const username = sessions.get(cookie["sessionid"] ?? "");
 
@@ -134,7 +135,7 @@ Deno.serve(async (req) => {
     socket.onopen = () => {
       // 部屋がなければ新規作成
       if (!waitingUser.has(roomName)) {
-        waitingUser.set(roomName, { username, socket });
+        waitingUser.set(roomName, { username, socket, aaId });
         socket.onclose = () => {
           waitingUser.delete(roomName);
           socket.onclose = null;
@@ -149,11 +150,12 @@ Deno.serve(async (req) => {
         const {
           username: username2,
           socket: socket2,
+          aaId: aaId2,
         } = waitingUser.get(roomName);
         waitingUser.delete(roomName);
         socket2.onclose = null;
         socket2.onerror = null;
-        battle([username2, socket2], [username, socket]);
+        battle([username2, socket2, aaId2], [username, socket, aaId]);
       }
     };
 

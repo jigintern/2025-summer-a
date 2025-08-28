@@ -20,10 +20,12 @@ form.addEventListener("submit", (e) => {
     document.getElementById("formsArea").style.display = "none";
     roomArea.style.display = "block";
     roomArea.textContent = `部屋名: ${roomName}`;
+    // 退出ボタン追加
   };
 
   ws.onclose = (e) => {
     alert(e.reason);
+    location.href = "/"; // ホームに遷移
   };
   ws.onerror = (e) => {
     alert(e.type);
@@ -35,7 +37,7 @@ form.addEventListener("submit", (e) => {
     const data = JSON.parse(event.data);
     console.log("サーバーから受信:", data);
 
-    if (data.type === "start") {
+    if (data.type === "init") {
       myName = data.myName; // サーバーから自分の名前を取得
       sign = data.sign; // サーバーから自分の記号を取得
       if (roomArea) {
@@ -45,9 +47,22 @@ form.addEventListener("submit", (e) => {
       } else {
         console.warn("要素 #roomArea が見つかりません");
       }
+      let leaveBtn = document.createElement("button");
+      leaveBtn.textContent = "退出";
+      leaveBtn.id = "leaveBtn";
+      roomArea.appendChild(leaveBtn);
+      leaveBtn.addEventListener("click", () => {
+        if (ws.readyState === WebSocket.OPEN) {
+          // サーバー経由で切断したい場合は下記を使う
+          // ws.send(JSON.stringify({ type: "leave" }));
+          console.log("サーバーから受信:", ws);
+          ws.close(1000, "ユーザーによる退出");
+        }
+        // location.href = "/"; // oncloseで遷移するのでここは不要
+      });
     }
 
-    if (data.type === "init") {
+    if (data.type === "init" || data.type === "yourTurn") {
       // 自分のターンだけ攻撃ボタンを表示
       if (data.sign === sign) {
         if (!attackBtn) {

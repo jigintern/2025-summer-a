@@ -1,12 +1,37 @@
 import { GameStatus } from "./public/battle/game-common.js";
 
 /**
- * @param {[string, WebSocket]} player1
- * @param {[string, WebSocket]} player2
+ * @param {[string, WebSocket, string]} player1
+ * @param {[string, WebSocket, string]} player2
  */
 export const battle = (player1, player2) => {
   // TODO: 対戦を実装する
   console.log(`対戦開始: ${player1[0]} vs ${player2[0]}`);
+  console.log(`player1 aaId: ${player1[2]}, player2 aaId: ${player2[2]}`);
+
+  player1[1].addEventListener("close", () => {
+    // player2がOPENのときだけ通知＆close
+    if (player2[1].readyState === 1) {
+      if (player2[1].readyState === 1) {
+        player2[1].close(4000, "相手が切断しました");
+      }
+    }
+    // 自分自身もclose（すでにclose済みでなければ）
+    if (player1[1].readyState === 1) {
+      player1[1].close(4000, "自分も終了");
+    }
+  });
+
+  player2[1].addEventListener("close", () => {
+    if (player1[1].readyState === 1) {
+      if (player1[1].readyState === 1) {
+        player1[1].close(4000, "相手が切断しました");
+      }
+    }
+    if (player2[1].readyState === 1) {
+      player2[1].close(4000, "自分も終了");
+    }
+  });
 
   // ゲーム状態を生成
   const game = new GameStatus();
@@ -32,6 +57,7 @@ export const battle = (player1, player2) => {
       players: [player1[0], player2[0]],
       myName: player1[0],
       sign: "A",
+      aaId: player2[2],
     }));
     player2[1].send(JSON.stringify({
       type: "init",
@@ -39,6 +65,7 @@ export const battle = (player1, player2) => {
       players: [player1[0], player2[0]],
       myName: player2[0],
       sign: "B",
+      aaId: player1[2],
     }));
   };
 
@@ -80,27 +107,15 @@ export const battle = (player1, player2) => {
       // 4. getJson（ターン終了後の盤面）
       const afterJson = game.getJson();
 
-      /*/ 5. ゲーム終了判定
-      if (game.field.isGameEnd() || outPlayers.length > 0) { // 勝者判定（例：場外に出ていない方が勝ち）
-        let winner = null;
-        if (outPlayers.length === 1) {
-          winner = outPlayers[0] === "A" ? playerMap.B[0] : playerMap.A[0];
+      // 5. ゲーム終了判定
+      if (!game.field.isGameEnd() || outPlayers.length > 0) { // 勝者判定（例：場外に出ていない方が勝ち）
+        console.log("ターンが終了");
+        if (playerMap[playerKey][1].readyState === 1) {
+          console.log("サーバーから受信:", playerMap[rivalKey][1]);
+          playerMap[rivalKey][1].close(4000, "ゲーム終了");
         }
-        console.log("ゲーム終了勝者は", winner);
-        // 両者にゲーム終了通知
-        player1[1].send(JSON.stringify({
-          winner,
-          field: afterJson,
-        }));
-        player2[1].send(JSON.stringify({
-          winner,
-          field: afterJson,
-        }));
-
-        //player1[1].close();
-        //player2[1].close();
         return;
-      }*/
+      }
 
       // 盤面情報を両者に送信
 
