@@ -648,7 +648,7 @@ function roomInButtonPush() {
   roomWord = roomInput.value;
   if (roomWord === "") return;
   ws = new WebSocket(
-    "ws://localhost:8000/ws/battle?word=" + roomWord,
+    `ws://${location.host}/ws/battle?room=${roomWord}`,
   ); //test
   console.log(ws);
 
