@@ -80,6 +80,7 @@ popupBackdrop.addEventListener("click", (e) => {
 (async () => {
   try {
     const response = await fetch("/AALibraryList", { method: "GET" });
+    if (response.status === 401) location.href = "/login";
     if (!response.ok) return;
 
     const json = await response.json();
@@ -113,8 +114,11 @@ popupBackdrop.addEventListener("click", (e) => {
         popupAACreated.innerText = formatDate(aaData.created_at);
         popupAAUpdated.innerText = formatDate(aaData.updated_at);
 
-        popupEditBt.dataset.aaId = popupBattleBt.dataset.aaId = popupDeleteBt
-          .dataset.aaId = aaData.id;
+        popupEditBt.dataset.aaId =
+          popupBattleBt.dataset.aaId =
+          popupDeleteBt
+            .dataset.aaId =
+            aaData.id;
 
         popupAAImage.src = "";
         aa2blob(aaData.content).then((url) => {
