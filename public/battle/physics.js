@@ -156,4 +156,8 @@ export class BattleStatus {
   isStopping() {
     return this.a.isStopping() && this.b.isStopping();
   }
+
+  isGameEnd() {
+    return !this.a.isInField() || this.b.isInField();
+  }
 }
