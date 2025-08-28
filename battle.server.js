@@ -11,32 +11,30 @@ export const battle = (player1, player2) => {
   // ゲーム状態を生成
   const game = new GameStatus();
 
+  // ランダムで先攻後攻を決める
+  if (Math.random() < 0.5) {
+    [player1, player2] = [player2, player1];
+  }
+
   // プレイヤー名とターンの対応
   const playerMap = {
     A: player1,
     B: player2,
   };
 
-  // ランダムで先攻後攻を決める
-  if (Math.random() < 0.5) {
-    game.turn = "A";
-  } else {
-    game.turn = "B";
-  }
-
   // 初期状態を送信
   const sendState = () => {
     const json = game.getJson();
     // それぞれのクライアントに自分の名前を含めて送信
     player1[1].send(JSON.stringify({
-      type: "init",
+      type: "start",
       field: json,
       players: [player1[0], player2[0]],
       myName: player1[0],
       sign: "A",
     }));
     player2[1].send(JSON.stringify({
-      type: "init",
+      type: "start",
       field: json,
       players: [player1[0], player2[0]],
       myName: player2[0],
@@ -48,14 +46,18 @@ export const battle = (player1, player2) => {
   const sendTurnInfo = () => {
     console.log("ターン情報を送信");
 
+    const json = game.getJson();
     player1[1].send(JSON.stringify({
-      type: "turn",
-      turn: game.turn === "A" ? player1[0] : player2[0],
+      type: "init",
+      field: json,
+      players: [player1[0], player2[0]],
+      sign: game.turn,
     }));
-
     player2[1].send(JSON.stringify({
-      type: "turn",
-      turn: game.turn === "A" ? player1[0] : player2[0],
+      type: "init",
+      field: json,
+      players: [player1[0], player2[0]],
+      sign: game.turn,
     }));
   };
 
@@ -78,7 +80,7 @@ export const battle = (player1, player2) => {
       // 4. getJson（ターン終了後の盤面）
       const afterJson = game.getJson();
 
-      // 5. ゲーム終了判定
+      /*/ 5. ゲーム終了判定
       if (game.field.isGameEnd() || outPlayers.length > 0) { // 勝者判定（例：場外に出ていない方が勝ち）
         let winner = null;
         if (outPlayers.length === 1) {
@@ -87,12 +89,10 @@ export const battle = (player1, player2) => {
         console.log("ゲーム終了勝者は", winner);
         // 両者にゲーム終了通知
         player1[1].send(JSON.stringify({
-          type: "gameEnd",
           winner,
           field: afterJson,
         }));
         player2[1].send(JSON.stringify({
-          type: "gameEnd",
           winner,
           field: afterJson,
         }));
@@ -100,12 +100,12 @@ export const battle = (player1, player2) => {
         //player1[1].close();
         //player2[1].close();
         return;
-      }
+      }*/
 
       // 盤面情報を両者に送信
 
       playerMap[playerKey][1].send(JSON.stringify({
-        type: "myselfAction",
+        type: "turn",
         power: data.power,
         direction: data.direction,
         dtt: data.dtt ?? 0,
@@ -113,7 +113,7 @@ export const battle = (player1, player2) => {
         afterField: afterJson,
       }));
       playerMap[rivalKey][1].send(JSON.stringify({
-        type: "opponentAction",
+        type: "turn",
         power: data.power,
         direction: data.direction,
         dtt: data.dtt ?? 0,

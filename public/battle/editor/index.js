@@ -1,6 +1,7 @@
 const form = document.getElementById("joinRoomForm");
 const roomArea = document.getElementById("roomArea");
 let myName = "";
+let sign = "";
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -34,8 +35,9 @@ form.addEventListener("submit", (e) => {
     const data = JSON.parse(event.data);
     console.log("サーバーから受信:", data);
 
-    if (data.type === "init") {
+    if (data.type === "start") {
       myName = data.myName; // サーバーから自分の名前を取得
+      sign = data.sign; // サーバーから自分の記号を取得
       if (roomArea) {
         roomArea.textContent = `対戦開始: あなた(${myName}) vs ${
           data.players.find((n) => n !== myName)
@@ -45,9 +47,9 @@ form.addEventListener("submit", (e) => {
       }
     }
 
-    if (data.type === "turn") {
+    if (data.type === "init") {
       // 自分のターンだけ攻撃ボタンを表示
-      if (data.turn === myName) {
+      if (data.sign === sign) {
         if (!attackBtn) {
           attackBtn = document.createElement("button");
           attackBtn.textContent = "攻撃";
