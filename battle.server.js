@@ -8,13 +8,20 @@ export const battle = (player1, player2) => {
   // TODO: 対戦を実装する
   console.log(`対戦開始: ${player1[0]} vs ${player2[0]}`);
 
+  // oncloseハンドラは最初に一度だけ設定
+  player1[1].onclose = () => {
+    if (player2[1].readyState === 1) {
+      player2[1].close(4000, "相手が切断しました");
+    }
+  };
+  player2[1].onclose = () => {
+    if (player1[1].readyState === 1) {
+      player1[1].close(4000, "相手が切断しました");
+    }
+  };
+
   // ゲーム状態を生成
   const game = new GameStatus();
-  let a = 0;
-  if (a === 0) {
-    a = 1;
-    player2[1].close(4000, "まだ作ってない!");
-  }
 
   // ランダムで先攻後攻を決める
   if (Math.random() < 0.5) {
@@ -85,27 +92,20 @@ export const battle = (player1, player2) => {
       // 4. getJson（ターン終了後の盤面）
       const afterJson = game.getJson();
 
-      /*/ 5. ゲーム終了判定
-      if (game.field.isGameEnd() || outPlayers.length > 0) { // 勝者判定（例：場外に出ていない方が勝ち）
-        let winner = null;
-        if (outPlayers.length === 1) {
-          winner = outPlayers[0] === "A" ? playerMap.B[0] : playerMap.A[0];
+      // 5. ゲーム終了判定
+      if (!game.field.isGameEnd() || outPlayers.length > 0) { // 勝者判定（例：場外に出ていない方が勝ち）
+        if (game.turn === "A") {
+          console.log("Aのターンが終了");
+          if (player2[1].readyState === 1) {
+            player2[1].close(4000, "ゲーム終了");
+          }
+        } else {
+          console.log("Bのターンが終了");
+          if (player1[1].readyState === 1) {
+            player1[1].close(4000, "ゲーム終了");
+          }
         }
-        console.log("ゲーム終了勝者は", winner);
-        // 両者にゲーム終了通知
-        player1[1].send(JSON.stringify({
-          winner,
-          field: afterJson,
-        }));
-        player2[1].send(JSON.stringify({
-          winner,
-          field: afterJson,
-        }));
-
-        //player1[1].close();
-        //player2[1].close();
-        return;
-      }*/
+      }
 
       // 盤面情報を両者に送信
 
