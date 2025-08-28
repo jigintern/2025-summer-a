@@ -48,8 +48,8 @@ const makeSession = async (username, kv) => {
   return headers;
 };
 
+const kv = await Deno.openKv();
 Deno.serve(async (req) => {
-  const kv = await Deno.openKv();
   const pathname = new URL(req.url).pathname;
   console.log(pathname);
 
