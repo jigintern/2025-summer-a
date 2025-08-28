@@ -40,7 +40,7 @@ export class GameStatus {
    * @returns {("A" | "B")[]} 場外に出たプレイヤーの配列. 空なら続行
    */
   turnend() {
-    while (!(this.field.isStopping() || this.field.isGameEnd())) {
+    while (!this.isTurnFinished()) {
       this.field.nextTick();
     }
     /** @type {("A" | "B")[]} */
@@ -48,5 +48,13 @@ export class GameStatus {
     if (!this.field.a.isInField()) r.push("A");
     if (!this.field.b.isInField()) r.push("B");
     return r;
+  }
+
+  /**
+   * ターンが終わった(次の人が攻撃可能か, 決着が付いた)か判定
+   * @returns {boolean}
+   */
+  isTurnFinished() {
+    return this.field.isStopping() || this.field.isGameEnd();
   }
 }
