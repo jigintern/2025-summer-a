@@ -329,23 +329,15 @@ function drawMyAA() {
   ctx.rotate(bs.a.tt);
   let w = playerImgA.width;
   let h = playerImgA.height;
-  let a = 2 * bs.a.r / Math.hypot(w, h);
+  let a = 2 * gs.field.a.r / Math.hypot(w, h);
 
   ctx.drawImage(
     playerImgA,
     -a * w / 2,
     -a * h / 2,
-    w,
-    h,
+    a * w,
+    a * h,
   );
-
-  /*ctx.drawImage(
-    playerImgA,
-    -bs.a.r * Math.sqrt(2) / 2,
-    -bs.a.r * Math.sqrt(2) / 2,
-    bs.a.r * Math.sqrt(2),
-    bs.a.r * Math.sqrt(2),
-  );*/
 
   ctx.restore();
   ctx.closePath();
@@ -356,23 +348,16 @@ function drawMyAA() {
   ctx.rotate(bs.b.tt);
   w = playerImgB.width;
   h = playerImgB.height;
-  a = 2 * bs.b.r / Math.hypot(w, h);
+  a = 2 * gs.field.b.r / Math.hypot(w, h);
 
   ctx.drawImage(
     playerImgB,
     -a * w / 2,
     -a * h / 2,
-    w,
-    h,
+    a * w,
+    a * h,
   );
 
-  /*ctx.drawImage(
-    playerImgB,
-    -bs.b.r * Math.sqrt(2) / 2,
-    -bs.b.r * Math.sqrt(2) / 2,
-    bs.b.r * Math.sqrt(2),
-    bs.b.r * Math.sqrt(2),
-  );*/
   ctx.restore();
   ctx.closePath();
 
@@ -438,6 +423,12 @@ function AAMove() {
     );
     conflictEffectTime = 0.5;
   }
+  if (mySign === "A") {
+    gs.field = bs;
+  } else {
+    gs.field.b = bs.a;
+    gs.field.a = bs.b;
+  }
 }
 
 let deltaTime = 0;
@@ -471,35 +462,25 @@ function setDeath(x, y, angle, size, player) {
 }
 
 function checkDeath() {
-  if (bs.a.x[0] < -bs.a.r || bs.a.x[0] > 1000 + bs.a.r) {
+  const death = [];
+  if (!gs.field.a.isInField()) death.push("A");
+  if (!gs.field.b.isInField()) death.push("B");
+  if (death.length === 0) {
+    console.log("error");
+    return;
+  }
+  if (death[0] === mySign) {
     setDeath(
-      bs.a.x[0] < 0 ? 0 : 1000,
+      bs.a.x[0],
       bs.a.x[1],
       Math.atan2(bs.a.dx[1], bs.a.dx[0]),
       bs.a.r,
       0,
     );
-  } else if (bs.a.x[1] < -bs.a.r || bs.a.x[1] > 500 + bs.a.r) {
-    setDeath(
-      bs.a.x[0],
-      bs.a.x[1] < 0 ? 0 : 500,
-      Math.atan2(bs.a.dx[1], bs.a.dx[0]),
-      bs.a.r,
-      0,
-    );
-  }
-  if (bs.b.x[0] < -bs.b.r || bs.b.x[0] > 1000 + bs.b.r) {
-    setDeath(
-      bs.b.x[0] < 0 ? 0 : 1000,
-      bs.b.x[1],
-      Math.atan2(bs.b.dx[1], bs.b.dx[0]),
-      bs.b.r,
-      1,
-    );
-  } else if (bs.b.x[1] < -bs.b.r || bs.b.x[1] > 500 + bs.b.r) {
+  } else {
     setDeath(
       bs.b.x[0],
-      bs.b.x[1] < 0 ? 0 : 500,
+      bs.b.x[1],
       Math.atan2(bs.b.dx[1], bs.b.dx[0]),
       bs.b.r,
       1,
@@ -509,20 +490,20 @@ function checkDeath() {
 
 function gameFlow() {
   AAMove();
-  checkDeath();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawMyAA();
   if (isButtonEnable) drawButton();
   if (isMetarEnable) drawMeter();
   if (isArrow) drawArrow();
   checkTurnEnd();
+
   //testDraw();
 }
 
 let isMoving = false;
 
 function checkTurnEnd() {
-  if (bs.isStopping() && isMoving) {
+  if (gs.isTurnFinished() && isMoving) {
     if (isWaitTurn) {
       myTurn();
     } else {
@@ -537,8 +518,9 @@ function checkTurnEnd() {
       bs.a = gs.field.b;
       bs.b = gs.field.a;
     }
+    checkDeath();
   }
-  isMoving = !bs.isStopping();
+  isMoving = !gs.isTurnFinished();
 }
 
 let waitTime = 0;
@@ -842,8 +824,6 @@ function drawGameOver() {
     0,
     Math.PI * 2,
   );
-
-  console.log(deathPlayer);
 
   ctx.fillStyle = deathColor[deathPlayer][0];
   ctx.fill();
