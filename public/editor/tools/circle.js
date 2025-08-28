@@ -16,22 +16,22 @@ export const circle = (aa, width, height, cx, top, bottom) => {
     cp.addChar(top, cx - 8, "◯");
     return cp.toAA();
   }
-  const r = (bottom - top) * 18;
+  const r = (bottom - top) * 9;
   const cy = (top + bottom) / 2;
   for (let i = top + 1; i < bottom - 1; ++i) {
     aa = line(
       aa,
       width,
       height,
-      [i, cx + Math.sqrt(r ** 2 - (cy - i) ** 2)],
-      [i + 1, cx + Math.sqrt(r ** 2 - (cy - i - 1) ** 2)],
+      [i, cx + Math.sqrt(r ** 2 - ((cy - i) * 18) ** 2)],
+      [i + 1, cx + Math.sqrt(r ** 2 - ((cy - i - 1) * 18) ** 2)],
     );
     aa = line(
       aa,
       width,
       height,
-      [i, cx - Math.sqrt(r ** 2 - (cy - i) ** 2)],
-      [i + 1, cx - Math.sqrt(r ** 2 - (cy - i - 1) ** 2)],
+      [i, cx - Math.sqrt(r ** 2 - ((cy - i) * 18) ** 2)],
+      [i + 1, cx - Math.sqrt(r ** 2 - ((cy - i - 1) * 18) ** 2)],
     );
   }
   return aa;
