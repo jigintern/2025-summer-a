@@ -46,7 +46,7 @@ export class AAObj {
    * 場外に出ていないか判定
    * @returns {boolean}
    */
-  isInOfField() {
+  isInField() {
     const r = this.r;
     const [x, y] = this.x;
     return -r < x && x < r + fieldWidth && -r < y && y < r + fieldHeight;
