@@ -243,7 +243,6 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   });
   circleModeButton.addEventListener("change", () => {
-    console.log("!!");
     finishmode();
     overwrap.style.display = "block";
     /** @type {[number, number,string] | null} */
