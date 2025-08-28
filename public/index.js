@@ -1,6 +1,5 @@
 window.devicePixelRatio = 2;
 
-// --- DOM要素の取得 ---
 const popupBackdrop = document.getElementById("popup-backdrop");
 const popupHeaderTitle = document.getElementById("popup-header-title");
 const popupCloseBt = document.getElementById("popup-close-bt");
@@ -9,14 +8,11 @@ const popupAATitle = document.getElementById("popup-aa-title");
 const popupAACreated = document.getElementById("popup-aa-created");
 const popupAAUpdated = document.getElementById("popup-aa-updated");
 
-// --- 関数定義 ---
-
-// ポップアップを閉じる関数
 const closePopup = () => {
   popupBackdrop.style.display = "none";
 };
 
-// 日付文字列を YYYY/MM/DD HH:mm 形式にフォーマットする関数
+// 日付文字列のフォーマット
 const formatDate = (isoString) => {
   if (!isoString) return "N/A";
   const date = new Date(isoString);
@@ -28,8 +24,6 @@ const formatDate = (isoString) => {
   return `${y}/${mo}/${d} ${h}:${mi}`;
 };
 
-// --- イベントリスナー設定 ---
-
 popupCloseBt.addEventListener("click", closePopup);
 popupBackdrop.addEventListener("click", (e) => {
   if (e.target === popupBackdrop) {
@@ -37,7 +31,6 @@ popupBackdrop.addEventListener("click", (e) => {
   }
 });
 
-// --- メイン処理 ---
 (async () => {
   try {
     const response = await fetch("/AALibraryList", { method: "GET" });
@@ -70,8 +63,8 @@ popupBackdrop.addEventListener("click", (e) => {
       opus_canvas.width = 160 * window.devicePixelRatio;
       opus_canvas.height = 160 * window.devicePixelRatio;
       const listCtx = opus_canvas.getContext("2d");
-      const fontSize = 16;
-      const lineHeight = 18;
+      const fontSize = 12;
+      const lineHeight = 14;
       listCtx.font = `${fontSize}px 'MS PGothic', sans-serif`;
       listCtx.fillStyle = "black";
       const lines = aaData.content.split("\n");
