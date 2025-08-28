@@ -1,5 +1,7 @@
 import { AAObj, BattleStatus } from "./physics.js";
 
+import { GameStatus } from "./game-common.js";
+
 const canvas = document.getElementById("battle_canvas");
 
 canvas.width = 1000;
@@ -13,8 +15,6 @@ function setDispSize() {
   const area = document.getElementById("window_main");
   console.log(area.clientWidth);
   console.log(area.clientHeight);
-
-  //  area.style.height = (area.clientWidth / 2) + "px";
 
   if (area.clientHeight * 1000 > area.clientWidth * 500) {
     aspect = area.clientWidth / canvas.width;
@@ -37,6 +37,14 @@ const bs = new BattleStatus(
   new AAObj(50, [250, 250], [0, 0], 0, 0),
   new AAObj(50, [750, 250], [0, 0], 0, 0),
 );
+
+const gs = new GameStatus();
+
+gs.turn = "A";
+gs.a = bs.a;
+gs.b = bs.b;
+
+const gs_a = new GameStatus();
 
 let mouseX = 0;
 let mouseY = 0;
@@ -139,11 +147,29 @@ let metarNum = 0;
 const metarMaxNum = 10;
 const metarVelc = 12.5;
 
+const maxPower = 1;
+const maxDtt = 1;
+
 //AAを打ち出す関数
 function AAShoot() {
-  bs.a.dx[0] = metarNum * 0.5 * Math.cos(angle - Math.PI / 2);
-  bs.a.dx[1] = metarNum * 0.5 * Math.sin(angle - Math.PI / 2);
-  bs.a.dtt = metarNum * 0.1 * (Math.random() - 0.5);
+  gs.addAccel(
+    angle,
+    maxPower * metarNum / metarMaxNum,
+    metarNum / metarMaxNum * maxDtt * (Math.random() - 0.5) * 2,
+  );
+
+  if (mySign === "A") {
+    bs.a = gs.field.a;
+  } else {
+    bs.a = gs.field.b;
+  }
+
+  ws.send(JSON.stringify({
+    type: "attack",
+    direction: angle - Math.PI / 2,
+    power: maxPower * metarNum / metarMaxNum,
+    dtt: bs.a.dtt,
+  }));
 }
 
 //ボタンの処理
@@ -391,7 +417,7 @@ function setDeath(x, y, angle, size, player) {
   deathX = x;
   deathY = y;
   deathAngle = angle;
-  deathSize = size;
+  deathSize = size * 0.75;
   deathAnimTime = 0;
   deathPlayer = player;
   isGameTime = false;
@@ -443,7 +469,30 @@ function gameFlow() {
   if (isButtonEnable) drawButton();
   if (isMetarEnable) drawMeter();
   if (isArrow) drawArrow();
+  checkTurnEnd();
   //testDraw();
+}
+
+let isMoving = false;
+
+function checkTurnEnd() {
+  if (bs.isStopping() && isMoving) {
+    if (isWaitTurn) {
+      myTurn();
+    } else {
+      waitTurn();
+    }
+    /*
+    gs.updateFromJSON(gs_a.getJson());
+    if (mySign === "A") {
+      bs.a = gs.a;
+      bs.b = gs.b;
+    } else {
+      bs.a = gs.b;
+      bs.b = gs.a;
+    }*/
+  }
+  isMoving = !bs.isStopping();
 }
 
 let waitTime = 0;
@@ -461,10 +510,12 @@ function hourglass() {
   const y = canvas.height / 2;
   const w = canvas.width / 7;
   const h = canvas.height / 3;
+  const h2 = canvas.height / 12.5;
   let animNum = 2 * (waitTime % 3) / 3;
 
   const sundStyle = "rgba(255, 255, 255, 1)";
   const glassStyle = "rgba(143, 143, 143, 1)";
+  const blockStyle = "rgba(49, 49, 49, 1)";
   let angleStyle;
 
   ctx.save();
@@ -533,7 +584,7 @@ function hourglass() {
   ctx.lineTo(-w / 2, -h / 2);
   ctx.lineTo(w / 2, -h / 2);
   ctx.lineTo(0, 0);
-  ctx.strokeStyle = "#585858ff";
+  ctx.strokeStyle = blockStyle;
   ctx.stroke();
   ctx.closePath();
 
@@ -545,6 +596,39 @@ function hourglass() {
   ctx.stroke();
   ctx.closePath();
 
+  ctx.beginPath();
+  ctx.moveTo(-w / 2, +h / 2);
+  ctx.lineTo(-w / 2, +h / 2 + h2);
+  ctx.lineTo(w / 2, +h / 2 + h2);
+  ctx.lineTo(w / 2, +h / 2);
+  ctx.fillStyle = blockStyle;
+  ctx.fill();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.moveTo(-w / 2, +h / 2);
+  ctx.lineTo(-w / 2, +h / 2 + h2);
+  ctx.lineTo(w / 2, +h / 2 + h2);
+  ctx.lineTo(w / 2, +h / 2);
+  ctx.stroke();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.moveTo(-w / 2, -h / 2);
+  ctx.lineTo(-w / 2, -h / 2 - h2);
+  ctx.lineTo(w / 2, -h / 2 - h2);
+  ctx.lineTo(w / 2, -h / 2);
+  ctx.fill();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.moveTo(-w / 2, -h / 2);
+  ctx.lineTo(-w / 2, -h / 2 - h2);
+  ctx.lineTo(w / 2, -h / 2 - h2);
+  ctx.lineTo(w / 2, -h / 2);
+  ctx.stroke();
+  ctx.closePath();
+
   ctx.restore();
 }
 
@@ -553,12 +637,6 @@ function waitingAnim() {
 
   waitingText();
   hourglass();
-
-  if (waitTime > 10) {
-    console.log("test");
-    isWaiting = false;
-    isGameTime = true;
-  }
   waitTime += deltaTime;
 }
 
@@ -569,6 +647,23 @@ function roomInButtonPush() {
   const roomInput = document.getElementById("room_word");
   roomWord = roomInput.value;
   if (roomWord === "") return;
+  ws = new WebSocket(
+    `ws://${location.host}/ws/battle?room=${roomWord}`,
+  ); //test
+  console.log(ws);
+
+  ws.onmessage = (event) => {
+    getMessage(event);
+  };
+
+  ws.onopen = (event) => {
+    getOpen(event);
+  };
+
+  ws.onerror = (error) => {
+    getError(error);
+  };
+
   isRoomInEnable = false;
   isRoomSearch = false;
   waitTime = 0;
@@ -809,6 +904,71 @@ function resetStyle() {
   ctx.filter = "none";
   ctx.lineWidth = 1;
   ctx.strokeStyle = "#000000";
+}
+
+let ws;
+let mySign = "";
+
+function getMessage(event) {
+  console.log("メッセージ");
+  console.log(event);
+
+  const msg = JSON.parse(event.data);
+
+  switch (msg.type) {
+    case "init":
+      isWaiting = false;
+      isGameTime = true;
+      mySign = msg.sign;
+      gs.turn = msg.sign;
+      console.log(msg.field);
+      gs.updateFromJSON(msg.field);
+      if (mySign === "A") {
+        bs.a = gs.field.a;
+        bs.b = gs.field.b;
+        myTurn();
+      } else {
+        bs.a = gs.field.b;
+        bs.b = gs.field.a;
+        waitTurn();
+      }
+      console.log("hello");
+      break;
+    case "turn":
+      //console.log(msg.beforeField);
+      gs_a.updateFromJSON(msg.afterField);
+
+      gs.updateFromJSON(msg.beforeField);
+      break;
+  }
+}
+
+let isWaitTurn = false;
+
+function myTurn() {
+  console.log("myTurn");
+  isWaitTurn = false;
+  isMetarEnable = true;
+  isButtonEnable = true;
+  isArrow = false;
+}
+
+function waitTurn() {
+  console.log("waiting");
+  isWaitTurn = true;
+  isMetarEnable = false;
+  isButtonEnable = false;
+  isArrow = false;
+}
+
+function getOpen(event) {
+  console.log("通信接続イベント受信");
+  console.log(event.data);
+}
+
+function getError(error) {
+  console.log("エラー発生");
+  console.log(error.data);
 }
 
 //メインの描画関数
