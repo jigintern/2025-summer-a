@@ -5,6 +5,8 @@ export class GameStatus {
   turn;
   /** @type {BattleStatus} */
   field;
+  /** @type {number} */
+  #timeSpend = 0;
 
   constructor() {
     this.turn = "A";
@@ -27,6 +29,7 @@ export class GameStatus {
     if (this.field.isGameEnd()) {
       throw new Error("既にゲームは終了しています");
     }
+    this.#timeSpend = 0;
     if (power < 0 || 1 < power) return;
     if (dtt < 0 || 1 < dtt) return;
     const obj = this.turn === "A" ? this.field.a : this.field.b;
@@ -42,12 +45,24 @@ export class GameStatus {
   toTurnend() {
     while (!this.isTurnFinished()) {
       this.field.nextTick();
+      this.#timeSpend += 1;
     }
     /** @type {("A" | "B")[]} */
     const r = [];
     if (!this.field.a.isInField()) r.push("A");
     if (!this.field.b.isInField()) r.push("B");
     return r;
+  }
+
+  /**
+   * アニメーション用に少しずつ時間を進める
+   * @param {number} delta 攻撃開始からの経過時間 (ミリ秒)
+   */
+  advance(delta) {
+    while (this.#timeSpend < delta) {
+      this.field.nextTick();
+      this.#timeSpend += 1;
+    }
   }
 
   /**
