@@ -158,6 +158,6 @@ export class BattleStatus {
   }
 
   isGameEnd() {
-    return !this.a.isInField() || this.b.isInField();
+    return !this.a.isInField() || !this.b.isInField();
   }
 }
