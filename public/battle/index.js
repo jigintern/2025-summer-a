@@ -4,6 +4,8 @@ import { GameStatus } from "./game-common.js";
 
 import { aa2blob } from "../util/aa2img.js";
 
+import { aa2blob } from "../util/aa2img.js";
+
 const canvas = document.getElementById("battle_canvas");
 
 canvas.width = 1000;
@@ -434,6 +436,7 @@ function fpsUpdate(timestamp) {
 
 function setDeath(x, y, angle, size, player) {
   console.log(angle);
+  console.log(angle);
   deathX = x;
   deathY = y;
   deathAngle = angle;
@@ -450,6 +453,7 @@ function checkDeath() {
       bs.a.x[0] < 0 ? 0 : 1000,
       bs.a.x[1],
       Math.atan2(bs.a.dx[1], bs.a.dx[0]),
+      Math.atan2(bs.a.dx[1], bs.a.dx[0]),
       bs.a.r,
       0,
     );
@@ -457,6 +461,7 @@ function checkDeath() {
     setDeath(
       bs.a.x[0],
       bs.a.x[1] < 0 ? 0 : 500,
+      Math.atan2(bs.a.dx[1], bs.a.dx[0]),
       Math.atan2(bs.a.dx[1], bs.a.dx[0]),
       bs.a.r,
       0,
@@ -467,6 +472,7 @@ function checkDeath() {
       bs.b.x[0] < 0 ? 0 : 1000,
       bs.b.x[1],
       Math.atan2(bs.b.dx[1], bs.b.dx[0]),
+      Math.atan2(bs.b.dx[1], bs.b.dx[0]),
       bs.b.r,
       1,
     );
@@ -474,6 +480,7 @@ function checkDeath() {
     setDeath(
       bs.b.x[0],
       bs.b.x[1] < 0 ? 0 : 500,
+      Math.atan2(bs.b.dx[1], bs.b.dx[0]),
       Math.atan2(bs.b.dx[1], bs.b.dx[0]),
       bs.b.r,
       1,
@@ -507,7 +514,12 @@ function checkTurnEnd() {
     if (mySign === "A") {
       bs.a = gs.field.a;
       bs.b = gs.field.b;
+      bs.a = gs.field.a;
+      bs.b = gs.field.b;
     } else {
+      bs.a = gs.field.b;
+      bs.b = gs.field.a;
+    }
       bs.a = gs.field.b;
       bs.b = gs.field.a;
     }
