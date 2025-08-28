@@ -861,7 +861,15 @@ let ws;
 
 function getMessage(event) {
   console.log("メッセージ");
-  console.log(event.data);
+  console.log(event);
+
+  const msg = JSON.parse(event.data);
+
+  switch (msg.type) {
+    case "battle_start":
+      console.log("hello");
+      break;
+  }
 }
 
 function getOpen(event) {
