@@ -2,6 +2,9 @@
  * 対戦の物理演算部分
  */
 
+const fieldWidth = 1000;
+const fieldHeight = 500;
+
 export class AAObj {
   /** @type {number} */
   r;
@@ -14,7 +17,7 @@ export class AAObj {
   /** @type {number} 角速度 */
   dtt;
   /** @type {number} 摩擦で生じる加速度 */
-  mu = 0.01;
+  mu = 0.001;
 
   /**
    * @param {number} r
@@ -29,6 +32,24 @@ export class AAObj {
     this.dx = dx;
     this.tt = tt;
     this.dtt = dtt;
+  }
+
+  /**
+   * オブジェクトが止まっているか判定
+   * @returns {boolean}
+   */
+  isStopping() {
+    return this.dx[0] === 0 && this.dx[1] === 0 && this.dtt === 0;
+  }
+
+  /**
+   * 場外に出ていないか判定
+   * @returns {boolean}
+   */
+  isInField() {
+    const r = this.r;
+    const [x, y] = this.x;
+    return -r < x && x < r + fieldWidth && -r < y && y < r + fieldHeight;
   }
 }
 
@@ -133,7 +154,10 @@ export class BattleStatus {
    * @returns {boolean}
    */
   isStopping() {
-    return this.a.dx.every((v) => v === 0) && this.b.dx.every((v) => v === 0) &&
-      this.a.dtt === 0 && this.b.dtt === 0;
+    return this.a.isStopping() && this.b.isStopping();
+  }
+
+  isGameEnd() {
+    return !this.a.isInField() || this.b.isInField();
   }
 }
