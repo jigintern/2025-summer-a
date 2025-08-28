@@ -34,8 +34,8 @@ export class GameStatus {
     if (dtt < -1 || 1 < dtt) return;
     const obj = this.turn === "A" ? this.field.a : this.field.b;
     this.turn = this.turn === "A" ? "B" : "A";
-    obj.dx = [power * Math.cos(direction) / 2, power * Math.cos(direction / 2)];
-    obj.dtt = 4 * Math.PI * dtt;
+    obj.dx = [power * Math.cos(direction) * 2, power * Math.sin(direction) * 2];
+    obj.dtt = 0.04 * Math.PI * dtt;
   }
 
   /**

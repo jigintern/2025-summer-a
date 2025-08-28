@@ -1,6 +1,6 @@
 import { AAObj, BattleStatus } from "./physics.js";
 
-import{GameStatus}from"./game-common.js";
+import { GameStatus } from "./game-common.js";
 
 const canvas = document.getElementById("battle_canvas");
 
@@ -15,8 +15,6 @@ function setDispSize() {
   const area = document.getElementById("window_main");
   console.log(area.clientWidth);
   console.log(area.clientHeight);
-
-  //  area.style.height = (area.clientWidth / 2) + "px";
 
   if (area.clientHeight * 1000 > area.clientWidth * 500) {
     aspect = area.clientWidth / canvas.width;
@@ -40,9 +38,13 @@ const bs = new BattleStatus(
   new AAObj(50, [750, 250], [0, 0], 0, 0),
 );
 
-const gs = new GameStatus(
-  
-);
+const gs = new GameStatus();
+
+gs.turn = "A";
+gs.a = bs.a;
+gs.b = bs.b;
+
+const gs_a = new GameStatus();
 
 let mouseX = 0;
 let mouseY = 0;
@@ -145,11 +147,29 @@ let metarNum = 0;
 const metarMaxNum = 10;
 const metarVelc = 12.5;
 
+const maxPower = 1;
+const maxDtt = 1;
+
 //AAを打ち出す関数
 function AAShoot() {
-  bs.a.dx[0] = metarNum * 0.5 * Math.cos(angle - Math.PI / 2);
-  bs.a.dx[1] = metarNum * 0.5 * Math.sin(angle - Math.PI / 2);
-  bs.a.dtt = metarNum * 0.1 * (Math.random() - 0.5);
+  gs.addAccel(
+    angle,
+    maxPower * metarNum / metarMaxNum,
+    metarNum / metarMaxNum * maxDtt * (Math.random() - 0.5) * 2,
+  );
+
+  if (mySign === "A") {
+    bs.a = gs.field.a;
+  } else {
+    bs.a = gs.field.b;
+  }
+
+  ws.send(JSON.stringify({
+    type: "attack",
+    direction: angle - Math.PI / 2,
+    power: maxPower * metarNum / metarMaxNum,
+    dtt: bs.a.dtt,
+  }));
 }
 
 //ボタンの処理
@@ -397,7 +417,7 @@ function setDeath(x, y, angle, size, player) {
   deathX = x;
   deathY = y;
   deathAngle = angle;
-  deathSize = size;
+  deathSize = size * 0.75;
   deathAnimTime = 0;
   deathPlayer = player;
   isGameTime = false;
@@ -449,7 +469,30 @@ function gameFlow() {
   if (isButtonEnable) drawButton();
   if (isMetarEnable) drawMeter();
   if (isArrow) drawArrow();
+  checkTurnEnd();
   //testDraw();
+}
+
+let isMoving = false;
+
+function checkTurnEnd() {
+  if (bs.isStopping() && isMoving) {
+    if (isWaitTurn) {
+      myTurn();
+    } else {
+      waitTurn();
+    }
+
+    gs = gs_a;
+    if (mySign === "A") {
+      bs.a = gs.a;
+      bs.b = gs.b;
+    } else {
+      bs.a = gs.b;
+      bs.b = gs.a;
+    }
+  }
+  isMoving = !bs.isStopping();
 }
 
 let waitTime = 0;
@@ -864,6 +907,7 @@ function resetStyle() {
 }
 
 let ws;
+let mySign = "";
 
 function getMessage(event) {
   console.log("メッセージ");
@@ -875,27 +919,43 @@ function getMessage(event) {
     case "init":
       isWaiting = false;
       isGameTime = true;
-      if (msg.sign === "A") {
+      mySign = msg.sign;
+      gs.turn = msg.sign;
+      console.log(msg.field);
+      gs.updateFromJSON(msg.field);
+      if (mySign === "A") {
+        bs.a = gs.field.a;
+        bs.b = gs.field.b;
         myTurn();
       } else {
+        bs.a = gs.field.b;
+        bs.b = gs.field.a;
         waitTurn();
       }
       console.log("hello");
       break;
     case "turn":
-      msg.before.;//
-      msg.after.
+      //console.log(msg.beforeField);
+      gs_a.updateFromJSON(msg.afterField);
+
+      gs.updateFromJSON(msg.beforeField);
       break;
   }
 }
 
+let isWaitTurn = false;
+
 function myTurn() {
+  console.log("myTurn");
+  isWaitTurn = false;
   isMetarEnable = true;
   isButtonEnable = true;
   isArrow = false;
 }
 
 function waitTurn() {
+  console.log("waiting");
+  isWaitTurn = true;
   isMetarEnable = false;
   isButtonEnable = false;
   isArrow = false;
