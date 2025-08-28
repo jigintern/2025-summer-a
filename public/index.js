@@ -1,62 +1,81 @@
+import { aa2blob } from "./util/aa2img.js";
+
 window.devicePixelRatio = 2;
+
+const popupBackdrop = document.getElementById("popup-backdrop");
+const popupHeaderTitle = document.getElementById("popup-header-title");
+const popupCloseBt = document.getElementById("popup-close-bt");
+const popupAAImage = document.getElementById("popup-aa-img");
+const popupAATitle = document.getElementById("popup-aa-title");
+const popupAACreated = document.getElementById("popup-aa-created");
+const popupAAUpdated = document.getElementById("popup-aa-updated");
+
+const closePopup = () => {
+  popupBackdrop.style.display = "none";
+};
+
+const formatDate = (isoString) => {
+  if (!isoString) return "N/A";
+  const date = new Date(isoString);
+  const y = date.getFullYear();
+  const mo = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  const h = String(date.getHours()).padStart(2, "0");
+  const mi = String(date.getMinutes()).padStart(2, "0");
+  return `${y}/${mo}/${d} ${h}:${mi}`;
+};
+
+popupCloseBt.addEventListener("click", closePopup);
+popupBackdrop.addEventListener("click", (e) => {
+  if (e.target === popupBackdrop) {
+    closePopup();
+  }
+});
 
 (async () => {
   try {
     const response = await fetch("/AALibraryList", { method: "GET" });
-    if (!response.ok) {
-      return;
-    }
+    if (!response.ok) return;
+
     const json = await response.json();
     const libraries = json["AA"];
 
-    if (libraries.length === 0) {
-      document.getElementById("opus_is_none").style.display = "block";
-    } else {
-      document.getElementById("opus_is_none").style.display = "none";
-    }
+    document.getElementById("opus_is_none").style.display =
+      libraries.length === 0 ? "block" : "none";
 
     const library_parent = document.getElementById("opuses");
 
-    for (let i = 0; i < libraries.length; i++) {
+    for (const aaData of libraries) {
       const opus = document.createElement("button");
-      const opus_canvas = document.createElement("canvas");
+      const opus_img = document.createElement("img");
       const opus_title = document.createElement("p");
 
       opus.classList.add("opus");
-      opus.id = "opus_" + libraries[i].title;
-      opus_canvas.classList.add("opus_image");
-      opus_canvas.id = "opus_img_" + libraries[i].title;
+      opus_img.classList.add("opus_image");
       opus_title.classList.add("opus_title");
-      opus_title.id = "opus_tt_" + libraries[i].title;
-      opus_title.innerText = libraries[i].title;
+      opus_title.innerText = aaData.title;
 
-      // Canvasの描画サイズを高解像度ディスプレイに対応させる
-      opus_canvas.width = 160 * window.devicePixelRatio;
-      opus_canvas.height = 160 * window.devicePixelRatio;
+      // 一覧のプレビュー画像の生成
+      await aa2blob(aaData.content).then((url) => {
+        opus_img.src = url;
+      });
 
-      const ctx = opus_canvas.getContext("2d");
+      // ポップアップ表示
+      opus.addEventListener("click", async () => {
+        popupHeaderTitle.innerText = aaData.title;
+        popupAATitle.innerText = aaData.title;
+        popupAACreated.innerText = formatDate(aaData.created_at);
+        popupAAUpdated.innerText = formatDate(aaData.updated_at);
 
-      // プレビュー用のフォントと行の高さを設定
-      const fontSize = 16; // 12pt ≒ 16px
-      const lineHeight = 18;
-      ctx.font = `${fontSize}px 'MS PGothic', sans-serif`;
-      ctx.fillStyle = "black";
+        popupAAImage.src = "";
+        await aa2blob(aaData.content).then((url) => {
+          popupAAImage.src = url;
+        });
 
-      const aaContent = libraries[i].content;
-      const lines = aaContent.split("\n");
+        popupBackdrop.style.display = "flex";
+      });
 
-      // アスキーアートを一行ずつCanvasに描画する
-      for (let j = 0; j < lines.length; j++) {
-        const y = (j * lineHeight) + fontSize;
-        // Canvasの表示領域を超える場合は描画を中断
-        if (y > opus_canvas.height) {
-          break;
-        }
-        // 少し左に余白を空けて描画
-        ctx.fillText(lines[j], 5, y);
-      }
-
-      opus.appendChild(opus_canvas);
+      opus.appendChild(opus_img);
       opus.appendChild(opus_title);
       library_parent.appendChild(opus);
     }

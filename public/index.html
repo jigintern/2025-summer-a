@@ -99,7 +99,40 @@
       </div>
     </div>
     <div id="window_mask"></div>
-    <script type="text/javascript" src="index.js">
-    </script>
+    <div id="popup-backdrop" style="display: none">
+      <div class="window_frame" id="popup-window">
+        <div class="window_header">
+          <div class="window_header_left">
+            <div class="window_fr_icon"></div>
+            <span id="popup-header-title"></span>
+          </div>
+          <div class="window_header_right">
+            <button id="popup-close-bt" class="window_fr_bt">
+              <span class="window_fr_bt_img">r</span>
+            </button>
+          </div>
+        </div>
+        <div class="window">
+          <div id="popup-content-wrapper">
+            <div id="popup-aa-info">
+              <p><b>タイトル:</b> <span id="popup-aa-title"></span></p>
+              <p><b>作成日時:</b> <span id="popup-aa-created"></span></p>
+              <p><b>更新日時:</b> <span id="popup-aa-updated"></span></p>
+            </div>
+            <div id="popup-aa-container">
+              <img id="popup-aa-img">
+              <button id="popup-delete-bt">
+                <span class="window_fr_bt_img">r</span>
+              </button>
+            </div>
+            <div id="popup-buttons">
+              <button class="access_bt">編集</button>
+              <button class="access_bt">対戦</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="index.js"></script>
   </body>
 </html>
