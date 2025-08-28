@@ -12,6 +12,12 @@ export const battle = (player1, player2) => {
   player1[1].addEventListener("close", () => {
     // player2がOPENのときだけ通知＆close
     if (player2[1].readyState === 1) {
+      if (type !== "timeout") {
+        player2[1].send(JSON.stringify({
+          type: "cutting",
+          message: "相手が切断しました",
+        }));
+      }
       if (player2[1].readyState === 1) {
         player2[1].close(4000, "相手が切断しました");
       }
@@ -24,6 +30,12 @@ export const battle = (player1, player2) => {
 
   player2[1].addEventListener("close", () => {
     if (player1[1].readyState === 1) {
+      if (type !== "timeout") {
+        player2[1].send(JSON.stringify({
+          type: "cutting",
+          message: "相手が切断しました",
+        }));
+      }
       if (player1[1].readyState === 1) {
         player1[1].close(4000, "相手が切断しました");
       }
@@ -112,6 +124,7 @@ export const battle = (player1, player2) => {
         console.log("ターンが終了");
         // 10秒待って両方のWebSocketを閉じる
         setTimeout(() => {
+          type = "timeout";
           if (player1[1].readyState === 1) {
             player1[1].close(4000, "タイムアウト: 10秒経過");
             return;
