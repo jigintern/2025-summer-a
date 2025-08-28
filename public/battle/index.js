@@ -350,8 +350,8 @@ function drawMyAA() {
       bs.a.x[0],
       bs.a.x[1],
       bs.a.r,
-      conflictAngle - 1.5 * conflictEffectTime,
-      conflictAngle + 1.5 * conflictEffectTime,
+      conflictAngle - 1.5 * conflictEffectTime - (mySign !== "A" ? Math.PI : 0),
+      conflictAngle + 1.5 * conflictEffectTime - (mySign !== "A" ? Math.PI : 0),
     );
     ctx.stroke();
     ctx.closePath();
@@ -360,8 +360,8 @@ function drawMyAA() {
       bs.b.x[0],
       bs.b.x[1],
       bs.b.r,
-      conflictAngle - 1.5 * conflictEffectTime - Math.PI,
-      conflictAngle + 1.5 * conflictEffectTime - Math.PI,
+      conflictAngle - 1.5 * conflictEffectTime - (mySign === "A" ? Math.PI : 0),
+      conflictAngle + 1.5 * conflictEffectTime - (mySign === "A" ? Math.PI : 0),
     );
     ctx.stroke();
     ctx.closePath();
