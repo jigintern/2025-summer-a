@@ -6,6 +6,9 @@ import { GameStatus } from "./public/battle/game-common.js";
  */
 export const battle = (player1, player2) => {
   // TODO: 対戦を実装する
+
+  let type = "";
+
   console.log(`対戦開始: ${player1[0]} vs ${player2[0]}`);
   console.log(`player1 aaId: ${player1[2]}, player2 aaId: ${player2[2]}`);
 
