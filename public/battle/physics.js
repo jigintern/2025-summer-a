@@ -30,6 +30,14 @@ export class AAObj {
     this.tt = tt;
     this.dtt = dtt;
   }
+
+  /**
+   * オブジェクトが止まっているか判定
+   * @returns {boolean}
+   */
+  isStopping() {
+    return this.dx[0] === 0 && this.dx[1] === 0 && this.dtt === 0;
+  }
 }
 
 export class BattleStatus {
@@ -133,7 +141,6 @@ export class BattleStatus {
    * @returns {boolean}
    */
   isStopping() {
-    return this.a.dx.every((v) => v === 0) && this.b.dx.every((v) => v === 0) &&
-      this.a.dtt === 0 && this.b.dtt === 0;
+    return this.a.isStopping() && this.b.isStopping();
   }
 }
