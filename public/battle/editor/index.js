@@ -69,11 +69,11 @@ form.addEventListener("submit", (e) => {
 
     if (data.type === "opponentAction") {
       // 相手の行動を表示したい場合
-      console.log("相手の行動:", data.action);
+      console.log("相手の行動:", data);
     }
     if (data.type === "myselfAction") {
       // 自分の行動を表示したい場合
-      console.log("自分の行動:", data.action);
+      console.log("自分の行動:", data);
     }
   };
 });
