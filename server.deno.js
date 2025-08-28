@@ -123,7 +123,7 @@ Deno.serve(async (req) => {
   if (pathname === "/ws/battle") {
     const params = new URL(req.url).searchParams;
     const roomName = params.get("room") ?? "";
-    const aaId = params.get("AAid") ?? "";
+    const aaId = params.get("id") ?? "";
     const cookie = getCookies(req.headers);
     const username = sessions.get(cookie["sessionid"] ?? "");
 

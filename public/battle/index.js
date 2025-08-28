@@ -951,7 +951,7 @@ function getMessage(event) {
       console.log(msg.field);
       gs.updateFromJSON(msg.field);
 
-      enemyAA = msg.AAId;
+      enemyAA = msg.aaId;
       playerImgB.src = "";
       if (enemyAA || true) {
         fetch(`/AALibrary/${encodeURIComponent(enemyAA)}`)
