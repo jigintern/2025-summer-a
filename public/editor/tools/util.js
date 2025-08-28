@@ -20,11 +20,13 @@ export class CharPlace {
     this.#chars = [];
     this.#width = width;
     for (const line of aa.split("\n")) {
+      if (this.#chars.length >= height) break;
       /** @type {{ offset: number, char: string }[]} */
       const lineChars = [];
       let offset = 0;
       for (const char of line) {
         if (!(char in charwidth)) continue;
+        if (offset + charwidth[char] > width) continue;
         if (!whiteSpace.includes(char)) {
           lineChars.push({ offset, char });
         }
