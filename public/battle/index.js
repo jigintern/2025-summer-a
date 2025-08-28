@@ -13,6 +13,9 @@ function setDispSize() {
   const area = document.getElementById("window_main");
   console.log(area.clientWidth);
   console.log(area.clientHeight);
+
+  //  area.style.height = (area.clientWidth / 2) + "px";
+
   if (area.clientHeight * 1000 > area.clientWidth * 500) {
     aspect = area.clientWidth / canvas.width;
     canvas.style.width = area.clientWidth + "px";
@@ -384,14 +387,51 @@ function fpsUpdate(timestamp) {
   lastTimestamp = timestamp;
 }
 
+function setDeath(x, y, angle, size, player) {
+  deathX = x;
+  deathY = y;
+  deathAngle = angle;
+  deathSize = size;
+  deathAnimTime = 0;
+  deathPlayer = player;
+  isGameTime = false;
+  isGameOver = true;
+}
+
 function checkDeath() {
-  if (bs.a.x[0] < -bs.a.r || bs.a.x[0] > 1000 + bs.a.r) console.log("death");
-  else if (bs.a.x[1] < -bs.a.r || bs.a.x[1] > 500 + bs.a.r) {
-    console.log("death");
+  if (bs.a.x[0] < -bs.a.r || bs.a.x[0] > 1000 + bs.a.r) {
+    setDeath(
+      bs.a.x[0] < 0 ? 0 : 1000,
+      bs.a.x[1],
+      Math.atan(bs.a.dx[1] / bs.a.dx[0]) + bs.a.x[0] < 0 ? Math.PI : 0,
+      bs.a.r,
+      0,
+    );
+  } else if (bs.a.x[1] < -bs.a.r || bs.a.x[1] > 500 + bs.a.r) {
+    setDeath(
+      bs.a.x[0],
+      bs.a.x[1] < 0 ? 0 : 500,
+      Math.atan(bs.a.dx[1] / bs.a.dx[0]) + bs.a.x[1] < 0 ? Math.PI : 0,
+      bs.a.r,
+      0,
+    );
   }
-  if (bs.b.x[0] < -bs.b.r || bs.b.x[0] > 1000 + bs.b.r) console.log("death");
-  else if (bs.b.x[1] < -bs.b.r || bs.b.x[1] > 500 + bs.b.r) {
-    console.log("death");
+  if (bs.b.x[0] < -bs.b.r || bs.b.x[0] > 1000 + bs.b.r) {
+    setDeath(
+      bs.b.x[0] < 0 ? 0 : 1000,
+      bs.b.x[1],
+      Math.atan(bs.b.dx[1] / bs.b.dx[0]) + bs.b.x[0] < 0 ? Math.PI : 0,
+      bs.b.r,
+      1,
+    );
+  } else if (bs.b.x[1] < -bs.b.r || bs.b.x[1] > 500 + bs.b.r) {
+    setDeath(
+      bs.b.x[0],
+      bs.b.x[1] < 0 ? 0 : 500,
+      Math.atan(bs.b.dx[1] / bs.b.dx[0]) + bs.b.x[1] < 0 ? Math.PI : 0,
+      bs.b.r,
+      1,
+    );
   }
 }
 
@@ -423,8 +463,8 @@ function hourglass() {
   const h = canvas.height / 3;
   let animNum = 2 * (waitTime % 3) / 3;
 
-  let sundStyle = "rgba(255, 255, 255, 1)";
-  let glassStyle = "rgba(143, 143, 143, 1)";
+  const sundStyle = "rgba(255, 255, 255, 1)";
+  const glassStyle = "rgba(143, 143, 143, 1)";
   let angleStyle;
 
   ctx.save();
@@ -538,6 +578,7 @@ function roomInButtonPush() {
 
 let isMouseOverUserBt = false;
 
+//あいことば入力画面の描画
 function drawUserInputRect() {
   let x, y;
   ctx.beginPath();
@@ -600,6 +641,7 @@ function drawUserInputRect() {
   ctx.closePath();
 }
 
+//角が丸い長方形の描画
 function createRoundRectPath(x, y, w, h, r) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
@@ -619,11 +661,139 @@ function roomSearch() {
   drawUserInputRect();
 }
 
+let deathX = 0;
+let deathY = 250;
+let deathAngle = 0;
+let deathSize = 20;
+let deathAnimTime = 0;
+let deathPlayer = 0;
+const deathColor = [[
+  "#5bffcea3",
+  "#6dffd3b2",
+  "#94ffdf1a",
+], [
+  "#ff5b5ba3",
+  "#ff6d6db2",
+  "#ff94941a",
+]];
+
 function drawGameOver() {
+  const animNum = deathAnimTime > 0.5 ? 1 : deathAnimTime / 0.5;
+  const animNum2 = Math.log2(animNum * 31 + 1) / 5;
+  const animClock = Math.PI * 2 * deathAnimTime * 5;
+
+  ctx.save();
+  ctx.translate(deathX, deathY);
+  ctx.rotate(deathAngle);
+
+  ctx.beginPath();
+  ctx.filter = "blur(8px)";
+  ctx.ellipse(
+    0,
+    0,
+    canvas.height / 1.5 * animNum2 + Math.sin(animClock) * 20,
+    deathSize * animNum,
+    0,
+    0,
+    Math.PI * 2,
+  );
+
+  ctx.fillStyle = deathColor[deathPlayer][0];
+  ctx.fill();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.filter = "blur(4px)";
+  ctx.globalCompositeOperation = "lighter";
+
+  makeEllipse(
+    0,
+    canvas.height / 2 * animNum2 + Math.sin(animClock) * 10,
+    deathSize * animNum * 0.35,
+  );
+
+  makeEllipse(
+    deathSize / 2.45 * animNum,
+    canvas.height / 2.3 * animNum2 + Math.sin(animClock * 1.2) * 20,
+    deathSize * animNum * 0.095,
+  );
+
+  makeEllipse(
+    -deathSize / 2.4 * animNum,
+    canvas.height / 2.5 * animNum2 + Math.sin(animClock * 1.2) * 20,
+    deathSize * animNum * 0.095,
+  );
+
+  makeEllipse(
+    0,
+    canvas.height / 1.8 * animNum2 + Math.sin(animClock * 1.2) * 20,
+    deathSize * animNum * 0.25,
+  );
+
+  makeEllipse(
+    0,
+    canvas.height / 1.5 * animNum2 + Math.sin(animClock * 1.2) * 20,
+    deathSize * animNum * 0.1,
+  );
+
+  ctx.fillStyle = deathColor[deathPlayer][1];
+  ctx.fill();
+  ctx.fill();
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.filter = "blur(24px)";
+
+  makeEllipse(
+    0,
+    canvas.height / 2 * animNum2 + Math.sin(animClock) * 10,
+    deathSize * animNum * 0.3,
+  );
+
+  makeEllipse(
+    deathSize / 2.45 * animNum,
+    canvas.height / 2.3 * animNum2 + Math.sin(animClock * 1.2) * 20,
+    deathSize * animNum * 0.095,
+  );
+
+  makeEllipse(
+    -deathSize / 2.4 * animNum,
+    canvas.height / 2.5 * animNum2 + Math.sin(animClock * 1.2) * 20,
+    deathSize * animNum * 0.095,
+  );
+
+  makeEllipse(
+    0,
+    canvas.height / 1.5 * animNum2 + Math.sin(animClock * 1.2) * 20,
+    deathSize * animNum * 0.01,
+  );
+
+  ctx.fillStyle = deathColor[deathPlayer][2];
+  ctx.fill();
+  ctx.fill();
+
+  ctx.closePath();
+
+  ctx.restore();
+
+  deathAnimTime += deltaTime;
+}
+
+function makeEllipse(x, h, w) {
+  ctx.ellipse(
+    0,
+    x,
+    h,
+    w,
+    0,
+    0,
+    Math.PI * 2,
+  );
 }
 
 function gameOver() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawMyAA();
   drawGameOver();
 }
 
