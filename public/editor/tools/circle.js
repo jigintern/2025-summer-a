@@ -19,55 +19,70 @@ export const circle = (aa, width, height, cx, top, bottom) => {
     return cp.toAA();
   }
   const r = (bottom - top) * 9;
-  const cy = (top + bottom) / 2;
-  for (let i = top + 1; i < bottom - 1; ++i) {
-    aa = line(
-      aa,
-      width,
-      height,
-      [i, cx + Math.sqrt(r ** 2 - ((cy - i) * 18) ** 2)],
-      [i + 1, cx + Math.sqrt(r ** 2 - ((cy - i - 1) * 18) ** 2)],
-    );
-    aa = line(
-      aa,
-      width,
-      height,
-      [i, cx - Math.sqrt(r ** 2 - ((cy - i) * 18) ** 2)],
-      [i + 1, cx - Math.sqrt(r ** 2 - ((cy - i - 1) * 18) ** 2)],
-    );
-  }
-  const cp = new CharPlace(aa, width, height);
+  if (r === 18) {
+    const cp = new CharPlace(aa, width, height);
+    cp.addChar(top, cx - 18, "₍");
+    cp.addChar(top, cx - 15, "ˑ");
+    cp.addChar(top, cx - 8, "⌒");
+    cp.addChar(top, cx + 11, "ˑ");
+    cp.addChar(top, cx + 15, "₎");
+    cp.addChar(top + 1, cx - 17, "∖");
+    cp.addChar(top + 1, cx - 6, "‿");
+    cp.addChar(top + 1, cx + 9, "ɹ");
+    cp.addChar(top + 1, cx + 15, "'");
 
-  const count = Math.round(Math.sqrt(r ** 2 - (r - 18) ** 2) / 8);
-  const l = cx - count * 8;
-  const lowL = Math.round(
-    (cx - Math.sqrt(r ** 2 - (r - 13.5) ** 2) - l) / 16,
-  );
-  const midL = Math.round((cx - Math.sqrt(r ** 2 - (r - 4.5) ** 2) - l) / 16);
-  const high = Math.round((cx + Math.sqrt(r ** 2 - (r - 4.5) ** 2) - l) / 16);
-  const midR = Math.round(
-    (cx + Math.sqrt(r ** 2 - (r - 13.5) ** 2) - l) / 16,
-  );
-  for (let i = 0; i < lowL; ++i) {
-    cp.addChar(top, l + i * 16, "＿");
-    cp.addChar(bottom - 1, l + i * 16, "￣");
-  }
-  for (let i = lowL; i < midL; ++i) {
-    cp.addChar(top, l + i * 16, "─");
-    cp.addChar(bottom - 1, l + i * 16, "─");
-  }
-  for (let i = midL; i < high; ++i) {
-    cp.addChar(top, l + i * 16, "￣");
-    cp.addChar(bottom - 1, l + i * 16, "＿");
-  }
-  for (let i = high; i < midR; ++i) {
-    cp.addChar(top, l + i * 16, "─");
-    cp.addChar(bottom - 1, l + i * 16, "─");
-  }
-  for (let i = midR; i < count; ++i) {
-    cp.addChar(top, l + i * 16, "＿");
-    cp.addChar(bottom - 1, l + i * 16, "￣");
-  }
+    return cp.toAA();
+  } else {
+    const cy = (top + bottom) / 2;
+    for (let i = top + 1; i < bottom - 1; ++i) {
+      aa = line(
+        aa,
+        width,
+        height,
+        [i, cx + Math.sqrt(r ** 2 - ((cy - i) * 18) ** 2)],
+        [i + 1, cx + Math.sqrt(r ** 2 - ((cy - i - 1) * 18) ** 2)],
+      );
+      aa = line(
+        aa,
+        width,
+        height,
+        [i, cx - Math.sqrt(r ** 2 - ((cy - i) * 18) ** 2)],
+        [i + 1, cx - Math.sqrt(r ** 2 - ((cy - i - 1) * 18) ** 2)],
+      );
+    }
+    const cp = new CharPlace(aa, width, height);
 
-  return cp.toAA();
+    const count = Math.round(Math.sqrt(r ** 2 - (r - 18) ** 2) / 8);
+    const l = cx - count * 8;
+    const lowL = Math.round(
+      (cx - Math.sqrt(r ** 2 - (r - 13.5) ** 2) - l) / 16,
+    );
+    const midL = Math.round((cx - Math.sqrt(r ** 2 - (r - 4.5) ** 2) - l) / 16);
+    const high = Math.round((cx + Math.sqrt(r ** 2 - (r - 4.5) ** 2) - l) / 16);
+    const midR = Math.round(
+      (cx + Math.sqrt(r ** 2 - (r - 13.5) ** 2) - l) / 16,
+    );
+    for (let i = 0; i < lowL; ++i) {
+      cp.addChar(top, l + i * 16, "＿");
+      cp.addChar(bottom - 1, l + i * 16, "￣");
+    }
+    for (let i = lowL; i < midL; ++i) {
+      cp.addChar(top, l + i * 16, "─");
+      cp.addChar(bottom - 1, l + i * 16, "─");
+    }
+    for (let i = midL; i < high; ++i) {
+      cp.addChar(top, l + i * 16, "￣");
+      cp.addChar(bottom - 1, l + i * 16, "＿");
+    }
+    for (let i = high; i < midR; ++i) {
+      cp.addChar(top, l + i * 16, "─");
+      cp.addChar(bottom - 1, l + i * 16, "─");
+    }
+    for (let i = midR; i < count; ++i) {
+      cp.addChar(top, l + i * 16, "＿");
+      cp.addChar(bottom - 1, l + i * 16, "￣");
+    }
+
+    return cp.toAA();
+  }
 };
