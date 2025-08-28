@@ -108,7 +108,7 @@ export const battle = (player1, player2) => {
       const afterJson = game.getJson();
 
       // 5. ゲーム終了判定
-      if (!game.field.isGameEnd() || outPlayers.length > 0) { // 勝者判定（例：場外に出ていない方が勝ち）
+      if (game.field.isGameEnd() || outPlayers.length > 0) { // 勝者判定（例：場外に出ていない方が勝ち）
         console.log("ターンが終了");
         if (playerMap[playerKey][1].readyState === 1) {
           console.log("サーバーから受信:", playerMap[rivalKey][1]);
