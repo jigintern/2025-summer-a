@@ -1,5 +1,6 @@
 import { line } from "./tools/line.js";
 import { erase } from "./tools/erase.js";
+import { circle } from "./tools/circle.js";
 import { CharPlace } from "./tools/util.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -131,6 +132,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const lineModeButton = document.querySelector("#btn-line");
   /** @type {HTMLInputElement} */
   const eraseModeButton = document.querySelector("#btn-erase");
+  /** @type {HTMLInputElement} */
+  const circleModeButton = document.querySelector("#btn-circle");
   const textareaPadding = 6;
   /** @type {() => unknown} */
   let finishmode = () => {};
@@ -229,6 +232,58 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     const onMouseup = () => {
       ismousedown = false;
+    };
+    overwrap.addEventListener("mousedown", onMousedown);
+    overwrap.addEventListener("mousemove", onMousemove);
+    window.addEventListener("mouseup", onMouseup);
+    finishmode = () => {
+      overwrap.removeEventListener("mousedown", onMousedown);
+      overwrap.removeEventListener("mousemove", onMousemove);
+      window.removeEventListener("mouseup", onMouseup);
+    };
+  });
+  circleModeButton.addEventListener("change", () => {
+    finishmode();
+    overwrap.style.display = "block";
+    /** @type {[number, number,string] | null} */
+    let status = null;
+    /** @param {MouseEvent} e */
+    const onMousedown = (e) => {
+      status = [
+        Math.round((e.offsetY - textareaPadding) / 9) / 2,
+        Math.round(e.offsetX - textareaPadding),
+        textarea.value,
+      ];
+    };
+    /** @param {MouseEvent} e */
+    const onMousemove = (e) => {
+      if (status === null) return;
+      const r = Math.hypot(
+        status[0] * 18 - (e.offsetY - textareaPadding),
+        status[1] - (e.offsetX - textareaPadding),
+      );
+      if (status[0] % 1 === 0) {
+        textarea.value = circle(
+          status[2],
+          1000,
+          40,
+          status[1],
+          status[0] - Math.round(r / 18),
+          status[0] + Math.round(r / 18),
+        );
+      } else {
+        textarea.value = circle(
+          status[2],
+          1000,
+          40,
+          status[1],
+          status[0] - Math.floor(r / 18) - 0.5,
+          status[0] + Math.floor(r / 18) + 0.5,
+        );
+      }
+    };
+    const onMouseup = () => {
+      status = null;
     };
     overwrap.addEventListener("mousedown", onMousedown);
     overwrap.addEventListener("mousemove", onMousemove);
