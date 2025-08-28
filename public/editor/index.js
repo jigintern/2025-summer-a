@@ -1,5 +1,6 @@
 import { line } from "./tools/line.js";
 import { erase } from "./tools/erase.js";
+import { CharPlace } from "./tools/util.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const newButton = document.getElementById("btn-new");
@@ -136,6 +137,13 @@ document.addEventListener("DOMContentLoaded", () => {
   textModeButton.addEventListener("change", () => {
     finishmode();
     overwrap.style.display = "none";
+    const onchange = () => {
+      textarea.value = new CharPlace(textarea.value, 1000, 40).toAA();
+    };
+    textarea.addEventListener("change", onchange);
+    finishmode = () => {
+      textarea.removeEventListener("change", onchange);
+    };
   });
   lineModeButton.addEventListener("change", () => {
     finishmode();
