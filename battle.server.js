@@ -8,17 +8,24 @@ export const battle = (player1, player2) => {
   // TODO: 対戦を実装する
   console.log(`対戦開始: ${player1[0]} vs ${player2[0]}`);
 
-  // oncloseハンドラは最初に一度だけ設定
-  player1[1].onclose = () => {
+  player1[1].addEventListener("close", () => {
     if (player2[1].readyState === 1) {
+      player2[1].send(JSON.stringify({
+        type: "info",
+        message: "相手が切断しました",
+      }));
       player2[1].close(4000, "相手が切断しました");
     }
-  };
-  player2[1].onclose = () => {
+  });
+  player2[1].addEventListener("close", () => {
     if (player1[1].readyState === 1) {
+      player1[1].send(JSON.stringify({
+        type: "info",
+        message: "相手が切断しました",
+      }));
       player1[1].close(4000, "相手が切断しました");
     }
-  };
+  });
 
   // ゲーム状態を生成
   const game = new GameStatus();
