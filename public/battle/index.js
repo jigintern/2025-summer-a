@@ -4,8 +4,6 @@ import { GameStatus } from "./game-common.js";
 
 import { aa2blob } from "../util/aa2img.js";
 
-import { aa2blob } from "../util/aa2img.js";
-
 const canvas = document.getElementById("battle_canvas");
 
 canvas.width = 1000;
