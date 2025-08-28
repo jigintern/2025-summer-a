@@ -32,6 +32,27 @@ export const circle = (aa, width, height, cx, top, bottom) => {
     cp.addChar(top + 1, cx + 15, "'");
 
     return cp.toAA();
+  } else if (r === 27) {
+    const cp = new CharPlace(aa, width, height);
+    cp.addChar(top, cx - 23, "ˌ");
+    cp.addChar(top, cx - 19, "‛");
+    cp.addChar(top, cx - 14, "´");
+    cp.addChar(top, cx - 5, "¯");
+    cp.addChar(top, cx + 7, "`");
+    cp.addChar(top, cx + 16, "‛");
+    cp.addChar(top, cx + 20, "ˌ");
+    cp.addChar(top + 1, cx - 26, "|");
+    cp.addChar(top + 1, cx + 23, "|");
+    cp.addChar(top + 2, cx - 24, "ˈ");
+    cp.addChar(top + 2, cx - 20, "·");
+    cp.addChar(top + 2, cx - 12, "¸");
+    cp.addChar(top + 2, cx - 5, "_");
+    cp.addChar(top + 2, cx, "_");
+    cp.addChar(top + 2, cx + 10, ",");
+    cp.addChar(top + 2, cx + 17, "·");
+    cp.addChar(top + 2, cx + 20, "ˈ");
+
+    return cp.toAA();
   } else {
     const cy = (top + bottom) / 2;
     for (let i = top + 1; i < bottom - 1; ++i) {
