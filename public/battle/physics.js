@@ -2,6 +2,9 @@
  * 対戦の物理演算部分
  */
 
+const fieldWidth = 1000;
+const fieldHeight = 500;
+
 export class AAObj {
   /** @type {number} */
   r;
@@ -37,6 +40,16 @@ export class AAObj {
    */
   isStopping() {
     return this.dx[0] === 0 && this.dx[1] === 0 && this.dtt === 0;
+  }
+
+  /**
+   * 場外に出ていないか判定
+   * @returns {boolean}
+   */
+  isInOfField() {
+    const r = this.r;
+    const [x, y] = this.x;
+    return -r < x && x < r + fieldWidth && -r < y && y < r + fieldHeight;
   }
 }
 
