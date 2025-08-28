@@ -327,13 +327,26 @@ function drawMyAA() {
   ctx.save();
   ctx.translate(bs.a.x[0], bs.a.x[1]);
   ctx.rotate(bs.a.tt);
+  let w = playerImgA.width;
+  let h = playerImgA.height;
+  let a = 2 * bs.a.r / Math.hypot(w, h);
+
   ctx.drawImage(
+    playerImgA,
+    -a * w / 2,
+    -a * h / 2,
+    w,
+    h,
+  );
+
+  /*ctx.drawImage(
     playerImgA,
     -bs.a.r * Math.sqrt(2) / 2,
     -bs.a.r * Math.sqrt(2) / 2,
     bs.a.r * Math.sqrt(2),
     bs.a.r * Math.sqrt(2),
-  );
+  );*/
+
   ctx.restore();
   ctx.closePath();
 
@@ -341,13 +354,25 @@ function drawMyAA() {
   ctx.save();
   ctx.translate(bs.b.x[0], bs.b.x[1]);
   ctx.rotate(bs.b.tt);
+  w = playerImgB.width;
+  h = playerImgB.height;
+  a = 2 * bs.b.r / Math.hypot(w, h);
+
   ctx.drawImage(
+    playerImgB,
+    -a * w / 2,
+    -a * h / 2,
+    w,
+    h,
+  );
+
+  /*ctx.drawImage(
     playerImgB,
     -bs.b.r * Math.sqrt(2) / 2,
     -bs.b.r * Math.sqrt(2) / 2,
     bs.b.r * Math.sqrt(2),
     bs.b.r * Math.sqrt(2),
-  );
+  );*/
   ctx.restore();
   ctx.closePath();
 
