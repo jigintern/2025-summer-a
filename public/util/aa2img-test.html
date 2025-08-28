@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AA画像変換テスト</title>
+  </head>
+  <body>
+    <script type="module">
+      import { aa2blob } from "./aa2img.js";
+      const img = document.createElement("img");
+      img.src = await aa2blob("国Ajy|g\n国Ajy|g");
+      document.body.append(img);
+    </script>
+  </body>
+</html>
