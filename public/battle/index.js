@@ -489,6 +489,17 @@ function checkDeath() {
   }
 }
 
+let isReload = false;
+
+function disconnectCheck() {
+  if (!willBeGameEnd && !isDisconnected && !isReload) {
+    console.log("disconnected!!");
+    alert("通信が切断されました。");
+    window.location.reload();
+    isReload = true;
+  }
+}
+
 function gameFlow() {
   AAMove();
   checkDeath();
@@ -500,6 +511,8 @@ function gameFlow() {
   if (isMetarEnable) drawMeter();
   if (isArrow) drawArrow();
   checkTurnEnd();
+
+  disconnectCheck();
 
   //testDraw();
 }
@@ -1102,9 +1115,16 @@ function getMessage(event) {
       gs_a.updateFromJSON(msg.afterField);
 
       gs.updateFromJSON(msg.beforeField);
+
+      willBeGameEnd = gs_a.field.isGameEnd;
+      break;
+    case "cutting":
+      isDisconnected = true;
       break;
   }
 }
+
+let connection = false;
 
 let isWaitTurn = false;
 
@@ -1124,19 +1144,34 @@ function waitTurn() {
   isArrow = false;
 }
 
+let isDisconnected = false;
+
 function getOpen(event) {
   console.log("通信接続イベント受信");
   console.log(event);
+
+  connection = true;
 }
 
 function getError(error) {
   console.log("エラー発生");
   console.log(error);
+
+  if (!isReload) {
+    console.log("disconnected!!");
+    alert("通信失敗!!");
+    window.location.reload();
+    isReload = true;
+  }
 }
+
+let willBeGameEnd = false;
 
 function getClose(event) {
   console.log("通信切断イベント受信");
   console.log(event);
+
+  connection = false;
 }
 
 //メインの描画関数
