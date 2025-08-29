@@ -1,5 +1,24 @@
 import charwidth from "../../util/charwidth.json" with { type: "json" };
 
+const whitespace = [
+  "",
+  " ",
+  " ",
+  " ",
+  " ",
+  " ",
+  "  ",
+  "  ",
+  " ",
+  "  ",
+  " ",
+  "　",
+  "  ",
+  "  ",
+  "  ",
+  "  ",
+];
+
 /**
  * 「文字の種類と2次元上の位置」でAAを表したもの
  */
@@ -111,8 +130,8 @@ export class CharPlace {
       for (const { offset, char } of line) {
         // 文字間の空白の大きさ
         const whiteWidth = offset - lastOffset;
-        r += " ".repeat(Math.floor(whiteWidth / 5));
-        r += "\u200a".repeat(whiteWidth % 5);
+        r += " ".repeat(Math.floor(whiteWidth / 16));
+        r += whitespace[whiteWidth % 16];
         r += char;
         lastOffset = offset + charwidth[char];
       }
