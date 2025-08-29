@@ -68,7 +68,7 @@ export class CharPlace {
    * @param {string} char
    */
   addChar(line, offset, char) {
-    if (/^\s+$/.test(char)) return;
+    if (/^\s$/.test(char)) return;
     if (char in charwidth) {
       if (
         Number.isInteger(line) && Number.isInteger(offset) &&
