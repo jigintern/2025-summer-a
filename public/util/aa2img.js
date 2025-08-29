@@ -12,7 +12,7 @@ export const aa2blob = async (aa) => {
   const [top, right, bottom, left] = new CharPlace(aa, 1000, 720).getRect();
   canvas.width = right - left;
   canvas.height = (bottom - top) * 18;
-  ctx.font = "12pt 'MS PGothic'";
+  ctx.font = "12pt 'MS PGothic', 12pt 'aahub_light'";
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const saa = aa.split("\n");
   for (let i = 0; i < saa.length; ++i) {

@@ -3,6 +3,11 @@
   src: url("UDEVGothic-Regular.woff2") format("woff2");
   src: url("UDEVGothic-Regular.ttf") format("tunetype");
 }
+@font-face {
+  font-family: "aahub_light";
+  src: url("/util/aahub_light.woff2") format("woff2");
+  font-display: swap;
+}
 
 :root {
   --window-bg-color: #ece9d8;
