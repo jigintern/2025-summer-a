@@ -490,7 +490,10 @@ function checkDeath() {
 
 function gameFlow() {
   AAMove();
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  checkDeath();
+
+  drawBackground();
+
   drawMyAA();
   if (isButtonEnable) drawButton();
   if (isMetarEnable) drawMeter();
@@ -661,8 +664,6 @@ function hourglass() {
 }
 
 function waitingAnim() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   waitingText();
   hourglass();
   waitTime += deltaTime;
@@ -784,7 +785,6 @@ function createRoundRectPath(x, y, w, h, r) {
 }
 
 function roomSearch() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawUserInputRect();
 }
 
@@ -918,8 +918,35 @@ function makeEllipse(x, h, w) {
   );
 }
 
+const loserImg = new Image();
+loserImg.addEventListener("load", () => {
+});
+loserImg.src = "./images/you_are_lose.png";
+
+const winnerImg = new Image();
+winnerImg.addEventListener("load", () => {
+});
+winnerImg.src = "./images/you_are_win.png";
+
+function drawBackground() {
+  ctx.beginPath();
+  ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+  ctx.closePath();
+}
+
+function result(){
+  if(deathPlayer)
+
+
+  ctx.save();
+
+  ctx.Image()
+
+  ctx.restore();
+}
+
 function gameOver() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBackground();
   drawMyAA();
   drawGameOver();
 }
@@ -933,9 +960,21 @@ let isGameTime = true;
 let isGameOver = true;
 
 function resetStyle() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.filter = "none";
   ctx.lineWidth = 1;
   ctx.strokeStyle = "#000000";
+}
+
+const backgroundImg = new Image();
+backgroundImg.addEventListener("load", () => {
+});
+backgroundImg.src = "./images/battle_frame.png";
+
+function drawBackground() {
+  ctx.beginPath();
+  ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+  ctx.closePath();
 }
 
 let ws;
