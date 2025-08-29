@@ -69,6 +69,11 @@ function drawButton() {
   y = bs.a.x[1] + bs.a.r + 10;
   alt = y > 400;
   if (alt) y = bs.a.x[1] - bs.a.r - 75;
+  alt = x < 40;
+  x = 40;
+  if (alt) x = 40;
+  alt = x > canvas.width - 80;
+  if (alt) x = canvas.width - 80;
   ctx.strokeStyle = "#0a3cd1ff";
   createRoundRectPath(x, y, 80, 50, 5);
   ctx.stroke();
@@ -478,7 +483,7 @@ function checkDeath() {
 let isReload = false;
 
 function disconnectCheck() {
-  if (!willBeGameEnd && !isDisconnected && !isReload) {
+  if (!willBeGameEnd && isDisconnected && !isReload) {
     console.log("disconnected!!");
     alert("通信が切断されました。");
     window.location.reload();
@@ -1133,7 +1138,7 @@ function getError(error) {
   console.log("エラー発生");
   console.log(error);
 
-  if (!isReload) {
+  if (!isReload && false) {
     console.log("disconnected!!");
     alert("通信失敗!!");
     window.location.reload();
