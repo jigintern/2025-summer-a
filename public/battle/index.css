@@ -28,6 +28,7 @@ body {
   border-radius: 2px;
   height: auto;
   min-height: 0px;
+  overflow: hidden;
 }
 
 .window {
@@ -37,6 +38,7 @@ body {
   height: auto;
   aspect-ratio: 1000/500;
   flex-grow: 0;
+  overflow: hidden;
 }
 
 .window_main {

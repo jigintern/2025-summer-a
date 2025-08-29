@@ -8,7 +8,7 @@ form.addEventListener("submit", (e) => {
   const formData = new FormData(form);
   const roomName = formData.get("roomName");
 
-  const ws = new WebSocket(`ws://${location.host}/ws/battle?room=${roomName}`);
+  const ws = new WebSocket(`wss://${location.host}/ws/battle?room=${roomName}`);
 
   ws.onopen = () => {
     console.log("WebSocket接続が開かれました");
