@@ -17,7 +17,7 @@ export class AAObj {
   /** @type {number} 角速度 */
   dtt;
   /** @type {number} 摩擦で生じる加速度 */
-  mu = 0.001;
+  mu = 0.02;
 
   /**
    * @param {number} r
