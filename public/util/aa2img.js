@@ -13,7 +13,6 @@ export const aa2blob = async (aa) => {
   canvas.width = right - left;
   canvas.height = (bottom - top) * 18;
   ctx.font = "12pt 'MS PGothic', 'Saitamaar'";
-  console.log(ctx.font);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const saa = aa.split("\n");
   for (let i = 0; i < saa.length; ++i) {
