@@ -4,8 +4,8 @@
   src: url("UDEVGothic-Regular.ttf") format("tunetype");
 }
 @font-face {
-  font-family: "aahub_light";
-  src: url("/util/aahub_light.woff2") format("woff2");
+  font-family: "Saitamaar";
+  src: url("/util/Saitamaar.woff2") format("woff2");
   font-display: swap;
 }
 
