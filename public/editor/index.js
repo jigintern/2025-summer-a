@@ -3,6 +3,8 @@ import { erase } from "./tools/erase.js";
 import { circle } from "./tools/circle.js";
 import { CharPlace } from "./tools/util.js";
 
+let selectedChar = "#";
+
 document.addEventListener("DOMContentLoaded", () => {
   const newButton = document.getElementById("btn-new");
   const openButton = document.getElementById("btn-open");
@@ -133,6 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
   /** @type {HTMLInputElement} */
   const eraseModeButton = document.querySelector("#btn-erase");
   /** @type {HTMLInputElement} */
+  const fillModeButton = document.querySelector("#btn-fill");
+  /** @type {HTMLInputElement} */
   const circleModeButton = document.querySelector("#btn-circle");
   const textareaPadding = 6;
   /** @type {() => unknown} */
@@ -242,6 +246,47 @@ document.addEventListener("DOMContentLoaded", () => {
       window.removeEventListener("mouseup", onMouseup);
     };
   });
+  fillModeButton.addEventListener("change", () => {
+    finishmode();
+    overwrap.style.display = "block";
+    /** @type {boolean} */
+    let ismousedown = false;
+    /** @param {MouseEvent} e */
+    const onMousedown = (e) => {
+      ismousedown = true;
+      const cp = new CharPlace(textarea.value, 1000, 40);
+      const cwidth = charwidth[selectedChar];
+      cp.addChar(
+        Math.floor((e.offsetY - textareaPadding) / 18),
+        Math.floor((e.offsetX - textareaPadding) / cwidth) * cwidth,
+        selectedChar,
+      );
+      textarea.value = cp.toAA();
+    };
+    /** @param {MouseEvent} e */
+    const onMousemove = (e) => {
+      if (!ismousedown) return;
+      const cp = new CharPlace(textarea.value, 1000, 40);
+      const cwidth = charwidth[selectedChar];
+      cp.addChar(
+        Math.floor((e.offsetY - textareaPadding) / 18),
+        Math.floor((e.offsetX - textareaPadding) / cwidth) * cwidth,
+        selectedChar,
+      );
+      textarea.value = cp.toAA();
+    };
+    const onMouseup = () => {
+      ismousedown = false;
+    };
+    overwrap.addEventListener("mousedown", onMousedown);
+    overwrap.addEventListener("mousemove", onMousemove);
+    window.addEventListener("mouseup", onMouseup);
+    finishmode = () => {
+      overwrap.removeEventListener("mousedown", onMousedown);
+      overwrap.removeEventListener("mousemove", onMousemove);
+      window.removeEventListener("mouseup", onMouseup);
+    };
+  });
   circleModeButton.addEventListener("change", () => {
     finishmode();
     overwrap.style.display = "block";
@@ -294,4 +339,16 @@ document.addEventListener("DOMContentLoaded", () => {
       window.removeEventListener("mouseup", onMouseup);
     };
   });
+  for (const elem of document.querySelectorAll("input[name='char-bar']")) {
+    if (
+      document.querySelector(`label[for="${elem.id}"]`)
+        .textContent.trim() === "#"
+    ) {
+      elem.checked = true;
+    }
+    elem.addEventListener("change", () => {
+      selectedChar = document.querySelector(`label[for="${elem.id}"]`)
+        .textContent.trim();
+    });
+  }
 });
