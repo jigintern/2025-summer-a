@@ -1101,6 +1101,11 @@ function getMessage(event) {
       break;
     case "cutting":
       isDisconnected = true;
+
+      willBeGameEnd = gs_a.field.isGameEnd;
+      break;
+    case "cutting":
+      isDisconnected = true;
       break;
   }
 }
@@ -1127,9 +1132,13 @@ function waitTurn() {
 
 let isDisconnected = false;
 
+let isDisconnected = false;
+
 function getOpen(event) {
   console.log("通信接続イベント受信");
   console.log(event);
+
+  connection = true;
 
   connection = true;
 }
