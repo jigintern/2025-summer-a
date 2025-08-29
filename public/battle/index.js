@@ -4,6 +4,10 @@ import { GameStatus } from "./game-common.js";
 
 import { aa2blob } from "../util/aa2img.js";
 
+if (new URL(location.href).searchParams.get("id") == null) {
+  location.href = "/";
+}
+
 const canvas = document.getElementById("battle_canvas");
 
 canvas.width = 1000;
