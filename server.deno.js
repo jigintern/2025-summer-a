@@ -1,6 +1,7 @@
 import { serveDir } from "jsr:@std/http/file-server";
 import { getCookies, setCookie } from "jsr:@std/http/cookie";
 import { battle } from "./battle.server.js";
+import { normalize } from "./public/editor/tools/util.js";
 
 // パスワードハッシュ化の関数
 async function hashPassword(password) {
@@ -193,7 +194,7 @@ Deno.serve(async (req) => {
         .set(["aa", aaId], {
           author: username,
           title: title,
-          content: AA,
+          content: normalize(AA),
           created_at: now,
           updated_at: now,
         })
@@ -274,7 +275,7 @@ Deno.serve(async (req) => {
         .set(originalKey, {
           ...originalEntry.value,
           title: title,
-          content: AA,
+          content: normalize(AA),
           updated_at: newTimestamp,
         })
         .delete(["aa_by_user", username, +originalTimestamp])
