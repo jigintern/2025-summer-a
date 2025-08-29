@@ -678,7 +678,7 @@ function roomInButtonPush() {
   roomWord = roomInput.value;
   if (roomWord === "") return;
   ws = new WebSocket(
-    `ws://${location.host}/ws/battle?id=${myAA}&room=${roomWord}`,
+    `wss://${location.host}/ws/battle?id=${myAA}&room=${roomWord}`,
   );
   console.log(ws);
 
