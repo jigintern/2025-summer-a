@@ -17,6 +17,7 @@ async function hashPassword(password) {
  * @typedef {Object} Room
  * @property {string} username
  * @property {WebSocket} socket
+ * @property {string} aa
  */
 
 /** @type {Map<string, Room>} */
@@ -141,12 +142,18 @@ Deno.serve(async (req) => {
     if (username === "") {
       return Response("ログインしていません", { status: 401 });
     }
+    const entry = await kv.get(["aa", aaId]);
+    if (!entry.value) {
+      return Response("AAが見つかりません", { status: 400 });
+    }
+    const aa = entry.value.content;
+
     const { socket, response } = Deno.upgradeWebSocket(req);
 
     socket.onopen = () => {
       // 部屋がなければ新規作成
       if (!waitingUser.has(roomName)) {
-        waitingUser.set(roomName, { username, socket, aaId });
+        waitingUser.set(roomName, { username, socket, aa });
         socket.onclose = () => {
           waitingUser.delete(roomName);
           socket.onclose = null;
@@ -161,12 +168,12 @@ Deno.serve(async (req) => {
         const {
           username: username2,
           socket: socket2,
-          aaId: aaId2,
+          aa: aa2,
         } = waitingUser.get(roomName);
         waitingUser.delete(roomName);
         socket2.onclose = null;
         socket2.onerror = null;
-        battle([username2, socket2, aaId2], [username, socket, aaId]);
+        battle([username2, socket2, aa2], [username, socket, aa]);
       }
     };
 

@@ -4,6 +4,10 @@ import { GameStatus } from "./game-common.js";
 
 import { aa2blob } from "../util/aa2img.js";
 
+if (new URL(location.href).searchParams.get("id") == null) {
+  location.href = "/";
+}
+
 const canvas = document.getElementById("battle_canvas");
 
 canvas.width = 1000;
@@ -303,24 +307,6 @@ const playerImgA = new Image();
 const playerImgB = new Image();
 let AATitle;
 let AATitle_e;
-
-playerImgA.src = "";
-if (myAA) {
-  fetch(`/AALibrary/${encodeURIComponent(myAA)}`)
-    .then((r) => r.json())
-    .then((aainfo) => {
-      AATitle = aainfo.title;
-      aa2blob(aainfo.content).then((url) => {
-        playerImgA.src = url;
-      });
-    })
-    .catch(() => {
-      alert("AAの読み込みに失敗しました");
-      aa2blob("error...\n[悲報]エラー").then((url) => {
-        playerImgA.src = url;
-      });
-    });
-}
 
 //AA描画用関数(今は円だけ)
 function drawMyAA() {
@@ -1069,24 +1055,14 @@ function getMessage(event) {
       console.log(msg.field);
       gs.updateFromJSON(msg.field);
 
-      enemyAA = msg.aaId;
+      playerImgA.src = "";
+      aa2blob(msg.aa[msg.sign === "A" ? 0 : 1]).then((url) =>
+        playerImgA.src = url
+      );
       playerImgB.src = "";
-      if (enemyAA || true) {
-        fetch(`/AALibrary/${encodeURIComponent(enemyAA)}`)
-          .then((r) => r.json())
-          .then((aainfo) => {
-            AATitle_e = aainfo.title;
-            aa2blob(aainfo.content).then((url) => {
-              playerImgB.src = url;
-            });
-          })
-          .catch(() => {
-            alert("AAの読み込みに失敗しました");
-            aa2blob("error...\n[悲報]エラー").then((url) => {
-              playerImgB.src = url;
-            });
-          });
-      }
+      aa2blob(msg.aa[msg.sign === "A" ? 1 : 0]).then((url) =>
+        playerImgB.src = url
+      );
 
       if (mySign === "A") {
         bs.a = gs.field.a;
