@@ -315,10 +315,14 @@ if (myAA) {
     })
     .catch(() => {
       alert("AAの読み込みに失敗しました");
+      location.href = "/";
       aa2blob("error...\n[悲報]エラー").then((url) => {
         playerImgA.src = url;
       });
     });
+} else {
+  alert("AAが指定されていません。ホームに戻ります。");
+  location.href = "/";
 }
 
 //AA描画用関数(今は円だけ)
