@@ -101,6 +101,26 @@ Deno.serve(async (req) => {
         rating: 0,
       };
       await kv.set(key, value);
+      const now = new Date();
+      const aaId = crypto.randomUUID();
+      const res = await kv.atomic().set(
+        ["aa", aaId],
+        {
+          author: username,
+          title: "作品例（クリックして編集や対戦をしよう！）",
+          content: normalize(`　 ∧＿∧
+　（　´∀｀）
+　（　　　　）
+　｜ ｜　|
+　（_＿）＿）`),
+          created_at: now,
+          updated_at: now,
+        },
+      ).set(["aa_by_user", username, +now], { aa_id: aaId }).commit();
+
+      if (!res.ok) {
+        throw new Error("テンプレート作成時のエラー");
+      }
 
       return new Response(null, { headers: await makeSession(username, kv) });
     } catch (error) {
