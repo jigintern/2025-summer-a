@@ -339,4 +339,16 @@ document.addEventListener("DOMContentLoaded", () => {
       window.removeEventListener("mouseup", onMouseup);
     };
   });
+  for (const elem of document.querySelectorAll("input[name='char-bar']")) {
+    if (
+      document.querySelector(`label[for="${elem.id}"]`)
+        .textContent.trim() === "#"
+    ) {
+      elem.checked = true;
+    }
+    elem.addEventListener("change", () => {
+      selectedChar = document.querySelector(`label[for="${elem.id}"]`)
+        .textContent.trim();
+    });
+  }
 });
