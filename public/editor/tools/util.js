@@ -143,3 +143,10 @@ export class CharPlace {
     return r;
   }
 }
+
+/**
+ * AAを正規化する
+ * @param {string} aa
+ * @returns {string}
+ */
+export const normalize = (aa) => new CharPlace(aa, 1000, 40).toAA();

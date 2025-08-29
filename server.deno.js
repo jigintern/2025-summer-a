@@ -1,6 +1,7 @@
 import { serveDir } from "jsr:@std/http/file-server";
 import { getCookies, setCookie } from "jsr:@std/http/cookie";
 import { battle } from "./battle.server.js";
+import { normalize } from "./public/editor/tools/util.js";
 
 // パスワードハッシュ化の関数
 async function hashPassword(password) {
@@ -80,6 +81,9 @@ Deno.serve(async (req) => {
   if (req.method === "POST" && pathname === "/signup") {
     try {
       const { username, password } = await req.json();
+      if (!/^[0-9A-Za-z_-]{2,20}$/.test(username)) {
+        return new Response("そのユーザー名は登録できません", { status: 400 });
+      }
 
       // ユーザー名の重複チェック
       const userEntry = await kv.get(["users", username]);
@@ -190,7 +194,7 @@ Deno.serve(async (req) => {
         .set(["aa", aaId], {
           author: username,
           title: title,
-          content: AA,
+          content: normalize(AA),
           created_at: now,
           updated_at: now,
         })
@@ -271,7 +275,7 @@ Deno.serve(async (req) => {
         .set(originalKey, {
           ...originalEntry.value,
           title: title,
-          content: AA,
+          content: normalize(AA),
           updated_at: newTimestamp,
         })
         .delete(["aa_by_user", username, +originalTimestamp])
