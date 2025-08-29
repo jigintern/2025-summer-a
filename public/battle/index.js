@@ -123,6 +123,7 @@ function onMouseUp() {
   isMouseDown = false;
   if (isMouseOverBt && isButtonEnable) buttonPush();
   if (isMouseOverUserBt && isRoomInEnable) roomInButtonPush();
+  if (isMouseOverGoHome) window.location.href = `../`;
 }
 
 canvas.addEventListener("mousedown", onMouseDown, false);
@@ -494,7 +495,10 @@ function checkDeath() {
 
 function gameFlow() {
   AAMove();
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  checkDeath();
+
+  drawBackground();
+
   drawMyAA();
   if (isButtonEnable) drawButton();
   if (isMetarEnable) drawMeter();
@@ -665,8 +669,6 @@ function hourglass() {
 }
 
 function waitingAnim() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   waitingText();
   hourglass();
   waitTime += deltaTime;
@@ -679,9 +681,16 @@ function roomInButtonPush() {
   const roomInput = document.getElementById("room_word");
   roomWord = roomInput.value;
   if (roomWord === "") return;
-  ws = new WebSocket(
-    `ws://${location.host}/ws/battle?id=${myAA}&room=${roomWord}`,
-  );
+  console.log(window.location.protocol);
+  if (window.location.protocol === "https:") {
+    ws = new WebSocket(
+      `wss://${location.host}/ws/battle?id=${myAA}&room=${roomWord}`,
+    );
+  } else {
+    ws = new WebSocket(
+      `ws://${location.host}/ws/battle?id=${myAA}&room=${roomWord}`,
+    );
+  }
   console.log(ws);
 
   ws.onmessage = (event) => {
@@ -788,7 +797,6 @@ function createRoundRectPath(x, y, w, h, r) {
 }
 
 function roomSearch() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawUserInputRect();
 }
 
@@ -922,10 +930,103 @@ function makeEllipse(x, h, w) {
   );
 }
 
+const loserImg = new Image();
+loserImg.addEventListener("load", () => {
+});
+loserImg.src = "./images/you_are_lose.png";
+
+const winnerImg = new Image();
+winnerImg.addEventListener("load", () => {
+});
+winnerImg.src = "./images/you_are_win.png";
+
+function result() {
+  let img;
+  if (deathPlayer === 0) {
+    img = loserImg;
+  } else {
+    img = winnerImg;
+  }
+
+  const x = canvas.width / 2;
+  const y = canvas.height / 2;
+  const aspect = img.height / img.width;
+  const w = canvas.width * 0.6;
+  const h = w * aspect;
+
+  ctx.save();
+
+  ctx.filter = "blur(4px) invert(100%)";
+  ctx.drawImage(img, x - w / 2, y - h / 2, w, h);
+
+  ctx.restore();
+
+  ctx.save();
+
+  ctx.drawImage(img, x - w / 2, y - h / 2, w, h);
+
+  ctx.restore();
+}
+
+let isMouseOverGoHome = false;
+
+function goHomeButton() {
+  let x, y, w, h, alt;
+  ctx.save();
+  ctx.beginPath();
+  ctx.filter = "blur(4px)";
+  x = canvas.width / 2;
+  y = canvas.height * 0.8;
+  w = canvas.width / 5;
+  h = canvas.height * 0.1;
+  ctx.strokeStyle = "#0a3cd1ff";
+  createRoundRectPath(x - w / 2, y - h / 2, w, h, 5);
+  ctx.stroke();
+  ctx.closePath();
+  ctx.beginPath();
+  ctx.filter = "none";
+  createRoundRectPath(x - w / 2, y - h / 2, w, h, 5);
+  ctx.fillStyle = "#fefefeff";
+  isMouseOverGoHome = false;
+  if (mouseX < x + w / 2 && mouseX > x - w / 2) {
+    if (mouseY < y + h / 2 && mouseY > y - h / 2) {
+      isMouseOverGoHome = true;
+      if (isMouseDown) {
+        ctx.fillStyle = "#8edbffff";
+      } else {
+        ctx.fillStyle = "#caedffff";
+      }
+    }
+  }
+  ctx.fill();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#0a3cd1ff";
+  createRoundRectPath(x - w / 2, y - h / 2, w, h, 5);
+  ctx.stroke();
+  ctx.closePath();
+  ctx.beginPath();
+  ctx.fillStyle = "#000000ff";
+  ctx.textAlign = "center";
+  ctx.font = "20px 'MS UI Gothic'";
+  ctx.fillText("ホームに戻る", x, y);
+  ctx.closePath();
+
+  ctx.beginPath();
+  ctx.filter = "blur(10px)";
+  if (alt) y = bs.a.x[1] - bs.a.r - 50;
+  ctx.strokeStyle = "#54ddf9e1";
+  createRoundRectPath(x - w / 2, y - h / 2, w, h, 5);
+  ctx.stroke();
+  ctx.closePath();
+  ctx.restore();
+}
+
 function gameOver() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBackground();
   drawMyAA();
   drawGameOver();
+  result();
+  goHomeButton();
 }
 
 let isRoomSearch = true;
@@ -937,9 +1038,21 @@ let isGameTime = true;
 let isGameOver = true;
 
 function resetStyle() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.filter = "none";
   ctx.lineWidth = 1;
   ctx.strokeStyle = "#000000";
+}
+
+const backgroundImg = new Image();
+backgroundImg.addEventListener("load", () => {
+});
+backgroundImg.src = "./images/battle_frame.png";
+
+function drawBackground() {
+  ctx.beginPath();
+  ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+  ctx.closePath();
 }
 
 let ws;
