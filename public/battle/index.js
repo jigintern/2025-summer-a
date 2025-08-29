@@ -70,7 +70,6 @@ function drawButton() {
   alt = y > 400;
   if (alt) y = bs.a.x[1] - bs.a.r - 75;
   alt = x < 40;
-  x = 40;
   if (alt) x = 40;
   alt = x > canvas.width - 80;
   if (alt) x = canvas.width - 80;
@@ -1104,9 +1103,6 @@ function getMessage(event) {
 
       willBeGameEnd = gs_a.field.isGameEnd;
       break;
-    case "cutting":
-      isDisconnected = true;
-      break;
   }
 }
 
@@ -1132,13 +1128,9 @@ function waitTurn() {
 
 let isDisconnected = false;
 
-let isDisconnected = false;
-
 function getOpen(event) {
   console.log("通信接続イベント受信");
   console.log(event);
-
-  connection = true;
 
   connection = true;
 }
