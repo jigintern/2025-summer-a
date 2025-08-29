@@ -80,6 +80,9 @@ Deno.serve(async (req) => {
   if (req.method === "POST" && pathname === "/signup") {
     try {
       const { username, password } = await req.json();
+      if (!/^[0-9A-Za-z_-]{2,20}$/.test(username)) {
+        return new Response("そのユーザー名は登録できません", { status: 400 });
+      }
 
       // ユーザー名の重複チェック
       const userEntry = await kv.get(["users", username]);
