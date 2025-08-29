@@ -677,9 +677,16 @@ function roomInButtonPush() {
   const roomInput = document.getElementById("room_word");
   roomWord = roomInput.value;
   if (roomWord === "") return;
-  ws = new WebSocket(
-    `wss://${location.host}/ws/battle?id=${myAA}&room=${roomWord}`,
-  );
+  console.log(window.location.protocol);
+  if (window.location.protocol === "https:") {
+    ws = new WebSocket(
+      `wss://${location.host}/ws/battle?id=${myAA}&room=${roomWord}`,
+    );
+  } else {
+    ws = new WebSocket(
+      `ws://${location.host}/ws/battle?id=${myAA}&room=${roomWord}`,
+    );
+  }
   console.log(ws);
 
   ws.onmessage = (event) => {
