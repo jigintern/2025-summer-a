@@ -9,7 +9,7 @@
     "rules": { "exclude": ["no-window-prefix", "no-window"] }
   },
   "tasks": {
-    "start": "deno run --watch --unstable-kv --allow-net --allow-read=public server.deno.js"
+    "start": "deno run --watch --unstable-kv --allow-net --allow-read=public --allow-read=.env --allow-read=.env.defaults --allow-read=.env.example --allow-env server.deno.js"
   },
   "compilerOptions": {
     "lib": ["deno.window", "dom", "dom.iterable"]
