@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+  <body>
+    <script type="module">
+      import { rect } from "./rect.js";
+      const ta = document.createElement("textarea");
+      Object.assign(ta.style, {
+        font: "12pt 'MS PGothic'",
+        lineHeight: "18px",
+        width: "800px",
+        height: "800px",
+      });
+      
+      let t = -0.2;
+      setInterval(() => {
+        const r = 14;
+        const x = Math.round(Math.cos(t) * r * 18);
+        const y = Math.round(Math.sin(t) * r);
+        ta.value = rect("", 800, 40,
+          20, 400,
+          y, x
+        );
+        t += 0.03;
+      }, 50);
+      
+
+      /*
+      ta.value = rect("", 800, 40,
+        20, 400,
+        15, 100
+      );
+      console.log(ta.value);
+      */
+      document.body.append(ta);
+    </script>
+  </body>
+</html>
