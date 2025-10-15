@@ -1,6 +1,7 @@
 import { line } from "./tools/line.js";
 import { erase } from "./tools/erase.js";
 import { circle } from "./tools/circle.js";
+import { rect } from "./tools/rect.js";
 import { CharPlace } from "./tools/util.js";
 
 let selectedChar = "#";
@@ -143,6 +144,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const fillModeButton = document.querySelector("#btn-fill");
   /** @type {HTMLInputElement} */
   const circleModeButton = document.querySelector("#btn-circle");
+  /** @type {HTMLInputElement} */
+  const rectModeButton = document.querySelector("#btn-rect");
   const textareaPadding = 6;
   /** @type {() => unknown} */
   let finishmode = () => {};
@@ -331,6 +334,42 @@ document.addEventListener("DOMContentLoaded", () => {
           status[0] + Math.floor(r / 18) + 0.5,
         );
       }
+    };
+    const onMouseup = () => {
+      status = null;
+    };
+    overwrap.addEventListener("mousedown", onMousedown);
+    overwrap.addEventListener("mousemove", onMousemove);
+    window.addEventListener("mouseup", onMouseup);
+    finishmode = () => {
+      overwrap.removeEventListener("mousedown", onMousedown);
+      overwrap.removeEventListener("mousemove", onMousemove);
+      window.removeEventListener("mouseup", onMouseup);
+    };
+  });
+  rectModeButton.addEventListener("change", () => {
+    finishmode();
+    overwrap.style.display = "block";
+    /** @type {[number, number,string] | null} */
+    let status = null;
+    /** @param {MouseEvent} e */
+    const onMousedown = (e) => {
+      status = [
+        Math.round((e.offsetY - textareaPadding) / 9 / 2),
+        Math.round(e.offsetX - textareaPadding),
+        textarea.value,
+      ];
+    };
+    /** @param {MouseEvent} e */
+    const onMousemove = (e) => {
+      if (status === null) return;
+      const y2 = Math.round((e.offsetY - textareaPadding) / 9 / 2);
+      const x2 = Math.round(e.offsetX - textareaPadding);
+      const x0 = status[1];
+      const y0 = status[0];
+      const w = x2 - x0;
+      const h = y2 - y0;
+      textarea.value = rect(status[2], 1000, 40, y0, x0, h, w);
     };
     const onMouseup = () => {
       status = null;
