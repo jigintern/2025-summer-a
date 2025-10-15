@@ -2,6 +2,7 @@ import { serveDir } from "jsr:@std/http/file-server";
 import { getCookies, setCookie } from "jsr:@std/http/cookie";
 import { battle } from "./battle.server.js";
 import { normalize } from "./public/editor/tools/util.js";
+import "https://deno.land/std@0.224.0/dotenv/load.ts";
 
 // パスワードハッシュ化の関数
 async function hashPassword(password) {
@@ -50,8 +51,10 @@ const makeSession = async (username, kv) => {
   return headers;
 };
 
+const port = Deno.env.get("PORT");
+
 const kv = await Deno.openKv();
-Deno.serve(async (req) => {
+Deno.serve({ port }, async (req) => {
   const pathname = new URL(req.url).pathname;
   console.log(pathname);
 
