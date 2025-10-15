@@ -45,7 +45,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const handleNew = () => {
     console.log("「新規作成」ボタンが押されました。");
-    // ここに新規作成の処理を書いていく
+    
+    if (
+      globalThis.confirm("編集中の内容は失われます。初期状態に戻しますか？")
+    ) {
+      globalThis.location.href = "/editor/";
+    }
   };
 
   const handleOpen = () => {
